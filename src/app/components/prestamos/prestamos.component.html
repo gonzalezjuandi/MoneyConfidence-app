@@ -1,0 +1,642 @@
+<div class="prestamos-container">
+  <!-- Préstamo Coche: Onboarding -->
+  <app-prestamo-coche-onboarding
+    *ngIf="prestamoCocheView === 'onboarding'"
+    (startSimulation)="onPrestamoCocheStartSimulation()"
+    (close)="onPrestamoCocheClose()">
+  </app-prestamo-coche-onboarding>
+
+  <!-- Préstamo Coche: Simulación -->
+  <app-prestamo-coche-simulacion
+    *ngIf="prestamoCocheView === 'simulation'"
+    (back)="onPrestamoCocheBack()"
+    (next)="onPrestamoCocheNext()">
+  </app-prestamo-coche-simulacion>
+
+  <!-- Préstamo Coche: Resumen -->
+  <app-prestamo-coche-resumen
+    *ngIf="prestamoCocheView === 'resumen'"
+    [loanData]="prestamoCocheData"
+    (back)="onPrestamoCocheResumenBack()"
+    (next)="onPrestamoCocheResumenNext()">
+  </app-prestamo-coche-resumen>
+
+  <!-- Préstamo Coche: Gestor Documental -->
+  <app-prestamo-coche-document-manager
+    *ngIf="prestamoCocheView === 'document-manager'"
+    [loanData]="prestamoCocheData"
+    (complete)="onPrestamoCocheDocumentManagerComplete()"
+    (exit)="onPrestamoCocheDocumentManagerExit()">
+  </app-prestamo-coche-document-manager>
+
+  <!-- Préstamo Coche: Firma Digital -->
+  <app-prestamo-coche-firma
+    *ngIf="prestamoCocheView === 'firma'"
+    [loanData]="prestamoCocheData"
+    (complete)="onPrestamoCocheFirmaComplete()"
+    (back)="onPrestamoCocheFirmaBack()">
+  </app-prestamo-coche-firma>
+
+  <!-- Préstamo Coche: Loading Seguro -->
+  <app-prestamo-coche-loading
+    *ngIf="prestamoCocheView === 'seguro-loading'"
+    [message]="'Estamos preparando la documentación del seguro'">
+  </app-prestamo-coche-loading>
+
+  <!-- Préstamo Coche: Gestor Documental Seguro -->
+  <app-prestamo-coche-seguro-document-manager
+    *ngIf="prestamoCocheView === 'seguro-document-manager'"
+    [loanData]="prestamoCocheData"
+    (complete)="onPrestamoCocheSeguroDocumentManagerComplete()"
+    (exit)="onPrestamoCocheSeguroDocumentManagerExit()">
+  </app-prestamo-coche-seguro-document-manager>
+
+  <!-- Préstamo Coche: Firma Digital Seguro -->
+  <app-prestamo-coche-firma
+    *ngIf="prestamoCocheView === 'seguro-firma'"
+    [loanData]="prestamoCocheData"
+    (complete)="onPrestamoCocheSeguroFirmaComplete()"
+    (back)="onPrestamoCocheSeguroFirmaBack()">
+  </app-prestamo-coche-firma>
+
+  <!-- Préstamo Coche: Loading Final -->
+  <app-prestamo-coche-loading
+    *ngIf="prestamoCocheView === 'final-loading'"
+    [message]="'Ingresando el dinero en tu cuenta. ¡Disfruta de tu préstamo!'">
+  </app-prestamo-coche-loading>
+
+  <!-- Préstamo Coche: Confirmación -->
+  <app-prestamo-coche-confirmacion
+    *ngIf="prestamoCocheView === 'confirmacion'"
+    [loanData]="prestamoCocheData"
+    (next)="onPrestamoCocheConfirmacionNext()">
+  </app-prestamo-coche-confirmacion>
+
+  <!-- Vista principal de préstamos -->
+  <div class="prestamos-wrapper" *ngIf="prestamoCocheView === 'none'">
+    <!-- Header -->
+    <header class="prestamos-header">
+      <button class="header-back-btn" (click)="onVolver()">
+        <i data-lucide="arrow-left" class="w-5 h-5 stroke-[1.5]"></i>
+      </button>
+      <h1 class="header-title">{{ view === 'list' ? 'Préstamos y créditos' : 'Préstamo preconcedido' }}</h1>
+    </header>
+
+    <!-- Vista listado -->
+    <main *ngIf="view === 'list'" class="prestamos-main">
+      <!-- Sección: Contrátalo online -->
+      <section class="px-5 pt-6">
+        <h2 class="text-lg font-bold text-slate-900 mb-4 tracking-tight">Contrátalo online</h2>
+        
+        <!-- Card Préstamo Aprobado -->
+        <div class="loan-card" (click)="onIrASimulacion()">
+          <div class="loan-card-icon loan-card-icon-green">
+            <i data-lucide="user-check" class="w-5 h-5 stroke-[1.5]"></i>
+          </div>
+          <div class="loan-card-content">
+            <h3 class="loan-card-title">Laura, tienes un préstamo aprobado de hasta 45.000 €!</h3>
+            <p class="loan-card-description">Contrátalo online y recíbelo en menos de 24 horas</p>
+            <div class="loan-card-action">
+              <button 
+                type="button"
+                class="loan-card-btn loan-card-btn-primary"
+                (click)="onIrASimulacion(); $event.stopPropagation()"
+              >
+                Contratar online
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Línea de Crédito -->
+        <div class="loan-card mt-4">
+          <div class="loan-card-icon loan-card-icon-green">
+            <i data-lucide="credit-card" class="w-5 h-5 stroke-[1.5]"></i>
+          </div>
+          <div class="loan-card-content">
+            <h3 class="loan-card-title">Línea de Crédito Sabadell</h3>
+            <p class="loan-card-description">Tienes hasta 5000 € disponibles para imprevistos</p>
+            <div class="loan-card-actions">
+              <button type="button" class="loan-card-btn loan-card-btn-secondary">
+                Saber más
+              </button>
+              <button type="button" class="loan-card-btn loan-card-btn-primary">
+                Disponer
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección: Otros tipos de préstamos -->
+      <section class="px-5 pt-8">
+        <h2 class="text-lg font-bold text-slate-900 mb-4 tracking-tight">Otros tipos de préstamos</h2>
+        
+        <div class="flex flex-col gap-4">
+          <!-- Préstamo Personal -->
+          <div class="loan-product-card">
+            <div class="loan-product-icon loan-product-icon-green">
+              <i data-lucide="hand-coins" class="w-5 h-5 stroke-[1.5]"></i>
+            </div>
+            <div class="loan-product-content">
+              <h4 class="loan-product-title">Préstamo Personal</h4>
+              <p class="loan-product-description">Hasta 50.000 €. Sin comisión de apertura</p>
+              <p class="loan-product-rate">TIN desde 5,95%</p>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+          </div>
+
+          <!-- Préstamo Coche -->
+          <div class="loan-product-card" (click)="onIrAPrestamoCoche()">
+            <div class="loan-product-icon loan-product-icon-green">
+              <i data-lucide="car-front" class="w-5 h-5 stroke-[1.5]"></i>
+            </div>
+            <div class="loan-product-content">
+              <h4 class="loan-product-title">Préstamo Coche</h4>
+              <p class="loan-product-description">Financia tu vehículo nuevo o usado</p>
+              <p class="loan-product-rate">TIN desde 4,95%</p>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-slate-400"></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- Sección: ¿No encuentras lo que buscas? -->
+      <section class="px-5 pt-8 pb-6">
+        <h2 class="text-lg font-bold text-slate-900 mb-4 tracking-tight">¿No encuentras lo que buscas?</h2>
+        
+        <div class="loan-card">
+          <div class="loan-card-icon loan-card-icon-gray">
+            <i data-lucide="headphones" class="w-5 h-5 stroke-[1.5]"></i>
+          </div>
+          <div class="loan-card-content">
+            <h3 class="loan-card-title">Contacta al momento</h3>
+            <p class="loan-card-description">Consúltanos cualquier duda que tengas por chat o llamada</p>
+            <div class="loan-card-actions">
+              <button type="button" class="loan-card-btn loan-card-btn-primary loan-card-btn-with-icon">
+                <i data-lucide="message-circle" class="w-4 h-4"></i>
+                Ir al chat
+              </button>
+              <button type="button" class="loan-card-btn loan-card-btn-secondary loan-card-btn-with-icon">
+                <i data-lucide="phone" class="w-4 h-4"></i>
+                Llamar
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Vista simulación -->
+    <main *ngIf="view === 'simulation'" class="prestamos-main simulation-main">
+      <section class="px-5 pt-4 pb-28">
+        <span class="text-xs font-semibold text-slate-500 mb-2 block uppercase tracking-wide">Paso 1 de 2</span>
+        <h1 class="text-2xl font-bold text-slate-900 mb-8 tracking-tight">Personaliza tu préstamo</h1>
+
+        <!-- Titulares -->
+        <div class="mb-5">
+          <h2 class="section-title">Tipo de préstamo</h2>
+          <div class="loan-type-simple">
+            <label class="loan-type-simple-option" [class.active]="loanType === 'individual'">
+              <input type="radio" 
+                     name="loanType" 
+                     value="individual" 
+                     [checked]="loanType === 'individual'"
+                     (change)="selectLoanType('individual')"
+                     class="sr-only">
+              <div class="loan-type-simple-content">
+                <div class="loan-type-simple-main">
+                  <span class="loan-type-simple-label">Individual</span>
+                  <span class="loan-type-simple-limit">Hasta 8.000 €</span>
+                </div>
+                <span class="loan-type-simple-name">María García Palao</span>
+              </div>
+            </label>
+
+            <label class="loan-type-simple-option" [class.active]="loanType === 'compartido'">
+              <input type="radio" 
+                     name="loanType" 
+                     value="compartido" 
+                     [checked]="loanType === 'compartido'"
+                     (change)="selectLoanType('compartido')"
+                     class="sr-only">
+              <div class="loan-type-simple-content">
+                <div class="loan-type-simple-main">
+                  <span class="loan-type-simple-label">Compartido</span>
+                  <span class="loan-type-simple-limit loan-type-simple-limit-high">Hasta 45.000 €</span>
+                </div>
+                <span class="loan-type-simple-name">María García y Luis González</span>
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <!-- Importe - Versión Actual (Mejorada) -->
+        <div class="mb-8">
+          <div class="comparison-header">
+            <h2 class="section-title">Importe del préstamo</h2>
+            <span class="comparison-badge">Versión Actual (Mejorada)</span>
+          </div>
+          <div class="amount-input-wrapper">
+            <div class="amount-input-container" [class.has-error]="amountError">
+              <div class="amount-input-inner">
+                <input type="text"
+                       id="amount-input"
+                       class="amount-input"
+                       [value]="isInputFocused ? amountInputValue : formattedAmount"
+                       (input)="onAmountInputChange($event)"
+                       (blur)="onAmountInputBlur()"
+                       (keydown)="onAmountInputKeydown($event)"
+                       (focus)="onAmountInputFocus()"
+                       placeholder="0"
+                       aria-label="Importe del préstamo en euros"
+                       [attr.aria-invalid]="amountError ? 'true' : 'false'"
+                       [attr.aria-describedby]="amountError ? 'amount-error' : 'amount-range'"
+                       autocomplete="off">
+                <span class="amount-currency-display">€</span>
+                <button type="button"
+                        class="amount-clear-btn"
+                        (click)="clearAmountInput()"
+                        *ngIf="amountInputValue && isInputFocused"
+                        aria-label="Limpiar importe">
+                  <i data-lucide="x" class="w-4 h-4"></i>
+                </button>
+              </div>
+            </div>
+            <div class="amount-error-message" *ngIf="amountError" id="amount-error" role="alert">
+              <i data-lucide="alert-circle" class="w-4 h-4"></i>
+              <span>{{ amountError }}</span>
+            </div>
+          </div>
+          <div class="relative h-10 px-2" id="amount-range">
+            <input type="range"
+                   [min]="minAmount"
+                   [max]="maxAmount"
+                   step="500"
+                   [value]="amount"
+                   (input)="onAmountChange($event)"
+                   class="amount-slider"
+                   aria-label="Desliza para ajustar el importe del préstamo"
+                   [attr.aria-valuemin]="minAmount"
+                   [attr.aria-valuemax]="maxAmount"
+                   [attr.aria-valuenow]="amount">
+            <div class="flex justify-between mt-2 text-xs font-medium text-slate-400">
+              <span>{{ minAmountFormatted }} €</span>
+              <span>{{ maxAmountFormatted }} €</span>
+            </div>
+          </div>
+          
+          <!-- Recomendaciones sutiles -->
+          <div class="loan-recommendation" *ngIf="showRecommendation && recommendationMessage" 
+               [class.recommendation-more]="recommendationType === 'more'" 
+               [class.recommendation-less]="recommendationType === 'less'"
+               [class.recommendation-credit-card]="recommendationType === 'credit-card'">
+            <i data-lucide="lightbulb" class="recommendation-icon"></i>
+            <div class="recommendation-content">
+              <span class="recommendation-text">{{ recommendationMessage }}</span>
+              <button 
+                type="button"
+                class="recommendation-cta"
+                *ngIf="showReactiveLoanCTA"
+                (click)="onIrAPrestamoReactivo()"
+                aria-label="Solicitar préstamo reactivo digital">
+                Solicitar préstamo reactivo
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+              <button 
+                type="button"
+                class="recommendation-cta"
+                *ngIf="showCreditCardCTA"
+                (click)="onIrATarjetaCredito()"
+                aria-label="Ver tarjetas de crédito">
+                Ver tarjetas de crédito
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Separador de comparación -->
+        <div class="comparison-divider">
+          <div class="comparison-divider-line"></div>
+          <span class="comparison-divider-text">Comparación</span>
+          <div class="comparison-divider-line"></div>
+        </div>
+
+        <!-- Importe - Versión Original bs-slider (Galatea Base) -->
+        <div class="mb-8">
+          <div class="comparison-header">
+            <h2 class="section-title">Importe del préstamo</h2>
+            <span class="comparison-badge comparison-badge-original">Versión Original (bs-slider base)</span>
+          </div>
+          
+          <div class="original-slider-wrapper">
+            <bs-slider
+              #originalSlider
+              [attr.min-value]="minAmount"
+              [attr.max-value]="maxAmount"
+              [attr.value]="amount"
+              [attr.step]="'500'"
+              [attr.unit]="'€'"
+              [attr.main-title]="'Importe del préstamo'"
+              [attr.input-label]="'Cantidad'"
+              [attr.bs-aria-label]="'Ajustar importe del préstamo'"
+              [attr.bs-aria-described-by]="'Rango de importe disponible'">
+            </bs-slider>
+          </div>
+        </div>
+
+        <!-- Separador de comparación -->
+        <div class="comparison-divider">
+          <div class="comparison-divider-line"></div>
+          <span class="comparison-divider-text">Versión Mejorada</span>
+          <div class="comparison-divider-line"></div>
+        </div>
+
+        <!-- Importe - Versión con bs-slider de Galatea Mejorado -->
+        <div class="mb-4">
+          <div class="comparison-header">
+            <h2 class="section-title">Importe del préstamo</h2>
+            <span class="comparison-badge comparison-badge-galatea">Versión Mejorada (bs-slider + input)</span>
+          </div>
+          
+          <app-amount-slider-galatea
+            [label]="'Label (opcional)'"
+            [labelOptional]="true"
+            [value]="amount"
+            [minValue]="minAmount"
+            [maxValue]="maxAmount"
+            [step]="500"
+            [unit]="'€'"
+            [editable]="true"
+            [showMinMax]="true"
+            [showInfo]="true"
+            [bsAriaDescribedBy]="'Rango de importe disponible'"
+            [ariaLabel]="'Ajustar importe del préstamo'"
+            (valueChange)="onAmountChangeFromGalatea($event)"
+            (error)="onErrorFromGalatea($event)">
+          </app-amount-slider-galatea>
+        </div>
+
+        <!-- Plazo -->
+        <div class="mb-6">
+          <div class="flex justify-between items-end mb-4">
+            <h2 class="section-title">Plazo de devolución</h2>
+            <button type="button" 
+                    class="text-xs text-primary-blue font-medium cursor-pointer hover:underline"
+                    (click)="toggleCalendar()"
+                    aria-label="Ver calendario de devolución">
+              Ver calendario
+            </button>
+          </div>
+          
+          <!-- Calendario expandible -->
+          <div class="calendar-preview" *ngIf="showCalendar">
+            <div class="calendar-timeline">
+              <div class="calendar-timeline-item" *ngFor="let year of getCalendarYears(); let i = index">
+                <div class="calendar-year-marker">
+                  <span class="calendar-year">{{ year }}</span>
+                  <div class="calendar-dot" [class.active]="i <= getTermYears()"></div>
+                </div>
+                <div class="calendar-payment-info" *ngIf="i === getTermYears()">
+                  <span class="calendar-payment-label">Cuota mensual</span>
+                  <span class="calendar-payment-amount">{{ monthlyPaymentDisplay }} €</span>
+                </div>
+              </div>
+            </div>
+            <p class="calendar-note">
+              Pagarás <strong>{{ monthlyPaymentDisplay }} €</strong> al mes durante <strong>{{ getTermYears() }} años</strong> ({{ termMonths }} meses)
+            </p>
+          </div>
+
+          <div class="grid grid-cols-4 gap-2">
+            <button type="button"
+                    class="term-btn py-3 rounded-lg border bg-white text-sm font-medium text-slate-600"
+                    [ngClass]="termMonths === 36 ? 'border-primary-blue bg-primary-blue-light text-primary-blue-dark font-bold shadow-sm' : 'border-slate-200 hover:border-slate-300'"
+                    (click)="selectTerm(36)">
+              3 años
+            </button>
+            <button type="button"
+                    class="term-btn py-3 rounded-lg border bg-white text-sm font-medium text-slate-600"
+                    [ngClass]="termMonths === 60 ? 'border-primary-blue bg-primary-blue-light text-primary-blue-dark font-bold shadow-sm' : 'border-slate-200 hover:border-slate-300'"
+                    (click)="selectTerm(60)">
+              5 años
+            </button>
+            <button type="button"
+                    class="term-btn py-3 rounded-lg border bg-white text-sm font-medium text-slate-600"
+                    [ngClass]="termMonths === 84 ? 'border-primary-blue bg-primary-blue-light text-primary-blue-dark font-bold shadow-sm' : 'border-slate-200 hover:border-slate-300'"
+                    (click)="selectTerm(84)">
+              7 años
+            </button>
+            <button type="button"
+                    class="term-btn py-3 rounded-lg border bg-white text-sm font-medium text-slate-600"
+                    [ngClass]="termMonths === 96 ? 'border-primary-blue bg-primary-blue-light text-primary-blue-dark font-bold shadow-sm' : 'border-slate-200 hover:border-slate-300'"
+                    (click)="selectTerm(96)">
+              8 años
+            </button>
+          </div>
+        </div>
+
+        <!-- Salud financiera -->
+        <div class="mb-6" *ngIf="hasUpdatedPotential">
+          <div class="financial-health-card" [class.financial-health-optima]="financialHealthStatus === 'optima'" 
+               [class.financial-health-buena]="financialHealthStatus === 'buena'"
+               [class.financial-health-atencion]="financialHealthStatus === 'atencion'">
+            <div class="financial-health-icon">
+              <i [attr.data-lucide]="financialHealthStatus === 'optima' ? 'trending-up' : financialHealthStatus === 'buena' ? 'check-circle' : 'alert-circle'" class="w-4 h-4"></i>
+            </div>
+            <div class="financial-health-content">
+              <h4 class="financial-health-title">
+                Salud financiera: 
+                <span *ngIf="financialHealthStatus === 'optima'">Óptima</span>
+                <span *ngIf="financialHealthStatus === 'buena'">Buena</span>
+                <span *ngIf="financialHealthStatus === 'atencion'">Atención</span>
+              </h4>
+              <p class="financial-health-text">
+                {{ financialHealthMessage }}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Acceso a Tu Potencial Financiero (si no tiene scoring) -->
+        <div class="mb-6" *ngIf="!hasUpdatedPotential">
+          <div class="financial-health-access">
+            <div class="financial-health-access-icon">
+              <i data-lucide="sparkles" class="w-4 h-4"></i>
+            </div>
+            <div class="financial-health-access-content">
+              <p class="financial-health-access-text">
+                Calcula tu potencial financiero para ver tu salud financiera personalizada
+              </p>
+              <button type="button" 
+                      class="financial-health-access-btn"
+                      (click)="onIrAPotencialFinanciero()"
+                      aria-label="Calcular potencial financiero">
+                Calcular potencial financiero
+                <i data-lucide="arrow-right" class="w-4 h-4"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modal de préstamo reactivo -->
+      <div class="modal-overlay" *ngIf="showReactiveLoanModal" (click)="onCerrarModalReactivo()">
+        <div class="modal-container" (click)="$event.stopPropagation()">
+          <div class="modal-header">
+            <h2 class="modal-title">Solicitar préstamo reactivo digital</h2>
+            <button type="button" class="modal-close" (click)="onCerrarModalReactivo()" aria-label="Cerrar">
+              <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+          </div>
+          
+          <div class="modal-content">
+            <p class="modal-description">
+              Completa el formulario para que nuestro equipo de Riesgos evalúe tu solicitud de préstamo.
+            </p>
+
+            <form class="reactive-loan-form">
+              <!-- Importe -->
+              <div class="form-group">
+                <label for="importe" class="form-label">Importe solicitado</label>
+                <div class="input-wrapper">
+                  <input type="number" 
+                         id="importe" 
+                         class="form-input"
+                         [(ngModel)]="reactiveLoanForm.importe"
+                         [min]="maxAmount"
+                         step="1000"
+                         required>
+                  <span class="input-suffix">€</span>
+                </div>
+              </div>
+
+              <!-- Finalidad -->
+              <div class="form-group">
+                <label for="finalidad" class="form-label">Finalidad del préstamo</label>
+                <select id="finalidad" 
+                        class="form-input"
+                        [(ngModel)]="reactiveLoanForm.finalidad"
+                        required>
+                  <option value="">Selecciona una opción</option>
+                  <option value="reforma">Reforma de vivienda</option>
+                  <option value="vehiculo">Compra de vehículo</option>
+                  <option value="negocio">Inversión en negocio</option>
+                  <option value="otros">Otros</option>
+                </select>
+              </div>
+
+              <!-- Ingresos mensuales -->
+              <div class="form-group">
+                <label for="ingresos" class="form-label">Ingresos mensuales netos</label>
+                <div class="input-wrapper">
+                  <input type="number" 
+                         id="ingresos" 
+                         class="form-input"
+                         [(ngModel)]="reactiveLoanForm.ingresosMensuales"
+                         min="0"
+                         step="100"
+                         required>
+                  <span class="input-suffix">€</span>
+                </div>
+              </div>
+
+              <!-- Gastos mensuales -->
+              <div class="form-group">
+                <label for="gastos" class="form-label">Gastos mensuales</label>
+                <div class="input-wrapper">
+                  <input type="number" 
+                         id="gastos" 
+                         class="form-input"
+                         [(ngModel)]="reactiveLoanForm.gastosMensuales"
+                         min="0"
+                         step="100"
+                         required>
+                  <span class="input-suffix">€</span>
+                </div>
+              </div>
+
+              <!-- Situación laboral -->
+              <div class="form-group">
+                <label for="situacion" class="form-label">Situación laboral</label>
+                <select id="situacion" 
+                        class="form-input"
+                        [(ngModel)]="reactiveLoanForm.situacionLaboral"
+                        required>
+                  <option value="">Selecciona una opción</option>
+                  <option value="indefinido">Contrato indefinido</option>
+                  <option value="temporal">Contrato temporal</option>
+                  <option value="autonomo">Autónomo</option>
+                  <option value="jubilado">Jubilado</option>
+                  <option value="parado">Desempleado</option>
+                </select>
+              </div>
+
+              <!-- Tipo de vivienda -->
+              <div class="form-group">
+                <label for="vivienda" class="form-label">Tipo de vivienda</label>
+                <select id="vivienda" 
+                        class="form-input"
+                        [(ngModel)]="reactiveLoanForm.tipoVivienda"
+                        required>
+                  <option value="">Selecciona una opción</option>
+                  <option value="propia">Propia</option>
+                  <option value="alquilada">Alquilada</option>
+                  <option value="familiar">Familiar</option>
+                </select>
+              </div>
+
+              <!-- Aceptación de términos -->
+              <div class="form-group-checkbox">
+                <label class="checkbox-label">
+                  <input type="checkbox" 
+                         [(ngModel)]="reactiveLoanForm.aceptaTerminos"
+                         required>
+                  <span class="checkbox-text">
+                    Acepto que se estudie mi solicitud y que se me contacte para continuar con el proceso
+                  </span>
+                </label>
+              </div>
+            </form>
+          </div>
+
+          <div class="modal-footer">
+            <button type="button" 
+                    class="btn-secondary"
+                    (click)="onCerrarModalReactivo()">
+              Cancelar
+            </button>
+            <button type="button" 
+                    class="btn-primary"
+                    (click)="onEnviarSolicitudReactivo()"
+                    [disabled]="!reactiveLoanForm.aceptaTerminos || !reactiveLoanForm.importe || !reactiveLoanForm.finalidad">
+              Enviar solicitud
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer simulación -->
+      <footer class="simulation-footer">
+        <div class="footer-inner">
+          <div>
+            <p class="text-xs text-slate-500 mb-1">Cuota mensual estimada</p>
+            <div class="flex items-baseline gap-1">
+              <span class="text-3xl font-bold text-slate-900 tracking-tight">{{ monthlyPaymentDisplay }}</span>
+              <span class="text-sm font-semibold text-slate-600">€/mes</span>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-[10px] text-slate-400 font-medium bg-slate-100 px-2 py-1 rounded inline-block mb-1">
+              TIN 4,00 % · <span class="text-slate-600 font-bold">TAE 4,84%</span>
+            </div>
+          </div>
+        </div>
+        <button class="simulation-cta">
+          Revisar detalles
+        </button>
+      </footer>
+    </main>
+  </div>
+</div>

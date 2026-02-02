@@ -1,0 +1,59 @@
+<!-- Componente basado en bs-slider de Galatea -->
+<div class="amount-slider-galatea-wrapper">
+  <!-- Header: Valor editable -->
+  <div class="amount-slider-galatea-header">
+    <div class="header-right">
+      <div class="amount-slider-galatea-value" 
+           [class.editable]="editable"
+           (click)="onEditValue()">
+        <span *ngIf="!isEditing">{{ formattedValue }} {{ unit }}</span>
+        <input *ngIf="isEditing"
+               type="text"
+               id="galatea-amount-input"
+               class="galatea-amount-input"
+               [value]="inputValue"
+               (input)="onInputChange($event)"
+               (blur)="onInputBlur()"
+               (focus)="onInputFocus()"
+               autocomplete="off">
+        <i data-lucide="pencil" class="pencil-icon" *ngIf="editable && !isEditing"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Slider personalizado -->
+  <div class="amount-slider-galatea-control">
+    <!-- Slider HTML nativo -->
+    <div class="custom-slider-wrapper">
+      <input type="range"
+             [min]="minValue"
+             [max]="maxValue"
+             [step]="step"
+             [value]="value"
+             (input)="onSliderChange($event)"
+             class="custom-slider"
+             [attr.aria-label]="ariaLabel"
+             [attr.aria-valuemin]="minValue"
+             [attr.aria-valuemax]="maxValue"
+             [attr.aria-valuenow]="value">
+    </div>
+    
+    <!-- Min/Max labels debajo del slider -->
+    <div class="amount-slider-galatea-min-max" *ngIf="showMinMax">
+      <div class="min-label">
+        <span class="label">Mín.</span>
+        <span class="value">{{ minFormatted }} {{ unit }}</span>
+      </div>
+      <div class="max-label">
+        <span class="label">Máx.</span>
+        <span class="value">{{ maxFormatted }} {{ unit }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div class="amount-slider-galatea-error" *ngIf="errorMessage" role="alert">
+    <i data-lucide="alert-circle" class="error-icon"></i>
+    <span>{{ errorMessage }}</span>
+  </div>
+</div>

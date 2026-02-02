@@ -1,0 +1,249 @@
+<div class="contratar-container">
+  <div class="contratar-wrapper">
+    <!-- Sticky Header -->
+    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md px-5 py-3 flex justify-between items-center">
+      <button class="h-9 w-9 rounded-full border border-slate-200 flex items-center justify-center text-slate-400 hover:text-primary-blue hover:border-primary-blue-light transition-colors cursor-pointer bg-slate-50" (click)="onVolver()">
+        <i data-lucide="arrow-left" class="w-5 h-5 stroke-[1.5]"></i>
+      </button>
+      <div class="flex items-center gap-5 text-primary-blue-medium">
+        <button class="hover:text-primary-blue transition-colors"><i data-lucide="eye" class="w-6 h-6 stroke-[1.5]"></i></button>
+        <button class="hover:text-primary-blue transition-colors"><i data-lucide="mail" class="w-6 h-6 stroke-[1.5]"></i></button>
+        <button class="hover:text-primary-blue transition-colors"><i data-lucide="message-circle-question" class="w-6 h-6 stroke-[1.5]"></i></button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex flex-col gap-8 pt-2">
+      <!-- Hero Section -->
+      <section class="px-5">
+        <h1 class="text-lg font-bold text-slate-900 mb-5 tracking-tight">Laura, esto te puede interesar</h1>
+        
+        <!-- Préstamo Preconcedido Promo Card -->
+        <div class="prestamo-preconcedido-card" (click)="onIrAPrestamos()">
+          <div class="prestamo-card-header">
+            <div class="prestamo-badge">
+              <i data-lucide="zap" class="w-4 h-4"></i>
+              <span>Preconcedido</span>
+            </div>
+            <div class="prestamo-logo">
+              <div class="prestamo-logo-circle">BS</div>
+            </div>
+          </div>
+          
+          <div class="prestamo-card-content">
+            <h3 class="prestamo-title">Tienes un préstamo disponible</h3>
+            <p class="prestamo-subtitle">Hasta 15.000 € aprobados para ti</p>
+            
+            <div class="prestamo-details">
+              <div class="prestamo-detail-item">
+                <span class="prestamo-detail-label">Importe</span>
+                <span class="prestamo-detail-value">15.000 €</span>
+              </div>
+              <div class="prestamo-detail-item">
+                <span class="prestamo-detail-label">Tipo interés</span>
+                <span class="prestamo-detail-value">5,95% TAE</span>
+              </div>
+              <div class="prestamo-detail-item">
+                <span class="prestamo-detail-label">Plazo</span>
+                <span class="prestamo-detail-value">60 meses</span>
+              </div>
+            </div>
+          </div>
+          
+          <div class="prestamo-card-actions">
+            <button 
+              type="button"
+              class="prestamo-cta-primary"
+              (click)="onIrAPrestamos(); $event.stopPropagation()"
+            >
+              Simular cuota
+            </button>
+            <button 
+              type="button"
+              class="prestamo-cta-secondary"
+              (click)="onVerDetalles(); $event.stopPropagation()"
+            >
+              Ver detalles
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Product List -->
+      <section>
+        <h2 class="px-5 text-lg font-bold text-slate-900 mb-4 tracking-tight">Nuestros productos</h2>
+        
+        <div class="flex flex-col divide-y divide-slate-100 border-t border-slate-100">
+          <!-- Préstamos y créditos -->
+          <button class="flex items-center justify-between px-5 py-4 hover:bg-slate-50 transition-colors group" (click)="onIrAPrestamos()">
+            <div class="flex items-center gap-4">
+              <i data-lucide="hand-coins" class="w-6 h-6 text-slate-900 stroke-[1.5]"></i>
+              <span class="text-sm font-medium text-slate-900">Préstamos y créditos</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-primary-blue-medium stroke-[1.5] group-hover:translate-x-0.5 transition-transform"></i>
+          </button>
+
+          <!-- Tarjetas -->
+          <button class="flex items-center justify-between px-5 py-4 hover:bg-slate-50 transition-colors group">
+            <div class="flex items-center gap-4">
+              <i data-lucide="credit-card" class="w-6 h-6 text-slate-900 stroke-[1.5]"></i>
+              <span class="text-sm font-medium text-slate-900">Tarjetas</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-primary-blue-medium stroke-[1.5] group-hover:translate-x-0.5 transition-transform"></i>
+          </button>
+
+          <!-- Cuentas -->
+          <button class="flex items-center justify-between px-5 py-4 hover:bg-slate-50 transition-colors group">
+            <div class="flex items-center gap-4">
+              <i data-lucide="files" class="w-6 h-6 text-slate-900 stroke-[1.5]"></i>
+              <span class="text-sm font-medium text-slate-900">Cuentas</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-primary-blue-medium stroke-[1.5] group-hover:translate-x-0.5 transition-transform"></i>
+          </button>
+
+          <!-- Hipotecas -->
+          <button class="flex items-center justify-between px-5 py-4 hover:bg-slate-50 transition-colors group">
+            <div class="flex items-center gap-4">
+              <i data-lucide="house" class="w-6 h-6 text-slate-900 stroke-[1.5]"></i>
+              <span class="text-sm font-medium text-slate-900">Hipotecas</span>
+            </div>
+            <i data-lucide="chevron-right" class="w-5 h-5 text-primary-blue-medium stroke-[1.5] group-hover:translate-x-0.5 transition-transform"></i>
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <!-- Modal Informativa del Préstamo -->
+    <div class="modal-overlay" *ngIf="showInfoModal" (click)="onCerrarModal()">
+      <div class="modal-container" (click)="$event.stopPropagation()">
+        <!-- Header de la modal -->
+        <header class="modal-header">
+          <h2 class="modal-title">Préstamo Preconcedido</h2>
+          <button 
+            type="button"
+            class="modal-close-btn"
+            (click)="onCerrarModal()"
+            aria-label="Cerrar"
+          >
+            <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+        </header>
+
+        <!-- Contenido de la modal -->
+        <div class="modal-content">
+          <!-- Hero Section -->
+          <div class="modal-hero">
+            <h3 class="modal-hero-title">{{ prestamoData.titulo }}</h3>
+            <p class="modal-hero-description">{{ prestamoData.descripcion }}</p>
+          </div>
+
+          <!-- Características clave -->
+          <div class="modal-features">
+            <div 
+              class="modal-feature-item"
+              *ngFor="let caracteristica of prestamoData.caracteristicas"
+            >
+              <div class="feature-icon">
+                <i [attr.data-lucide]="caracteristica.icono" class="w-5 h-5"></i>
+              </div>
+              <p class="feature-text">{{ caracteristica.texto }}</p>
+            </div>
+          </div>
+
+          <!-- Importe y condiciones -->
+          <div class="modal-amount-section">
+            <h4 class="modal-section-title">
+              Hasta {{ formatCurrency(prestamoData.importeMax) }} para lo que necesites
+            </h4>
+            <p class="modal-section-subtitle">
+              Desde {{ formatCurrency(prestamoData.importeMin) }} hasta {{ formatCurrency(prestamoData.importeMax) }}, 
+              con condiciones transparentes y personalizadas.
+            </p>
+          </div>
+
+          <!-- Beneficios -->
+          <div class="modal-benefits">
+            <div 
+              class="modal-benefit-item"
+              *ngFor="let beneficio of prestamoData.beneficios"
+            >
+              <i data-lucide="check-circle" class="benefit-check-icon"></i>
+              <span class="benefit-text">{{ beneficio }}</span>
+            </div>
+          </div>
+
+          <!-- Proceso -->
+          <div class="modal-process">
+            <h4 class="modal-section-title">Conseguir tu préstamo es muy sencillo</h4>
+            <ol class="modal-process-list">
+              <li 
+                class="modal-process-item"
+                *ngFor="let paso of prestamoData.proceso; let i = index"
+              >
+                <span class="process-number">{{ i + 1 }}</span>
+                <span class="process-text">{{ paso }}</span>
+              </li>
+            </ol>
+          </div>
+
+          <!-- Botón FAQ -->
+          <div class="modal-faq-section">
+            <button 
+              type="button"
+              class="modal-faq-button"
+              (click)="onVerFAQ()"
+              aria-label="Ver preguntas frecuentes"
+            >
+              <i data-lucide="help-circle" class="w-5 h-5"></i>
+              <span>Preguntas frecuentes</span>
+              <i data-lucide="chevron-right" class="w-5 h-5"></i>
+            </button>
+          </div>
+
+          <!-- Información Legal -->
+          <div class="modal-legal-section">
+            <p class="modal-legal-text">{{ prestamoData.infoLegal }}</p>
+          </div>
+        </div>
+
+        <!-- Botón sticky para simulador -->
+        <div class="modal-sticky-cta">
+          <button 
+            type="button"
+            class="modal-cta-button"
+            (click)="onIrASimulador()"
+            aria-label="Ir al simulador"
+          >
+            Simular cuota
+            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sticky Bottom Navigation -->
+    <nav class="navbar-bottom navbar-sticky">
+      <div class="navbar-content">
+        <button type="button" class="navbar-item" (click)="onVolver()">
+          <i data-lucide="home" class="navbar-icon"></i>
+          <span class="navbar-label">Inicio</span>
+        </button>
+
+        <button 
+          type="button"
+          class="navbar-center-button"
+          aria-label="Menú principal"
+        >
+          <i data-lucide="layout-grid" class="navbar-center-icon"></i>
+        </button>
+
+        <button type="button" class="navbar-item navbar-item-active">
+          <div class="navbar-indicator"></div>
+          <i data-lucide="plus-circle" class="navbar-icon"></i>
+          <span class="navbar-label">Contratar</span>
+        </button>
+      </div>
+      <div class="navbar-spacer"></div>
+    </nav>
+  </div>
+</div>

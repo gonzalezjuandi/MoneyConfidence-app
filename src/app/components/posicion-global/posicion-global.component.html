@@ -1,0 +1,310 @@
+<div class="posicion-global-container">
+  <!-- Main App Container -->
+  <div class="app-wrapper">
+    
+    <!-- Top Header -->
+    <header class="header-sticky">
+      <div class="header-icon-container">
+        <i data-lucide="user" class="header-icon"></i>
+      </div>
+      <div class="header-actions">
+        <button type="button" class="header-action-btn" aria-label="Ver">
+          <i data-lucide="eye" class="header-action-icon"></i>
+        </button>
+        <button type="button" class="header-action-btn" aria-label="Correo">
+          <i data-lucide="mail" class="header-action-icon"></i>
+        </button>
+        <button type="button" class="header-action-btn" aria-label="Ayuda">
+          <i data-lucide="message-circle-more" class="header-action-icon"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Balance -->
+    <div class="px-6 pt-2 pb-8 text-center">
+      <p class="text-sm text-gray-500 font-normal">Saldo total</p>
+      <h1 class="text-4xl text-gray-900 font-normal tracking-tight mt-1">
+        40.800<span class="text-2xl text-gray-400">,00 €</span>
+      </h1>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="px-4">
+      <div class="grid grid-cols-4 gap-2">
+        <!-- Bizum -->
+        <button class="flex flex-col items-center gap-2 group">
+          <div class="w-12 h-12 rounded-full bg-primary-blue-light text-primary-blue flex items-center justify-center border border-primary-blue-light group-hover:scale-105 transition-transform">
+            <i data-lucide="send" class="w-[22px] h-[22px]"></i>
+          </div>
+          <span class="text-[10px] text-gray-600 font-medium leading-tight text-center">Enviar<br>Bizum</span>
+        </button>
+        <!-- Transfer -->
+        <button class="flex flex-col items-center gap-2 group">
+          <div class="w-12 h-12 rounded-full bg-primary-blue-light text-primary-blue flex items-center justify-center border border-primary-blue-light group-hover:scale-105 transition-transform">
+            <i data-lucide="arrow-right-left" class="w-[22px] h-[22px]"></i>
+          </div>
+          <span class="text-[10px] text-gray-600 font-medium leading-tight text-center">Transferencia<br>nacional</span>
+        </button>
+        <!-- Cash -->
+        <button class="flex flex-col items-center gap-2 group">
+          <div class="w-12 h-12 rounded-full bg-primary-blue-light text-primary-blue flex items-center justify-center border border-primary-blue-light group-hover:scale-105 transition-transform">
+            <i data-lucide="banknote" class="w-[22px] h-[22px]"></i>
+          </div>
+          <span class="text-[10px] text-gray-600 font-medium leading-tight text-center">Sacar<br>dinero</span>
+        </button>
+        <!-- Limits -->
+        <button class="flex flex-col items-center gap-2 group">
+          <div class="w-12 h-12 rounded-full bg-primary-blue-light text-primary-blue flex items-center justify-center border border-primary-blue-light group-hover:scale-105 transition-transform">
+            <i data-lucide="credit-card" class="w-[22px] h-[22px]"></i>
+          </div>
+          <span class="text-[10px] text-gray-600 font-medium leading-tight text-center">Límites de<br>tarjeta</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Section Title -->
+    <div class="flex items-center justify-between px-6 mt-10 mb-4">
+      <h2 class="text-lg font-medium text-gray-900">Tus productos</h2>
+      <div class="bg-gray-100 p-0.5 rounded-lg flex items-center">
+        <button class="p-1.5 bg-white rounded-[6px] shadow-sm text-primary-blue">
+          <i data-lucide="layout-grid" class="w-4 h-4"></i>
+        </button>
+        <button class="p-1.5 text-gray-400 hover:text-gray-600">
+          <i data-lucide="list" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Accounts Section -->
+    <div class="px-6 mb-2">
+      <h3 class="text-sm font-medium text-gray-900 mb-3">Cuentas</h3>
+      
+      <!-- Account Card -->
+      <div class="bg-white rounded-2xl p-5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-gray-100">
+        <!-- Account 1 -->
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <div class="w-2 h-2 rounded-full bg-pink-500"></div>
+              <span class="text-sm font-normal text-gray-900">Cuenta Sabadell</span>
+            </div>
+            <div class="flex items-center gap-1 text-gray-500 text-xs">
+              <i data-lucide="users" class="w-3 h-3"></i>
+              <span>••••4422</span>
+            </div>
+          </div>
+          <span class="text-lg font-normal text-gray-900 tracking-tight">35.000,00 €</span>
+        </div>
+
+        <div class="h-px bg-gray-100 w-full mb-6"></div>
+
+        <!-- Account 2 -->
+        <div class="flex justify-between items-start mb-6">
+          <div>
+            <div class="mb-1">
+              <span class="text-sm font-normal text-gray-900">Cuenta familiar</span>
+            </div>
+            <div class="flex items-center gap-1 text-gray-500 text-xs">
+              <span>••••4425</span>
+            </div>
+          </div>
+          <span class="text-lg font-normal text-gray-900 tracking-tight">5.800,00 €</span>
+        </div>
+
+        <!-- Promo Banner -->
+        <div class="bg-[#E7F6EE] rounded-xl p-3 flex justify-between items-center cursor-pointer hover:bg-[#dcf0e5] transition-colors" (click)="onIrAPrestamoPreconcedido()">
+          <div>
+            <p class="text-xs font-semibold text-[#0B4F35] mb-0.5">¿Quieres hasta 45.000 € al instante?</p>
+            <p class="text-xs text-[#1F6B4E]">En 3 minutos y sin papeleo</p>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-[#0B4F35]"></i>
+        </div>
+      </div>
+
+      <!-- Bizum Row -->
+      <div class="bg-white rounded-xl p-4 mt-3 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-gray-100 flex items-center gap-3">
+        <div class="text-primary-blue-medium">
+          <i data-lucide="zap" class="w-5 h-5 stroke-[2.5]"></i>
+        </div>
+        <span class="text-sm font-normal text-gray-900">Bizum</span>
+      </div>
+    </div>
+
+    <!-- Cards Section -->
+    <div class="px-6 mt-8">
+      <h3 class="text-sm font-medium text-gray-900 mb-3">Tarjetas</h3>
+      
+      <div class="bg-white rounded-2xl p-5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-gray-100">
+        <!-- Card 1 -->
+        <div class="flex gap-4 mb-8">
+          <div class="w-12 h-8 rounded bg-gradient-primary flex items-end p-1 shadow-sm shrink-0">
+            <div class="w-2 h-2 bg-red-500 rounded-full opacity-80"></div>
+            <div class="w-2 h-2 bg-yellow-400 rounded-full -ml-1 opacity-80"></div>
+          </div>
+          <div class="flex-1">
+            <p class="text-sm font-normal text-gray-900 mb-0.5">Tarjeta BS Card</p>
+            <div class="flex justify-between items-end">
+              <p class="text-xs text-gray-500">Débito ••••7830</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="h-px bg-gray-100 w-full mb-8"></div>
+
+        <!-- Card 2 -->
+        <div class="tarjeta-classic-container">
+          <div class="flex items-center gap-2 mb-3">
+            <div class="w-2 h-2 rounded-full bg-pink-500"></div>
+            <p class="text-sm font-normal text-gray-900">Tarjeta Classic</p>
+          </div>
+          
+          <div class="flex gap-4 mb-4">
+            <div class="w-12 h-8 rounded bg-gradient-to-br from-gray-800 to-black flex items-end p-1 shadow-sm shrink-0 text-white text-[6px]">
+              <span class="font-bold ml-auto">VISA</span>
+            </div>
+            <div class="flex-1">
+              <p class="text-xs text-gray-500 mb-1">Crédito ••••7442</p>
+            </div>
+          </div>
+
+          <!-- Progress Bar -->
+          <div class="tarjeta-progress-container">
+            <div class="tarjeta-progress-bar">
+              <div class="tarjeta-progress-fill"></div>
+            </div>
+          </div>
+          <div class="tarjeta-progress-info">
+            <div class="tarjeta-info-item">
+              <span class="tarjeta-info-label">Disponible</span>
+              <p class="tarjeta-info-value">2.000,00 €</p>
+            </div>
+            <div class="tarjeta-info-item tarjeta-info-item-right">
+              <span class="tarjeta-info-label">Gastado</span>
+              <p class="tarjeta-info-value tarjeta-info-value-secondary">200,00 €</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Promo Banner -->
+        <div class="bg-[#E7F6EE] rounded-xl p-3 flex justify-between items-center cursor-pointer hover:bg-[#dcf0e5] transition-colors">
+          <div>
+            <p class="text-xs font-semibold text-[#0B4F35] mb-0.5">Gana dinero usando tus tarjetas</p>
+            <p class="text-xs text-[#1F6B4E]">Cashback del 5% en todas tus compras hasta el 5 de enero</p>
+          </div>
+          <i data-lucide="chevron-right" class="w-4 h-4 text-[#0B4F35]"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Financing Section -->
+    <div class="px-6 mt-8">
+      <h3 class="text-sm text-gray-500 mb-1">Financiación</h3>
+      <h2 class="text-lg font-medium text-gray-900 mb-3">Hipotecas</h2>
+
+      <div class="bg-white rounded-2xl p-5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-gray-100 mb-4">
+        <div class="flex items-center gap-2 mb-4">
+          <i data-lucide="users" class="w-3.5 h-3.5 text-gray-400"></i>
+          <span class="text-sm font-normal text-gray-900">Hipoteca Fija Bonificada</span>
+        </div>
+        <div class="flex justify-between items-end">
+          <div>
+            <span class="text-xs text-gray-500 block mb-1">Pendiente</span>
+            <span class="text-lg font-medium text-gray-900 tracking-tight">102.000,00 €</span>
+          </div>
+          <div class="text-right">
+            <span class="text-xs text-gray-500 block mb-1">Cuota</span>
+            <span class="text-sm text-gray-900">1250,00 € /mes</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tu Potencial Financiero Entry Point -->
+      <div class="simulator-banner" (click)="onIrAPotencialFinanciero()">
+        <div class="simulator-image">
+          <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=200&auto=format&fit=crop" alt="Potencial Financiero">
+        </div>
+        <div class="simulator-content">
+          <h4 class="text-sm font-semibold text-gray-900 mb-1">Conoce tu potencial financiero</h4>
+          <p class="text-xs text-gray-500 mb-3">Calcula cuánto podrías financiar hoy o en el futuro, según tus datos y perfil de riesgo.</p>
+          <button 
+            type="button"
+            class="text-xs text-primary-blue font-medium border border-primary-blue rounded-full px-4 py-1.5 hover:bg-primary-blue-light transition-colors w-full"
+            (click)="onIrAPotencialFinanciero(); $event.stopPropagation()"
+          >
+            Comenzar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insurance Section -->
+    <div class="px-6 mt-8">
+      <h3 class="text-lg font-medium text-gray-900 mb-3">Seguros</h3>
+      <div class="bg-white rounded-2xl p-5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-gray-100">
+        <div class="flex gap-4">
+          <div class="mt-1">
+            <i data-lucide="car-front" class="w-[18px] h-[18px] text-gray-700"></i>
+          </div>
+          <div>
+            <p class="text-sm font-normal text-gray-900 mb-0.5">Sabadell Blink Seguro Auto</p>
+            <p class="text-xs text-gray-500">Vehículo asegurado</p>
+            <p class="text-sm text-gray-900 mt-0.5">Seat León 8679FFL</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Interest Section -->
+    <div class="px-6 mt-8 mb-32">
+      <h3 class="text-lg font-medium text-gray-900 mb-3">Te puede interesar</h3>
+      <div class="flex gap-4 overflow-x-hidden">
+        <!-- Card Interest 1 -->
+        <div class="min-w-[240px] h-48 rounded-2xl overflow-hidden relative shadow-sm group cursor-pointer">
+          <img src="https://images.unsplash.com/photo-1586023492125-27b2c045efd7?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Living room">
+          <div class="absolute top-3 left-3 bg-emerald-100/90 text-emerald-800 text-[10px] font-semibold px-2 py-1 rounded-md backdrop-blur-sm">
+            Novedad
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+        </div>
+        <!-- Card Interest 2 -->
+        <div class="min-w-[240px] h-48 rounded-2xl overflow-hidden relative shadow-sm group cursor-pointer">
+          <img src="https://images.unsplash.com/photo-1616486338812-3dadae4b4f9d?q=80&w=400&auto=format&fit=crop" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Decor">
+        </div>
+      </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar-bottom navbar-sticky">
+      <div class="navbar-content">
+        <!-- Home -->
+        <button type="button" class="navbar-item navbar-item-active" (click)="onVolverInicio()">
+          <i data-lucide="home" class="navbar-icon"></i>
+          <span class="navbar-label">Inicio</span>
+          <div class="navbar-indicator"></div>
+        </button>
+
+        <!-- Center Button -->
+        <button 
+          type="button"
+          class="navbar-center-button" 
+          (click)="onIrAContratar()"
+          aria-label="Menú principal"
+        >
+          <i data-lucide="layout-grid" class="w-6 h-6"></i>
+        </button>
+
+        <!-- Action -->
+        <button 
+          type="button"
+          class="navbar-item" 
+          (click)="onIrAContratar()"
+          aria-label="Contratar"
+        >
+          <i data-lucide="plus-circle" class="navbar-icon"></i>
+          <span class="navbar-label">Contratar</span>
+        </button>
+      </div>
+    </nav>
+
+  </div>
+</div>

@@ -1,0 +1,89 @@
+<div class="prestamo-coche-firma-container">
+  <div class="prestamo-coche-firma-wrapper">
+    <!-- Header sin navegación -->
+    <header class="firma-header">
+      <h1 class="firma-title">Firma tu préstamo</h1>
+    </header>
+
+    <!-- Sección de Clave de Firma Digital -->
+    <section class="signature-key-section">
+      <h2 class="signature-key-title">Clave de Firma Digital</h2>
+      <p class="signature-key-instruction">
+        Presiona sobre la clave y arrástrala a la zona inferior para firmar tu operación
+      </p>
+      
+      <!-- Clave de firma (números) -->
+      <div class="signature-key-digits">
+        <div class="signature-digit"
+             *ngFor="let digit of signatureKeyArray; let i = index"
+             [class.dragging]="isDragging && draggedIndex === i"
+             (mousedown)="onDigitMouseDown($event, digit, i)"
+             (touchstart)="onDigitTouchStart($event, digit, i)"
+             (click)="onDigitClick(digit, i)">
+          {{ digit }}
+        </div>
+      </div>
+
+      <!-- Link de ayuda -->
+      <a href="#" 
+         class="signature-help-link"
+         (click)="toggleHelp(); $event.preventDefault()">
+        ¿Necesitas ayuda?
+      </a>
+    </section>
+
+    <!-- Sección de Input -->
+    <section class="signature-input-section">
+      <label class="signature-input-label">Introduce la clave de Firma Digital</label>
+      <div class="signature-input-wrapper">
+        <div class="signature-drop-zone">
+          <input type="text"
+                 class="signature-input"
+                 [value]="inputMask"
+                 readonly
+                 (focus)="onInputFocus()"
+                 (click)="onInputClick()"
+                 maxlength="6">
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer con botón de firmar -->
+    <footer class="firma-footer">
+      <button type="button"
+              class="firma-btn"
+              (click)="onSign()">
+        Firmar
+      </button>
+    </footer>
+
+    <!-- Modal de ayuda -->
+    <div class="help-modal-overlay" *ngIf="showHelp" (click)="toggleHelp()">
+      <div class="help-modal-container" (click)="$event.stopPropagation()">
+        <header class="help-modal-header">
+          <h3 class="help-modal-title">Ayuda con la Firma Digital</h3>
+          <button type="button"
+                  class="help-modal-close"
+                  (click)="toggleHelp()"
+                  aria-label="Cerrar">
+            <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+        </header>
+        <div class="help-modal-content">
+          <p class="help-text">
+            Para firmar tu préstamo digitalmente:
+          </p>
+          <ol class="help-list">
+            <li>Presiona sobre cada número de la clave de firma mostrada arriba</li>
+            <li>O arrastra cada número a la zona de entrada inferior</li>
+            <li>Introduce los 6 dígitos en el orden correcto</li>
+            <li>Una vez completada la clave, pulsa el botón "Firmar"</li>
+          </ol>
+          <p class="help-text">
+            Si tienes problemas, contacta con nuestro servicio de atención al cliente.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

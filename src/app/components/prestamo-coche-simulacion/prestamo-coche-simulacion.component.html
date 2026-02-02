@@ -1,0 +1,270 @@
+<div class="prestamo-coche-simulacion-container">
+  <div class="prestamo-coche-simulacion-wrapper">
+    <!-- Header -->
+    <header class="simulacion-header">
+      <button class="header-back-btn" (click)="onBack()">
+        <i data-lucide="arrow-left" class="w-5 h-5 stroke-[1.5]"></i>
+      </button>
+      <h1 class="header-title">Préstamo Preconcedido</h1>
+      <div class="header-actions">
+        <button class="header-icon-btn" aria-label="Chat">
+          <i data-lucide="message-circle" class="w-5 h-5 stroke-[1.5]"></i>
+        </button>
+        <button class="header-icon-btn" aria-label="Cerrar">
+          <i data-lucide="x" class="w-5 h-5 stroke-[1.5]"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="simulacion-main">
+      <h2 class="simulacion-title">Personaliza tu préstamo</h2>
+
+      <!-- Amount Section -->
+      <div class="form-section">
+        <!-- Slider de Galatea -->
+        <bs-slider
+          [attr.min-value]="minAmount"
+          [attr.max-value]="maxAmount"
+          [attr.value]="amount"
+          [attr.step]="'500'"
+          [attr.unit]="'€'"
+          [attr.main-title]="'¿Cuánto dinero necesitas?'"
+          [attr.input-label]="'Cantidad'"
+          (valueChange)="onAmountSliderChangeFromGalatea($event)"
+          class="amount-slider-galatea">
+        </bs-slider>
+      </div>
+
+      <!-- Term Section -->
+      <div class="form-section">
+        <h3 class="form-section-title">¿En cuántos meses quieres devolverlo?</h3>
+        <div class="term-buttons">
+          <button type="button"
+                  class="term-btn"
+                  [class.active]="termMonths === 96"
+                  (click)="selectTerm(96)">
+            96
+          </button>
+          <button type="button"
+                  class="term-btn"
+                  [class.active]="termMonths === 70"
+                  (click)="selectTerm(70)">
+            70
+          </button>
+          <button type="button"
+                  class="term-btn"
+                  [class.active]="termMonths === 50"
+                  (click)="selectTerm(50)">
+            50
+          </button>
+          <button type="button"
+                  class="term-btn"
+                  [class.active]="termMonths === 30"
+                  (click)="selectTerm(30)">
+            30
+          </button>
+        </div>
+      </div>
+
+      <!-- Monthly Payment Summary -->
+      <div class="payment-summary">
+        <h4 class="payment-summary-title">Cuota mensual personalizada</h4>
+        <div class="payment-summary-amount">{{ formattedMonthlyPayment }} € / mes</div>
+        <div class="payment-summary-rates">TIN {{ tin.toFixed(2) }} % anual TAE {{ tae.toFixed(2) }}%</div>
+      </div>
+
+      <!-- Insurance Section -->
+      <div class="form-section">
+        <h3 class="form-section-title">¿Quieres asegurar tu préstamo?</h3>
+        <p class="insurance-description">
+          El seguro cubre al titular del préstamo y las garantías son por fallecimiento e incapacidad absoluta.
+        </p>
+        <div class="insurance-option-wrapper">
+          <input type="checkbox"
+                 id="insurance-checkbox"
+                 [checked]="hasInsurance"
+                 [disabled]="isInsuranceDisabled"
+                 (change)="onInsuranceToggle($event)"
+                 class="insurance-checkbox-native"
+                 [class.disabled]="isInsuranceDisabled">
+          <label for="insurance-checkbox" class="insurance-label-wrapper" [class.disabled]="isInsuranceDisabled">
+            <div class="insurance-checkbox-label">
+              Añadir Seguro Protección Vida capital constante
+            </div>
+            <div class="insurance-content">
+              <div class="insurance-cost">
+                Por <strong>{{ insuranceCost.toFixed(2).replace('.', ',') }} €</strong>/mes (Primer recibo {{ insuranceFirstReceipt.toFixed(2).replace('.', ',') }} €).
+              </div>
+              <a href="#" 
+                 class="insurance-link"
+                 (click)="openInsuranceDrawer(); $event.preventDefault()">
+                Más información
+              </a>
+            </div>
+          </label>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="simulacion-footer">
+      <button type="button"
+              class="simulacion-cta"
+              (click)="onNext()">
+        Ver resumen de tu solicitud
+      </button>
+    </footer>
+
+    <!-- Toast de notificación -->
+    <div class="toast-container" *ngIf="showToast">
+      <div class="toast-notification" [class.toast-alert]="toastType === 'alert'">
+        <div class="toast-icon">
+          <i [attr.data-lucide]="toastType === 'alert' ? 'alert-circle' : 'info'" class="w-5 h-5"></i>
+        </div>
+        <div class="toast-message">
+          {{ toastMessage }}
+        </div>
+        <button type="button"
+                class="toast-close"
+                (click)="closeToast()"
+                aria-label="Cerrar notificación">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal médico fullscreen -->
+    <div class="medical-modal-overlay" *ngIf="showMedicalModal">
+      <div class="medical-modal-container">
+        <!-- Header -->
+        <header class="medical-modal-header">
+          <button type="button"
+                  class="medical-modal-close-btn"
+                  (click)="closeMedicalModal()"
+                  aria-label="Cerrar">
+            <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+        </header>
+
+        <!-- Content -->
+        <main class="medical-modal-content">
+          <h2 class="medical-modal-title">
+            Para añadir el seguro, necesitamos que confirmes que no padeces o has padecido ninguna de estas condiciones médicas:
+          </h2>
+          
+          <ul class="medical-conditions-list">
+            <li class="medical-condition-item">Baja laboral actualmente</li>
+            <li class="medical-condition-item">Incapacidad permanente (concedida o en trámite)</li>
+            <li class="medical-condition-item">Cáncer o tumores malignos (excepto si han pasado más de 5 años desde la finalización del tratamiento radical sin recaída posterior)</li>
+            <li class="medical-condition-item">Angina de pecho</li>
+            <li class="medical-condition-item">Insuficiencia cardiaca</li>
+            <li class="medical-condition-item">Infarto de miocardio</li>
+            <li class="medical-condition-item">Crisis de asma con ingreso hospitalario</li>
+            <li class="medical-condition-item">Diabetes con necesidad de insulina</li>
+            <li class="medical-condition-item">Bronquitis crónica</li>
+            <li class="medical-condition-item">Enfisema</li>
+            <li class="medical-condition-item">Hepatitis C</li>
+          </ul>
+        </main>
+
+        <!-- Footer -->
+        <footer class="medical-modal-footer">
+          <button type="button"
+                  class="medical-modal-btn medical-modal-btn-primary"
+                  (click)="onConfirmNoMedicalCondition()">
+            Confirmo que no padezco condición médica
+          </button>
+          <button type="button"
+                  class="medical-modal-btn medical-modal-btn-secondary"
+                  (click)="onHasMedicalCondition()">
+            Padezco alguna condición médica
+          </button>
+        </footer>
+      </div>
+    </div>
+
+    <!-- Drawer de información del seguro -->
+    <div class="insurance-drawer-overlay" *ngIf="showInsuranceDrawer" (click)="closeInsuranceDrawer()">
+      <div class="insurance-drawer" (click)="$event.stopPropagation()">
+        <!-- Header -->
+        <div class="drawer-header">
+          <h2 class="drawer-title">Seguro de vida Capital Constante</h2>
+          <button type="button" 
+                  class="drawer-close-btn"
+                  (click)="closeInsuranceDrawer()"
+                  aria-label="Cerrar">
+            <i data-lucide="x" class="w-6 h-6"></i>
+          </button>
+        </div>
+
+        <!-- Content -->
+        <div class="drawer-content">
+          <h3 class="drawer-section-title">Información sobre la compañía de seguros</h3>
+          
+          <div class="drawer-info-section">
+            <h4 class="drawer-info-title">Compañía de seguros</h4>
+            <p class="drawer-info-text">
+              <strong>Zurich Seguros</strong><br>
+              Zurich Insurance plc, Sucursal en España<br>
+              CIF: W0051326F<br>
+              Dirección: Calle de Orense, 1, 28020 Madrid<br>
+              Registro DGSFP: C-0001
+            </p>
+          </div>
+
+          <div class="drawer-info-section">
+            <h4 class="drawer-info-title">Coberturas</h4>
+            <p class="drawer-info-text">
+              Cubre al titular del préstamo y las garantías son por fallecimiento e incapacidad absoluta.
+            </p>
+          </div>
+
+          <div class="drawer-info-section">
+            <h4 class="drawer-info-title">El precio del seguro varía cada año</h4>
+            <p class="drawer-info-text">
+              Te informaremos de la prima tres meses antes de la renovación.
+            </p>
+          </div>
+
+          <div class="drawer-info-section">
+            <h4 class="drawer-info-title">Tiempo mínimo de contratación</h4>
+            <p class="drawer-info-text">
+              Durante los dos meses previos al vencimiento del depósito.
+            </p>
+          </div>
+
+          <div class="drawer-info-section">
+            <h4 class="drawer-info-title">Características del seguro</h4>
+            <ul class="drawer-info-list">
+              <li>Capital asegurado igual al importe pendiente del préstamo</li>
+              <li>Cobertura de fallecimiento por cualquier causa</li>
+              <li>Cobertura de incapacidad absoluta y permanente</li>
+              <li>Prima mensual constante durante la vigencia del seguro</li>
+              <li>Renovación automática anual</li>
+            </ul>
+          </div>
+
+          <div class="drawer-info-section">
+            <h4 class="drawer-info-title">Información legal</h4>
+            <p class="drawer-info-text drawer-legal-text">
+              Este seguro es opcional y no es requisito para la concesión del préstamo. 
+              La contratación del seguro es independiente de la concesión del préstamo. 
+              Puede consultar las condiciones generales y particulares del seguro antes de su contratación.
+            </p>
+            <a href="#" class="drawer-legal-link">Incluir información de contratación</a>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="drawer-footer">
+          <button type="button"
+                  class="drawer-cta"
+                  (click)="closeInsuranceDrawer()">
+            Entendido
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

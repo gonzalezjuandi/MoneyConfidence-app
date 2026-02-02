@@ -1,0 +1,61 @@
+<div class="recomendaciones-container">
+  <header class="recomendaciones-header">
+    <button class="btn-back" (click)="onVolver()" aria-label="Volver">
+      <span class="sr-only">Volver</span>
+      ←
+    </button>
+    <h1 class="recomendaciones-title">Productos recomendados</h1>
+  </header>
+
+  <section class="recomendaciones-content">
+    <p class="recomendaciones-intro">
+      Basándonos en tu perfil, estos productos se adaptan mejor a tus necesidades.
+    </p>
+
+    <div class="productos-list">
+      <article 
+        class="producto-card" 
+        *ngFor="let producto of productos"
+        [attr.aria-label]="producto.nombre"
+      >
+        <div class="producto-header">
+          <div class="producto-icon">
+            {{ getProductIcon(producto.tipo) }}
+          </div>
+          <div class="producto-info">
+            <h3 class="producto-nombre">{{ producto.nombre }}</h3>
+            <p class="producto-interes">{{ producto.tipoInteres }}</p>
+          </div>
+        </div>
+        
+        <p class="producto-condiciones">{{ producto.condiciones }}</p>
+        
+        <div class="producto-actions">
+          <button 
+            class="btn-secondary btn-small"
+            (click)="onSimular(producto)"
+            [attr.aria-label]="'Simular ' + producto.nombre"
+          >
+            Simular
+          </button>
+          <button 
+            class="btn-primary btn-small"
+            (click)="onSaberMas(producto)"
+            [attr.aria-label]="'Saber más sobre ' + producto.nombre"
+          >
+            Saber más
+          </button>
+        </div>
+      </article>
+    </div>
+
+    <div class="recomendaciones-actions">
+      <button class="btn-secondary" (click)="onVolver()">
+        Volver
+      </button>
+      <button class="btn-primary" (click)="onContinuar()">
+        Continuar
+      </button>
+    </div>
+  </section>
+</div>

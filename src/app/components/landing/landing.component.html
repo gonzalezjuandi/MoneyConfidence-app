@@ -1,0 +1,85 @@
+<div class="landing-container">
+  <div class="landing-wrapper">
+    <!-- Header unificado -->
+    <header class="app-header">
+      <button class="header-back-btn" (click)="onVolver()" aria-label="Volver atrás">
+        <i data-lucide="arrow-left" class="w-5 h-5 stroke-[1.5]"></i>
+      </button>
+      <h1 class="header-title">Conoce tu potencial financiero</h1>
+      <div class="header-actions">
+        <button type="button" class="header-action-btn" aria-label="Ver">
+          <i data-lucide="eye" class="header-action-icon"></i>
+        </button>
+        <button type="button" class="header-action-btn" aria-label="Correo">
+          <i data-lucide="mail" class="header-action-icon"></i>
+        </button>
+        <button type="button" class="header-action-btn" aria-label="Ayuda">
+          <i data-lucide="message-circle-more" class="header-action-icon"></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="landing-main">
+      <!-- Guide Panel -->
+      <section class="px-5 pt-6">
+        <div class="guide-panel">
+          <div class="guide-panel-header">
+            <div class="guide-panel-icon">
+              <i data-lucide="sparkles" class="w-6 h-6"></i>
+            </div>
+            <h2 class="guide-panel-title">Calcula tu potencial financiero</h2>
+          </div>
+          
+          <p class="guide-panel-description">
+            Descubre cuánto podrías financiar hoy o en el futuro, según tus datos y perfil de riesgo.
+          </p>
+
+          <!-- Pasos del flujo -->
+          <div class="guide-steps">
+            <div class="guide-step">
+              <div class="guide-step-number">1</div>
+              <div class="guide-step-content">
+                <h3 class="guide-step-title">Datos económicos y financieros</h3>
+                <p class="guide-step-text">Comparte tus ingresos, gastos y productos bancarios. Puedes añadir bancos o segundos intervinientes.</p>
+              </div>
+            </div>
+
+            <div class="guide-step">
+              <div class="guide-step-number">2</div>
+              <div class="guide-step-content">
+                <h3 class="guide-step-title">Resultado y productos</h3>
+                <p class="guide-step-text">Verás tu capacidad de financiación, productos relacionados y podrás establecer una meta personalizada.</p>
+              </div>
+            </div>
+          </div>
+
+          <button 
+            class="guide-panel-cta"
+            (click)="onComenzar()"
+            aria-label="Comenzar a calcular tu potencial financiero">
+            Comenzar
+            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+          </button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast de éxito del préstamo -->
+  <div class="toast-container" *ngIf="showSuccessToast">
+    <div class="toast-notification toast-success">
+      <div class="toast-icon">
+        <i data-lucide="check-circle" class="w-5 h-5"></i>
+      </div>
+      <div class="toast-message">
+        ¡Enhorabuena! Ya tienes el préstamo de {{ loanAmount.toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }} €
+      </div>
+      <button type="button"
+              class="toast-close"
+              (click)="closeToast()"
+              aria-label="Cerrar notificación">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+</div>

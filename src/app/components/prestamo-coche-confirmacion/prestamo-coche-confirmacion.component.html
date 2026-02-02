@@ -1,0 +1,72 @@
+<div class="prestamo-coche-confirmacion-container">
+  <div class="prestamo-coche-confirmacion-wrapper">
+    <!-- Success Icon and Message -->
+    <div class="confirmacion-success">
+      <div class="success-icon">
+        <svg viewBox="0 0 100 100" class="success-checkmark">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="4" class="success-circle"/>
+          <path d="M30 50 L45 65 L70 35" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" class="success-path"/>
+        </svg>
+      </div>
+      <h1 class="confirmacion-title">¡Enhorabuena!</h1>
+      <p class="confirmacion-message">
+        ¡Ya tienes los {{ formattedAmount }} € en tu cuenta! ¿Has visto qué fácil y rápido?
+      </p>
+    </div>
+
+    <!-- Loan Details Section -->
+    <div class="confirmacion-details-section">
+      <button type="button" 
+              class="details-toggle"
+              (click)="toggleDetails()">
+        <span class="details-title">Ver detalles del préstamo</span>
+        <i data-lucide="chevron-up" 
+           class="details-chevron"
+           [class.rotated]="!showDetails"></i>
+      </button>
+
+      <div class="details-content" *ngIf="showDetails">
+        <div class="details-item">
+          <span class="details-label">Cuota mensual personalizada</span>
+          <span class="details-value-large">{{ formattedMonthlyPayment }}€/mes</span>
+        </div>
+        
+        <div class="details-list">
+          <div class="details-list-item">
+            <span class="details-list-label">{{ data.termMonths }} cuotas ({{ termYears }} años)</span>
+          </div>
+          <div class="details-list-item">
+            <span class="details-list-label">TIN: {{ data.tin.toFixed(2) }}% anual</span>
+          </div>
+          <div class="details-list-item">
+            <span class="details-list-label">TAE: {{ data.tae.toFixed(2) }}%</span>
+          </div>
+          <div class="details-list-item">
+            <span class="details-list-label">Total a devolver: {{ formattedTotalToRepay }} €</span>
+          </div>
+        </div>
+
+        <div class="insurance-option" *ngIf="data.hasInsurance">
+          <span class="insurance-label">
+            Añadir Seguro Protección Vida capital constante:
+          </span>
+          <span class="insurance-value">{{ formattedInsuranceCost }} € mensual</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="confirmacion-actions">
+      <button type="button"
+              class="confirmacion-btn-primary"
+              (click)="onVerIngreso()">
+        Ver el ingreso en la cuenta
+      </button>
+      <a href="#" 
+         class="confirmacion-link"
+         (click)="onIrAPosicionGlobal(); $event.preventDefault()">
+        Ir a Posición Global
+      </a>
+    </div>
+  </div>
+</div>

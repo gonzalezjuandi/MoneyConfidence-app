@@ -1,0 +1,101 @@
+<div class="prestamo-coche-onboarding-container">
+  <div class="prestamo-coche-onboarding-wrapper">
+    <!-- Header -->
+    <header class="onboarding-header">
+      <button class="header-back-btn" (click)="onBack()">
+        <i data-lucide="arrow-left" class="w-5 h-5 stroke-[1.5]"></i>
+      </button>
+      <h1 class="header-title">Préstamo Preconcedido</h1>
+      <div class="header-actions">
+        <button class="header-icon-btn" aria-label="Chat">
+          <i data-lucide="message-circle" class="w-5 h-5 stroke-[1.5]"></i>
+        </button>
+        <button class="header-icon-btn" (click)="onClose()" aria-label="Cerrar">
+          <i data-lucide="x" class="w-5 h-5 stroke-[1.5]"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="onboarding-main">
+      <!-- Main Loan Offer Card -->
+      <div class="loan-offer-card">
+        <div class="loan-offer-image">
+          <div class="loan-offer-image-overlay">
+            <div class="loan-offer-badge">Hasta 45.000 €</div>
+          </div>
+        </div>
+        <div class="loan-offer-content">
+          <h2 class="loan-offer-title">Solicita hasta 45.000 €</h2>
+          <ul class="loan-offer-features">
+            <li class="loan-offer-feature">
+              <i data-lucide="check" class="w-5 h-5 stroke-[2]"></i>
+              <span>Sin necesidad de adjuntar documentación</span>
+            </li>
+            <li class="loan-offer-feature">
+              <i data-lucide="check" class="w-5 h-5 stroke-[2]"></i>
+              <span>Varios plazos a tu medida</span>
+            </li>
+            <li class="loan-offer-feature">
+              <i data-lucide="check" class="w-5 h-5 stroke-[2]"></i>
+              <span>100 % online</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Informational Text Block -->
+      <div class="info-block">
+        <p class="info-text">
+          Las cuotas mensuales se calculan según tu perfil y las condiciones del préstamo.
+        </p>
+      </div>
+
+      <!-- Loan Application Process Section -->
+      <div class="process-section">
+        <h3 class="process-title">Conseguir tu préstamo es muy sencillo:</h3>
+        <div class="process-steps">
+          <div class="process-step">
+            <div class="process-step-icon">
+              <i data-lucide="hand-coins" class="w-6 h-6 stroke-[1.5]"></i>
+            </div>
+            <span class="process-step-text">Personaliza tu préstamo</span>
+          </div>
+          <div class="process-step">
+            <div class="process-step-icon">
+              <i data-lucide="check-circle" class="w-6 h-6 stroke-[1.5]"></i>
+            </div>
+            <span class="process-step-text">Revisa los detalles</span>
+          </div>
+          <div class="process-step">
+            <div class="process-step-icon">
+              <i data-lucide="file-text" class="w-6 h-6 stroke-[1.5]"></i>
+            </div>
+            <span class="process-step-text">Firma el contrato</span>
+          </div>
+          <div class="process-step">
+            <div class="process-step-icon">
+              <i data-lucide="pen-tool" class="w-6 h-6 stroke-[1.5]"></i>
+            </div>
+            <span class="process-step-text">Recibe tu dinero</span>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="onboarding-footer">
+      <button
+        type="button"
+        class="onboarding-cta"
+        (click)="onSimularCuota()">
+        Simular cuota
+      </button>
+      <a
+        href="#"
+        class="onboarding-link">
+        Más información
+      </a>
+    </footer>
+  </div>
+</div>

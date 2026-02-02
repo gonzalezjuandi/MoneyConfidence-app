@@ -1,0 +1,231 @@
+.prestamo-coche-confirmacion-container {
+  width: 100%;
+  min-height: 100vh;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+}
+
+.prestamo-coche-confirmacion-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.25rem;
+  padding-bottom: 2rem;
+}
+
+/* Success Section */
+.confirmacion-success {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.success-icon {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 1.5rem;
+  color: #10b981;
+}
+
+.success-checkmark {
+  width: 100%;
+  height: 100%;
+}
+
+.success-circle {
+  stroke-dasharray: 283;
+  stroke-dashoffset: 283;
+  animation: drawCircle 0.6s ease-out forwards;
+}
+
+.success-path {
+  stroke-dasharray: 50;
+  stroke-dashoffset: 50;
+  animation: drawCheck 0.4s ease-out 0.6s forwards;
+}
+
+@keyframes drawCircle {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes drawCheck {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.confirmacion-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 1rem 0;
+}
+
+.confirmacion-message {
+  font-size: 1rem;
+  color: #0f172a;
+  line-height: 1.5;
+  margin: 0;
+  max-width: 500px;
+}
+
+/* Details Section */
+.confirmacion-details-section {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.75rem;
+  margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.details-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.details-toggle:hover {
+  background-color: #f8fafc;
+}
+
+.details-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.details-chevron {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #64748b;
+  transition: transform 0.2s ease;
+
+  &.rotated {
+    transform: rotate(180deg);
+  }
+}
+
+.details-content {
+  padding: 0 1.25rem 1.25rem 1.25rem;
+  border-top: 1px solid #e2e8f0;
+}
+
+.details-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.details-label {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.details-value-large {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.details-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.details-list-item {
+  display: flex;
+  align-items: center;
+}
+
+.details-list-label {
+  font-size: 0.875rem;
+  color: #0f172a;
+  line-height: 1.5;
+}
+
+.insurance-option {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1.25rem 0 0 0;
+}
+
+.insurance-label {
+  font-size: 0.875rem;
+  color: #64748b;
+}
+
+.insurance-value {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* Actions */
+.confirmacion-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: auto;
+}
+
+.confirmacion-btn-primary {
+  width: 100%;
+  padding: 1rem;
+  background: var(--bs-color-primary, #006DFF);
+  color: var(--bs-color-on-primary, #ffffff);
+  border: none;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  font-family: var(--bs-font-family-base, inherit);
+  
+  &:hover {
+    background: var(--bs-color-primary-dark, #0058E6);
+  }
+  
+  &:active {
+    background: var(--bs-color-primary-darker, #0047CC);
+  }
+  
+  &:focus-visible {
+    outline: 2px solid var(--bs-color-primary, #006DFF);
+    outline-offset: 2px;
+  }
+}
+
+.confirmacion-link {
+  display: block;
+  text-align: center;
+  font-size: 0.9375rem;
+  color: var(--bs-color-primary, #006DFF);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 0.75rem;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--bs-color-primary-dark, #0058E6);
+    text-decoration: underline;
+  }
+}

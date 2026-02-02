@@ -1,0 +1,51 @@
+<div class="document-manager-container">
+  <div class="document-manager-wrapper">
+    <!-- Header -->
+    <header class="document-manager-header" *ngIf="currentDocument">
+      <h1 class="document-manager-title">{{ currentDocument.title }}</h1>
+      <button type="button" 
+              class="document-download-btn"
+              (click)="onDownload()"
+              aria-label="Descargar documento">
+        <i data-lucide="download" class="w-5 h-5"></i>
+      </button>
+    </header>
+
+    <!-- Document Icons -->
+    <div class="document-icons">
+      <div class="document-icon" 
+           *ngFor="let doc of documents; let i = index"
+           [class.read]="doc.read"
+           [class.current]="i === currentDocumentIndex">
+        <i data-lucide="file-text" class="w-5 h-5"></i>
+      </div>
+    </div>
+
+    <!-- Instruction Text -->
+    <p class="document-instruction">
+      Lee cada documento hasta el final para poder continuar con la firma digital.
+    </p>
+
+    <!-- Document Content -->
+    <div class="document-content" 
+         *ngIf="currentDocument"
+         [innerHTML]="currentDocumentContent">
+    </div>
+
+    <!-- Footer with Buttons -->
+    <footer class="document-manager-footer">
+      <button type="button"
+              class="document-btn document-btn-primary"
+              [disabled]="!canContinue"
+              (click)="onMarkAsRead()">
+        He leído y entendido
+      </button>
+      <button type="button"
+              class="document-btn document-btn-secondary"
+              [disabled]="!canContinue"
+              (click)="onExit()">
+        Salir y hacerlo más tarde
+      </button>
+    </footer>
+  </div>
+</div>

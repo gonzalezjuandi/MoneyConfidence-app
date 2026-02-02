@@ -1,0 +1,209 @@
+<div class="capacidad-container">
+  <div class="capacidad-wrapper">
+    <!-- Header unificado -->
+    <header class="capacidad-header">
+      <button class="header-back-btn" (click)="onVolver()" aria-label="Volver atrás">
+        <i data-lucide="arrow-left" class="w-5 h-5 stroke-[1.5]"></i>
+      </button>
+      <h1 class="header-title">Tu potencial financiero</h1>
+    </header>
+
+    <main class="capacidad-main">
+      <!-- Resultado de capacidad -->
+      <section class="px-5 pt-6">
+        <div class="capacidad-result-card">
+          <p class="capacidad-label">Puedes financiar hasta</p>
+          <p class="capacidad-amount">{{ formatCurrency(capacidadMaxima) }}</p>
+          <p class="capacidad-details">
+            Hasta <strong>{{ formatCurrency(capacidadMensual) }}</strong> al mes durante <strong>{{ plazoAnos }} años</strong>
+          </p>
+        </div>
+
+        <!-- Indicador visual -->
+        <div class="capacidad-indicator">
+          <div class="indicator-bar">
+            <div class="indicator-fill" [style.width.%]="capacidadPorcentaje" [attr.data-zone]="getTermometerZone()"></div>
+          </div>
+          <div class="indicator-labels">
+            <span class="label-low">Baja</span>
+            <span class="label-medium">Media</span>
+            <span class="label-high">Alta</span>
+          </div>
+        </div>
+
+        <!-- Transparencia del cálculo -->
+        <div class="transparencia-section">
+          <button 
+            class="transparencia-toggle"
+            (click)="toggleTransparencia()"
+            [attr.aria-expanded]="mostrarTransparencia"
+            aria-label="Ver cómo calculamos tu capacidad"
+          >
+            <span>¿Cómo calculamos tu capacidad?</span>
+            <i [attr.data-lucide]="mostrarTransparencia ? 'chevron-up' : 'chevron-down'" class="w-5 h-5"></i>
+          </button>
+          
+          <div class="transparencia-content" *ngIf="mostrarTransparencia">
+            <div class="transparencia-item">
+              <span class="transparencia-label">Ingresos mensuales</span>
+              <span class="transparencia-value">{{ formatCurrency(ingresos) }}</span>
+            </div>
+            <div class="transparencia-item">
+              <span class="transparencia-label">Gastos mensuales</span>
+              <span class="transparencia-value">-{{ formatCurrency(gastos) }}</span>
+            </div>
+            <div class="transparencia-item transparencia-total">
+              <span class="transparencia-label">Disponible mensual</span>
+              <span class="transparencia-value">{{ formatCurrency(disponible) }}</span>
+            </div>
+            <div class="transparencia-item">
+              <span class="transparencia-label">Ratio de financiación (30%)</span>
+              <span class="transparencia-value">{{ formatCurrency(cuotaMaxima) }}/mes</span>
+            </div>
+            <div class="transparencia-item transparencia-result">
+              <span class="transparencia-label">Capacidad total</span>
+              <span class="transparencia-value">{{ formatCurrency(capacidadMaxima) }}</span>
+            </div>
+            <p class="transparencia-note">
+              Calculado sobre {{ plazoAnos }} años ({{ plazoAnos * 12 }} meses) con un ratio del 30% de tu capacidad disponible.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Productos recomendados con slider de riesgo -->
+      <section class="px-5 pt-6">
+        <h2 class="section-title">Productos recomendados</h2>
+        
+        <div class="riesgo-slider-section">
+          <div class="riesgo-header">
+            <span class="riesgo-label">Nivel de riesgo que quieres asumir</span>
+            <span class="riesgo-value">{{ getRiesgoLabel() }}</span>
+          </div>
+          <input 
+            type="range" 
+            min="1" 
+            max="5" 
+            [value]="riesgoSeleccionado"
+            (input)="onRiesgoChange($event)"
+            class="riesgo-slider"
+            aria-label="Nivel de riesgo"
+          />
+          <div class="riesgo-labels">
+            <span>Conservador</span>
+            <span>Moderado</span>
+            <span>Agresivo</span>
+          </div>
+        </div>
+
+        <div class="productos-list" *ngIf="productosFiltrados.length > 0">
+          <article 
+            class="producto-card" 
+            *ngFor="let producto of productosFiltrados"
+            [attr.aria-label]="producto.nombre"
+          >
+            <div class="producto-header">
+              <div class="producto-icon">
+                {{ getProductIcon(producto.tipo) }}
+              </div>
+              <div class="producto-info">
+                <h3 class="producto-nombre">{{ producto.nombre }}</h3>
+                <p class="producto-interes">{{ producto.tipoInteres }}</p>
+              </div>
+            </div>
+            
+            <p class="producto-condiciones">{{ producto.condiciones }}</p>
+            
+            <div class="producto-actions">
+              <button 
+                class="btn-secondary btn-small"
+                (click)="onSimular(producto)"
+                [attr.aria-label]="'Simular ' + producto.nombre"
+              >
+                Simular
+              </button>
+              <button 
+                class="btn-primary btn-small"
+                (click)="onSaberMas(producto)"
+                [attr.aria-label]="'Saber más sobre ' + producto.nombre"
+              >
+                Saber más
+              </button>
+            </div>
+          </article>
+        </div>
+
+        <div class="no-productos" *ngIf="productosFiltrados.length === 0">
+          <p>No hay productos disponibles para este nivel de riesgo.</p>
+        </div>
+      </section>
+
+      <!-- Establecer meta -->
+      <section class="px-5 pt-6" *ngIf="!metaEstablecida || mostrarFormularioMeta">
+        <h2 class="section-title">Establece tu meta</h2>
+        
+        <div class="meta-card" *ngIf="!mostrarFormularioMeta">
+          <p class="meta-intro">
+            Tu capacidad actual es de <strong>{{ formatCurrency(capacidadMaxima) }}</strong>.
+            ¿Quieres alcanzar una meta mayor?
+          </p>
+          <button 
+            class="btn-primary"
+            (click)="onAbrirFormularioMeta()"
+            aria-label="Establecer meta"
+          >
+            Establecer meta
+          </button>
+        </div>
+
+        <div class="meta-form" *ngIf="mostrarFormularioMeta">
+          <label class="form-label">
+            <span>Nombre de tu meta</span>
+            <input 
+              type="text" 
+              [(ngModel)]="metaNombre"
+              placeholder="Ej: Reforma piso Madrid"
+              class="form-input"
+              aria-label="Nombre de la meta"
+            />
+          </label>
+          <label class="form-label">
+            <span>Objetivo</span>
+            <input 
+              type="number" 
+              [(ngModel)]="metaObjetivo"
+              [min]="capacidadMaxima"
+              class="form-input"
+              aria-label="Objetivo en euros"
+            />
+          </label>
+          <div class="meta-actions">
+            <button 
+              class="btn-secondary"
+              (click)="mostrarFormularioMeta = false"
+            >
+              Cancelar
+            </button>
+            <button 
+              class="btn-primary"
+              (click)="onEstablecerMeta()"
+              [disabled]="!metaNombre.trim() || metaObjetivo <= capacidadMaxima"
+            >
+              Guardar meta
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Meta establecida -->
+      <section class="px-5 pt-6" *ngIf="metaEstablecida && !mostrarFormularioMeta">
+        <div class="meta-confirmada">
+          <div class="meta-confirmada-icon">✓</div>
+          <h3 class="meta-confirmada-title">Meta establecida: {{ metaNombre }}</h3>
+          <p class="meta-confirmada-objetivo">{{ formatCurrency(metaObjetivo) }}</p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+</div>

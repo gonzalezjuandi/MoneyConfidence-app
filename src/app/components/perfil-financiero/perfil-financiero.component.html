@@ -1,0 +1,129 @@
+<div class="perfil-container">
+  <div class="perfil-wrapper">
+    <!-- Header unificado -->
+    <header class="perfil-header">
+      <button class="header-back-btn" (click)="onVolver()" aria-label="Volver atrás">
+        <i data-lucide="arrow-left" class="w-5 h-5 stroke-[1.5]"></i>
+      </button>
+      <h1 class="header-title">Tu perfil financiero</h1>
+    </header>
+
+    <main class="perfil-main">
+      <form [formGroup]="profileForm" class="perfil-form">
+    <!-- Ingresos -->
+    <section class="form-section">
+      <label for="ingresos" class="form-label">
+        Ingresos mensuales
+      </label>
+      <div class="input-wrapper">
+        <input
+          type="number"
+          id="ingresos"
+          formControlName="ingresos"
+          class="form-input"
+          placeholder="0"
+          min="0"
+          step="100"
+          aria-describedby="ingresos-help"
+        />
+        <span class="input-suffix">€</span>
+      </div>
+      <p id="ingresos-help" class="form-help">
+        Ingresos netos mensuales después de impuestos
+      </p>
+    </section>
+
+    <!-- Gastos -->
+    <section class="form-section">
+      <label for="gastos" class="form-label">
+        Gastos mensuales
+      </label>
+      <div class="input-wrapper">
+        <input
+          type="number"
+          id="gastos"
+          formControlName="gastos"
+          class="form-input"
+          placeholder="0"
+          min="0"
+          step="100"
+          aria-describedby="gastos-help"
+        />
+        <span class="input-suffix">€</span>
+      </div>
+      <p id="gastos-help" class="form-help">
+        Gastos fijos mensuales (hipoteca, alquiler, facturas, etc.)
+      </p>
+    </section>
+
+    <!-- Productos Activos -->
+    <section class="form-section">
+      <h2 class="section-title">Productos activos</h2>
+      <div class="productos-list" *ngIf="productos.length > 0; else noProductos">
+        <div class="producto-item" *ngFor="let producto of productos">
+          <div class="producto-icon">
+            <span *ngIf="producto.tipo === 'cuenta'">🏦</span>
+            <span *ngIf="producto.tipo === 'tarjeta'">💳</span>
+            <span *ngIf="producto.tipo === 'prestamo'">📄</span>
+          </div>
+          <div class="producto-info">
+            <span class="producto-nombre">{{ producto.nombre }}</span>
+            <span class="producto-numero" *ngIf="producto.numero">••••{{ producto.numero }}</span>
+          </div>
+        </div>
+      </div>
+      <ng-template #noProductos>
+        <p class="no-productos">No hay productos registrados</p>
+      </ng-template>
+    </section>
+
+    <!-- Otros Bancos -->
+    <section class="form-section">
+      <div class="otros-bancos-toggle">
+        <button
+          type="button"
+          class="toggle-button"
+          (click)="toggleOtrosBancos()"
+          [attr.aria-expanded]="showOtrosBancos"
+          aria-label="Agregar otros bancos"
+        >
+          <span class="toggle-icon">{{ showOtrosBancos ? '−' : '+' }}</span>
+          <span class="toggle-label">Agregar otros bancos</span>
+        </button>
+        <div class="tooltip-wrapper">
+          <span class="tooltip-icon" aria-label="Información">ℹ️</span>
+          <div class="tooltip-content">
+            Agregar más datos mejora la exactitud del cálculo
+          </div>
+        </div>
+      </div>
+      
+      <div class="otros-bancos-content" *ngIf="showOtrosBancos">
+        <p class="info-text">
+          Próximamente podrás conectar tus cuentas de otros bancos para un cálculo más preciso.
+        </p>
+      </div>
+    </section>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button
+        type="button"
+        class="btn-secondary"
+        (click)="onVolver()"
+      >
+        Volver
+      </button>
+      <button
+        type="submit"
+        class="btn-primary"
+        (click)="onContinuar()"
+        [disabled]="!profileForm.valid"
+      >
+        Continuar
+      </button>
+    </div>
+      </form>
+    </main>
+  </div>
+</div>

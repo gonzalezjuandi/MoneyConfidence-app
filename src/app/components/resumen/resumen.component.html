@@ -1,0 +1,79 @@
+<div class="resumen-container">
+  <header class="resumen-header">
+    <button class="btn-back" (click)="onVolver()" aria-label="Volver">
+      <span class="sr-only">Volver</span>
+      ←
+    </button>
+    <h1 class="resumen-title">Resumen</h1>
+  </header>
+
+  <section class="resumen-content">
+    <!-- Capacidad -->
+    <div class="resumen-section">
+      <h2 class="section-title">Tu capacidad de financiación</h2>
+      <div class="capacidad-resumen">
+        <div class="capacidad-item">
+          <span class="capacidad-label">Máximo disponible</span>
+          <span class="capacidad-value">{{ formatCurrency(capacidadMaxima) }}</span>
+        </div>
+        <div class="capacidad-item">
+          <span class="capacidad-label">Cuota mensual</span>
+          <span class="capacidad-value">{{ formatCurrency(capacidadMensual) }}/mes</span>
+        </div>
+        <div class="capacidad-item">
+          <span class="capacidad-label">Plazo</span>
+          <span class="capacidad-value">{{ plazoAnos }} años</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Meta Objetivo -->
+    <div class="resumen-section" *ngIf="metaObjetivo">
+      <h2 class="section-title">Tu objetivo</h2>
+      <div class="meta-resumen">
+        <span class="meta-value">{{ formatCurrency(metaObjetivo) }}</span>
+        <p class="meta-text">Meta establecida y en seguimiento</p>
+      </div>
+    </div>
+
+    <!-- Productos Recomendados -->
+    <div class="resumen-section" *ngIf="productosRecomendados.length > 0">
+      <h2 class="section-title">Productos recomendados</h2>
+      <div class="productos-resumen">
+        <div 
+          class="producto-resumen-item" 
+          *ngFor="let producto of productosRecomendados.slice(0, 3)"
+        >
+          <span class="producto-resumen-nombre">{{ producto.nombre }}</span>
+          <span class="producto-resumen-interes">{{ producto.tipoInteres }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Próxima Acción -->
+    <div class="resumen-section">
+      <h2 class="section-title">Próxima acción</h2>
+      <div class="proxima-accion">
+        <p class="accion-text">
+          Revisa los productos recomendados y elige el que mejor se adapte a tus necesidades.
+        </p>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="resumen-actions">
+      <button class="btn-primary btn-full" (click)="onGuardarPotencial()">
+        Guardar potencial
+      </button>
+      <button class="btn-secondary btn-full" (click)="onVolverASimular()">
+        Volver a simular
+      </button>
+      <button class="btn-primary btn-full" (click)="onSolicitarPrestamo()">
+        Solicitar préstamo
+      </button>
+      <button class="btn-secondary btn-full" (click)="onHablarConGestor()">
+        Hablar con un gestor
+      </button>
+    </div>
+  </section>
+</div>

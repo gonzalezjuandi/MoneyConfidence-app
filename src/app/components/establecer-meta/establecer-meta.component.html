@@ -1,0 +1,82 @@
+<div class="meta-container">
+  <header class="meta-header">
+    <button class="btn-back" (click)="onVolver()" aria-label="Volver">
+      <span class="sr-only">Volver</span>
+      ←
+    </button>
+    <h1 class="meta-title">Establecer meta</h1>
+  </header>
+
+  <section class="meta-content" *ngIf="necesitaMeta; else noMetaNeeded">
+    <div class="meta-intro">
+      <p class="meta-message">
+        Tu capacidad actual es de <strong>{{ formatCurrency(capacidadMaxima) }}</strong>.
+      </p>
+      <p class="meta-question">
+        ¿Quieres alcanzar <strong>{{ formatCurrency(metaSugerida) }}</strong>?
+      </p>
+    </div>
+
+    <div class="meta-card" *ngIf="!metaEstablecida">
+      <div class="meta-info">
+        <h2 class="meta-card-title">Establece tu objetivo</h2>
+        <p class="meta-card-text">
+          Te ayudaremos a alcanzar tu meta mediante seguimiento de ahorro, mejora de ingresos y optimización de gastos.
+        </p>
+      </div>
+
+      <button 
+        class="btn-primary btn-large"
+        (click)="onEstablecerObjetivo()"
+        [attr.aria-label]="'Establecer objetivo de ' + formatCurrency(metaSugerida)"
+      >
+        Establecer objetivo
+      </button>
+    </div>
+
+    <div class="meta-confirmacion" *ngIf="metaEstablecida">
+      <div class="confirmacion-icon">✓</div>
+      <h2 class="confirmacion-title">¡Objetivo establecido!</h2>
+      <p class="confirmacion-text">
+        Tu meta de <strong>{{ formatCurrency(metaSugerida) }}</strong> ha sido guardada.
+      </p>
+
+      <div class="recordatorio-option">
+        <label class="checkbox-label">
+          <input 
+            type="checkbox" 
+            [(ngModel)]="recibirRecordatorio"
+            class="checkbox-input"
+            aria-label="Recibir recordatorios sobre mi meta"
+          />
+          <span class="checkbox-text">
+            Recibir recordatorios sobre mi progreso
+          </span>
+        </label>
+      </div>
+
+      <div class="meta-actions">
+        <button class="btn-primary" (click)="onGuardar()">
+          Guardar y continuar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <ng-template #noMetaNeeded>
+    <div class="no-meta-content">
+      <p class="no-meta-message">
+        Tu capacidad de financiación es excelente. No necesitas establecer una meta adicional en este momento.
+      </p>
+      <button class="btn-primary" (click)="onContinuar()">
+        Continuar
+      </button>
+    </div>
+  </ng-template>
+
+  <div class="meta-actions-secondary" *ngIf="!necesitaMeta || metaEstablecida">
+    <button class="btn-secondary" (click)="onVolver()">
+      Volver
+    </button>
+  </div>
+</div>
