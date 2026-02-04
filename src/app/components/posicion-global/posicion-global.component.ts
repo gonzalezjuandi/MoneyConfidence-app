@@ -76,21 +76,8 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
   }
 
   onIrAPrestamoPreconcedido(): void {
-    // Navegar a Contratar (paso 2) donde está el modal
-    // Si no ha visto el modal, se mostrará automáticamente
-    const modalSeen = localStorage.getItem('prestamo-modal-seen');
-    
-    if (!modalSeen) {
-      // Marcar que debe mostrar el modal
-      const state = this.wizardState.getCurrentState();
-      this.wizardState.setShowPrestamoModal(true);
-      // Navegar a Contratar
-      this.wizardState.setCurrentStep(2);
-    } else {
-      // Si ya vio el modal, ir directamente a Préstamos y abrir el simulador
-      this.wizardState.setCurrentStep(3);
-      // Marcar para que Préstamos abra el simulador
-      sessionStorage.setItem('from-prestamo-modal', 'true');
-    }
+    // Ir directamente al proceso de préstamo con seguro (onboarding → simulación → documentación → firma)
+    this.wizardState.setCurrentStep(3);
+    sessionStorage.setItem('from-prestamo-modal', 'true');
   }
 }

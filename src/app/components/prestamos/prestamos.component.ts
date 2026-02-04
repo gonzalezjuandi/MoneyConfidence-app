@@ -97,13 +97,13 @@ export class PrestamosComponent implements AfterViewInit, OnInit {
         }
       }
 
-      // Si viene del modal de Contratar, abrir el simulador automáticamente
+      // Si viene del modal de Contratar o del banner "45.000 € al instante", abrir el flujo de préstamo con seguro (onboarding)
       if (state.currentStep === 3 && this.view === 'list') {
         const fromModal = sessionStorage.getItem('from-prestamo-modal');
         if (fromModal === 'true') {
           sessionStorage.removeItem('from-prestamo-modal');
           setTimeout(() => {
-            this.onIrASimulacion();
+            this.onIrAPrestamoCoche();
           }, 100);
         }
       }
@@ -765,21 +765,29 @@ export class PrestamosComponent implements AfterViewInit, OnInit {
   }
 
   onPrestamoCocheFirmaComplete(): void {
-    // Mostrar spinner de carga del seguro
-    this.prestamoCocheView = 'seguro-loading';
-    
-    // Simular carga durante 4-6 segundos
-    const loadingTime = 4000 + Math.random() * 2000;
-    
-    setTimeout(() => {
-      // Navegar al gestor documental del seguro
-      this.prestamoCocheView = 'seguro-document-manager';
-      if (typeof lucide !== 'undefined') {
-        setTimeout(() => {
-          lucide.createIcons();
-        }, 100);
-      }
-    }, loadingTime);
+    const hasInsurance = this.prestamoCocheData?.hasInsurance === true;
+
+    if (hasInsurance) {
+      // Con seguro: spinner de documentación del seguro → documentos seguro → firma seguro → loading final → confirmación
+      this.prestamoCocheView = 'seguro-loading';
+      const loadingTime = 4000 + Math.random() * 2000;
+      setTimeout(() => {
+        this.prestamoCocheView = 'seguro-document-manager';
+        if (typeof lucide !== 'undefined') {
+          setTimeout(() => lucide.createIcons(), 100);
+        }
+      }, loadingTime);
+    } else {
+      // Sin seguro: solo firma del préstamo → loading final → confirmación (sin info de seguro)
+      this.prestamoCocheView = 'final-loading';
+      const loadingTime = 3000 + Math.random() * 2000;
+      setTimeout(() => {
+        this.prestamoCocheView = 'confirmacion';
+        if (typeof lucide !== 'undefined') {
+          setTimeout(() => lucide.createIcons(), 100);
+        }
+      }, loadingTime);
+    }
   }
 
   onPrestamoCocheSeguroDocumentManagerComplete(): void {

@@ -10,7 +10,7 @@
   <app-prestamo-coche-simulacion
     *ngIf="prestamoCocheView === 'simulation'"
     (back)="onPrestamoCocheBack()"
-    (next)="onPrestamoCocheNext()">
+    (next)="onPrestamoCocheNext($event)">
   </app-prestamo-coche-simulacion>
 
   <!-- Préstamo Coche: Resumen -->

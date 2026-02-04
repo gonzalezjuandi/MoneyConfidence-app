@@ -7,7 +7,7 @@
       </button>
       <h1 class="header-title">Préstamo Preconcedido</h1>
       <div class="header-actions">
-        <button class="header-icon-btn" aria-label="Chat">
+        <button class="header-icon-btn" aria-label="Chat" (click)="onOpenFaq()">
           <i data-lucide="message-circle" class="w-5 h-5 stroke-[1.5]"></i>
         </button>
         <button class="header-icon-btn" aria-label="Cerrar">
@@ -22,18 +22,18 @@
 
       <!-- Amount Section -->
       <div class="form-section">
-        <!-- Slider de Galatea -->
-        <bs-slider
-          [attr.min-value]="minAmount"
-          [attr.max-value]="maxAmount"
-          [attr.value]="amount"
-          [attr.step]="'500'"
-          [attr.unit]="'€'"
-          [attr.main-title]="'¿Cuánto dinero necesitas?'"
-          [attr.input-label]="'Cantidad'"
-          (valueChange)="onAmountSliderChangeFromGalatea($event)"
+        <app-amount-slider-galatea
+          [value]="amount"
+          [minValue]="minAmount"
+          [maxValue]="maxAmount"
+          [step]="500"
+          unit="€"
+          mainTitle="¿Cuánto dinero necesitas?"
+          inputLabel="Cantidad"
+          [showMinMax]="true"
+          (valueChange)="onAmountChange($event)"
           class="amount-slider-galatea">
-        </bs-slider>
+        </app-amount-slider-galatea>
       </div>
 
       <!-- Term Section -->
@@ -264,6 +264,48 @@
             Entendido
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Modal full-screen FAQs -->
+    <div class="faq-modal-overlay" *ngIf="showFaqModal" role="dialog" aria-labelledby="faq-title-sim" aria-modal="true">
+      <div class="faq-modal">
+        <header class="faq-modal-header">
+          <h2 id="faq-title-sim" class="faq-modal-title">Preguntas frecuentes</h2>
+          <button type="button" class="faq-modal-close" aria-label="Cerrar" (click)="onCloseFaq()">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </header>
+        <div class="faq-tabs">
+          <button type="button" class="faq-tab" [class.faq-tab-active]="faqActiveTab === 'prestamo'" (click)="setFaqTab('prestamo')">Préstamo</button>
+          <button type="button" class="faq-tab" [class.faq-tab-active]="faqActiveTab === 'seguro'" (click)="setFaqTab('seguro')">Seguro</button>
+        </div>
+        <div class="faq-content">
+          <div class="faq-list" *ngIf="faqActiveTab === 'prestamo'">
+            <div *ngFor="let item of prestamoFaqs; let i = index" class="faq-item" [class.faq-item-open]="expandedPrestamoId === i">
+              <button type="button" class="faq-item-question" (click)="togglePrestamoFaq(i)" [attr.aria-expanded]="expandedPrestamoId === i">
+                <span class="faq-item-question-text">{{ item.question }}</span>
+                <i data-lucide="chevron-down" class="faq-item-chevron"></i>
+              </button>
+              <div class="faq-item-answer" *ngIf="expandedPrestamoId === i"><p>{{ item.answer }}</p></div>
+            </div>
+          </div>
+          <div class="faq-list" *ngIf="faqActiveTab === 'seguro'">
+            <div *ngFor="let item of seguroFaqs; let i = index" class="faq-item" [class.faq-item-open]="expandedSeguroId === i">
+              <button type="button" class="faq-item-question" (click)="toggleSeguroFaq(i)" [attr.aria-expanded]="expandedSeguroId === i">
+                <span class="faq-item-question-text">{{ item.question }}</span>
+                <i data-lucide="chevron-down" class="faq-item-chevron"></i>
+              </button>
+              <div class="faq-item-answer" *ngIf="expandedSeguroId === i"><p>{{ item.answer }}</p></div>
+            </div>
+          </div>
+        </div>
+        <footer class="faq-modal-footer">
+          <button type="button" class="faq-help-link" (click)="onFaqHelp()">
+            <i data-lucide="headphones" class="faq-help-icon"></i>
+            <span>¿Sigues necesitando ayuda?</span>
+          </button>
+        </footer>
       </div>
     </div>
   </div>

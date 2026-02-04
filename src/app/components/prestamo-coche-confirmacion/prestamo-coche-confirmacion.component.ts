@@ -15,24 +15,18 @@ export class PrestamoCocheConfirmacionComponent implements OnInit, AfterViewInit
 
   get data(): any {
     const defaultData = {
-      amount: 45000,
-      termMonths: 96,
-      monthlyPayment: 550.52,
-      tin: 4.00,
-      tae: 4.83,
-      hasInsurance: true,
-      insuranceMonthlyCost: 12.52
+      amount: 0,
+      termMonths: 0,
+      monthlyPayment: 0,
+      tin: 4,
+      tae: 4.84,
+      hasInsurance: false,
+      totalToRepay: 0
     };
-    
     const data = this.loanData || defaultData;
-    
-    // Calcular total a devolver si no está presente
-    if (!data.totalToRepay) {
-      const totalPaid = data.monthlyPayment * data.termMonths;
-      const openingCommission = 220.00;
-      data.totalToRepay = totalPaid + openingCommission;
+    if (!data.totalToRepay && data.monthlyPayment && data.termMonths) {
+      data.totalToRepay = data.monthlyPayment * data.termMonths + (data.openingCommission ?? 220);
     }
-    
     return data;
   }
 
@@ -89,7 +83,9 @@ export class PrestamoCocheConfirmacionComponent implements OnInit, AfterViewInit
   }
 
   get formattedInsuranceCost(): string {
-    if (!this.data.hasInsurance || !this.data.insuranceMonthlyCost) return '0,00';
-    return this.data.insuranceMonthlyCost.toFixed(2).replace('.', ',');
+    if (!this.data.hasInsurance) return '0,00';
+    const cost = this.data.insuranceMonthlyReceipt ?? this.data.insuranceMonthlyCost ?? this.data.insuranceCost;
+    if (cost == null) return '0,00';
+    return Number(cost).toFixed(2).replace('.', ',');
   }
 }

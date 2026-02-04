@@ -1,4 +1,6 @@
 import { Component, EventEmitter, Output, AfterViewInit, Input, OnInit, OnDestroy } from '@angular/core';
+import { ViewportScroller } from '@angular/common';
+import { PRESTAMO_FAQS, SEGURO_FAQS } from '../../constants/prestamo-coche-faq';
 
 declare var lucide: any;
 
@@ -31,6 +33,8 @@ export class PrestamoCocheResumenComponent implements OnInit, AfterViewInit, OnD
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
 
+  constructor(private viewportScroller: ViewportScroller) {}
+
   // Toast de éxito
   showSuccessToast = false;
   private toastTimeout: any;
@@ -60,48 +64,60 @@ export class PrestamoCocheResumenComponent implements OnInit, AfterViewInit, OnD
   // Pantalla de carga
   showLoadingScreen = false;
 
+  // Modal FAQs
+  showFaqModal = false;
+  faqActiveTab: 'prestamo' | 'seguro' = 'prestamo';
+  expandedPrestamoId: number | null = null;
+  expandedSeguroId: number | null = null;
+  prestamoFaqs = PRESTAMO_FAQS;
+  seguroFaqs = SEGURO_FAQS;
 
-  // Datos por defecto
+  // Datos por defecto (solo si no llega loanData desde la simulación)
   defaultData: PrestamoCocheResumenData = {
-    amount: 45000,
+    amount: 31000,
     termMonths: 96,
-    monthlyPayment: 550.52,
+    monthlyPayment: 0,
     tin: 4.00,
-    tae: 4.83,
+    tae: 4.84,
     openingCommission: 220.00,
-    totalInterest: 7850.00,
-    totalToRepay: 53070.52,
-    firstPaymentDate: '30/06/2025',
-    hasInsurance: true,
-    insuranceAnnualPremium: 145.52,
-    insuranceFirstReceipt: 12.50,
-    insuranceMonthlyReceipt: 11.20,
+    totalInterest: 0,
+    totalToRepay: 0,
+    firstPaymentDate: '',
+    hasInsurance: false,
     accountNumber: 'Cuenta Online Sabadell •••2930',
     accountHolder: 'María García Palao',
     loanPurpose: 'Vehículo'
   };
 
+  /** Datos visibles: siempre los de la simulación (loanData) si existen. */
   get data(): PrestamoCocheResumenData {
     return this.loanData || this.defaultData;
   }
 
   ngOnInit(): void {
-    // Mostrar toast de éxito si tiene seguro
     if (this.data.hasInsurance) {
-      setTimeout(() => {
-        this.showSuccessToastNotification();
-      }, 500);
+      setTimeout(() => this.showSuccessToastNotification(), 500);
     }
   }
 
   ngAfterViewInit(): void {
+    this.scrollToTop();
     if (typeof lucide !== 'undefined') {
-      setTimeout(() => {
-        lucide.createIcons();
-      }, 100);
+      setTimeout(() => lucide.createIcons(), 100);
     }
-    // Cerrar dropdowns al hacer clic fuera
     document.addEventListener('click', this.closeDropdowns.bind(this));
+  }
+
+  /** Reset del scroll al aterrizar en la página de resumen. */
+  private scrollToTop(): void {
+    this.viewportScroller.scrollToPosition([0, 0]);
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+      const scrollable = document.querySelector('.wizard-content') || document.documentElement;
+      if (scrollable && 'scrollTop' in scrollable) {
+        (scrollable as HTMLElement).scrollTop = 0;
+      }
+    }, 0);
   }
 
   ngOnDestroy(): void {
@@ -173,6 +189,38 @@ export class PrestamoCocheResumenComponent implements OnInit, AfterViewInit, OnD
         lucide.createIcons();
       }, 100);
     }
+  }
+
+  onOpenFaq(): void {
+    this.showFaqModal = true;
+    this.faqActiveTab = 'prestamo';
+    this.expandedPrestamoId = null;
+    this.expandedSeguroId = null;
+    if (typeof lucide !== 'undefined') {
+      setTimeout(() => lucide.createIcons(), 150);
+    }
+  }
+
+  onCloseFaq(): void {
+    this.showFaqModal = false;
+    this.expandedPrestamoId = null;
+    this.expandedSeguroId = null;
+  }
+
+  setFaqTab(tab: 'prestamo' | 'seguro'): void {
+    this.faqActiveTab = tab;
+  }
+
+  togglePrestamoFaq(id: number): void {
+    this.expandedPrestamoId = this.expandedPrestamoId === id ? null : id;
+  }
+
+  toggleSeguroFaq(id: number): void {
+    this.expandedSeguroId = this.expandedSeguroId === id ? null : id;
+  }
+
+  onFaqHelp(): void {
+    this.onCloseFaq();
   }
 
   zoomIn(): void {

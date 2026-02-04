@@ -111,6 +111,8 @@ export class ContratarComponent implements AfterViewInit, OnInit {
   }
 
   onIrAPrestamos(): void {
+    // Abrir proceso de préstamo preconcedido con seguro (onboarding → simulación → resumen → documentos → firma)
+    sessionStorage.setItem('from-prestamo-modal', 'true');
     this.next.emit();
   }
 

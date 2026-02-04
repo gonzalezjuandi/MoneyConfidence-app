@@ -1,5 +1,6 @@
-import { Component, EventEmitter, Output, AfterViewInit, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, AfterViewInit, OnInit, ChangeDetectorRef } from '@angular/core';
 import { PrestamoCocheResumenData } from '../prestamo-coche-resumen/prestamo-coche-resumen.component';
+import { PRESTAMO_FAQS, SEGURO_FAQS } from '../../constants/prestamo-coche-faq';
 
 declare var lucide: any;
 
@@ -12,18 +13,20 @@ export class PrestamoCocheSimulacionComponent implements OnInit, AfterViewInit {
   @Output() back = new EventEmitter<void>();
   @Output() next = new EventEmitter<PrestamoCocheResumenData>();
 
-  // Estado del formulario
-  amount = 3000;
+  constructor(private cdr: ChangeDetectorRef) {}
+
+  // Estado del formulario (inicial al 75% del rango)
   minAmount = 3000;
   maxAmount = 40000;
+  amount = this.minAmount + Math.round(0.75 * (this.maxAmount - this.minAmount) / 500) * 500;
   termMonths = 96;
   monthlyPayment = 250.00;
   hasInsurance = false;
   insuranceCost = 11.20;
   insuranceFirstReceipt = 12.50;
 
-  // Estado del input
-  amountInputValue = '3.000';
+  // Estado del input (formato inicial 75%)
+  amountInputValue = this.amount.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
   isInputFocused = false;
   amountError: string | null = null;
 
@@ -45,6 +48,14 @@ export class PrestamoCocheSimulacionComponent implements OnInit, AfterViewInit {
   toastMessage = 'Tus datos serán enviados a la aseguradora si avanza con el proceso de contratación del seguro.';
   toastType: 'info' | 'alert' = 'info';
 
+  // Modal FAQs
+  showFaqModal = false;
+  faqActiveTab: 'prestamo' | 'seguro' = 'prestamo';
+  expandedPrestamoId: number | null = null;
+  expandedSeguroId: number | null = null;
+  prestamoFaqs = PRESTAMO_FAQS;
+  seguroFaqs = SEGURO_FAQS;
+
   ngOnInit(): void {
     this.updateMonthlyPayment();
   }
@@ -55,44 +66,17 @@ export class PrestamoCocheSimulacionComponent implements OnInit, AfterViewInit {
         lucide.createIcons();
       }, 100);
     }
-    
-    // Escuchar cambios en el slider de Galatea usando MutationObserver o eventos personalizados
-    setTimeout(() => {
-      this.setupSliderListener();
-    }, 500);
   }
 
-  setupSliderListener(): void {
-    // Buscar el componente bs-slider
-    const slider = document.querySelector('bs-slider.amount-slider-galatea');
-    if (slider) {
-      // Escuchar el evento valueChange del componente
-      slider.addEventListener('valueChange', (event: Event) => {
-        this.onAmountSliderChangeFromGalatea(event);
-      });
-      
-      // También escuchar cambios en el atributo value
-      const observer = new MutationObserver((mutations) => {
-        mutations.forEach((mutation) => {
-          if (mutation.type === 'attributes' && mutation.attributeName === 'value') {
-            const newValue = parseInt((mutation.target as HTMLElement).getAttribute('value') || '0', 10);
-            if (!isNaN(newValue) && newValue !== this.amount && newValue >= this.minAmount && newValue <= this.maxAmount) {
-              this.amount = newValue;
-              this.amountInputValue = newValue.toLocaleString('es-ES', {
-                minimumFractionDigits: 0,
-                maximumFractionDigits: 0
-              });
-              this.updateMonthlyPayment();
-            }
-          }
-        });
-      });
-      
-      observer.observe(slider, {
-        attributes: true,
-        attributeFilter: ['value']
-      });
-    }
+  /** Cambio de importe desde el slider (app-amount-slider-galatea): sincroniza con plazos y cuota. */
+  onAmountChange(newValue: number): void {
+    if (newValue === this.amount) return;
+    if (isNaN(newValue) || newValue < this.minAmount || newValue > this.maxAmount) return;
+    this.amount = newValue;
+    this.amountInputValue = newValue.toLocaleString('es-ES', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    this.amountError = null;
+    this.updateMonthlyPayment();
+    this.cdr.detectChanges();
   }
 
   onBack(): void {
@@ -174,62 +158,12 @@ export class PrestamoCocheSimulacionComponent implements OnInit, AfterViewInit {
     this.updateMonthlyPayment();
   }
 
-  onAmountSliderChangeFromGalatea(event: Event): void {
-    const customEvent = event as CustomEvent;
-    let newValue: number;
-    
-    // Intentar obtener el valor del evento de diferentes formas
-    if (customEvent && customEvent.detail !== undefined) {
-      if (typeof customEvent.detail === 'number') {
-        newValue = customEvent.detail;
-      } else if (typeof customEvent.detail === 'object' && customEvent.detail !== null) {
-        if (customEvent.detail.value !== undefined) {
-          newValue = typeof customEvent.detail.value === 'number' 
-            ? customEvent.detail.value 
-            : parseInt(String(customEvent.detail.value).replace(/[^\d]/g, ''), 10);
-        } else {
-          newValue = parseInt(String(customEvent.detail).replace(/[^\d]/g, ''), 10);
-        }
-      } else {
-        newValue = parseInt(String(customEvent.detail).replace(/[^\d]/g, ''), 10);
-      }
-    } else {
-      const target = event.target as any;
-      if (target?.value !== undefined) {
-        newValue = typeof target.value === 'number' 
-          ? target.value 
-          : parseInt(String(target.value).replace(/[^\d]/g, ''), 10);
-      } else {
-        // Intentar obtener del atributo value del elemento
-        const sliderElement = event.target as HTMLElement;
-        const valueAttr = sliderElement?.getAttribute('value');
-        if (valueAttr) {
-          newValue = parseInt(valueAttr.replace(/[^\d]/g, ''), 10);
-        } else {
-          newValue = this.amount;
-        }
-      }
-    }
-    
-    // Validar y actualizar
-    if (!isNaN(newValue) && newValue >= this.minAmount && newValue <= this.maxAmount && newValue !== this.amount) {
-      this.amount = newValue;
-      this.amountInputValue = newValue.toLocaleString('es-ES', {
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0
-      });
-      this.amountError = null;
-      this.updateMonthlyPayment();
-    }
-  }
-
   selectTerm(months: number): void {
     this.termMonths = months;
     this.updateMonthlyPayment();
+    this.cdr.detectChanges();
     if (typeof lucide !== 'undefined') {
-      setTimeout(() => {
-        lucide.createIcons();
-      }, 100);
+      setTimeout(() => lucide.createIcons(), 100);
     }
   }
 
@@ -261,6 +195,38 @@ export class PrestamoCocheSimulacionComponent implements OnInit, AfterViewInit {
     this.showToast = false;
   }
 
+  onOpenFaq(): void {
+    this.showFaqModal = true;
+    this.faqActiveTab = 'prestamo';
+    this.expandedPrestamoId = null;
+    this.expandedSeguroId = null;
+    if (typeof lucide !== 'undefined') {
+      setTimeout(() => lucide.createIcons(), 150);
+    }
+  }
+
+  onCloseFaq(): void {
+    this.showFaqModal = false;
+    this.expandedPrestamoId = null;
+    this.expandedSeguroId = null;
+  }
+
+  setFaqTab(tab: 'prestamo' | 'seguro'): void {
+    this.faqActiveTab = tab;
+  }
+
+  togglePrestamoFaq(id: number): void {
+    this.expandedPrestamoId = this.expandedPrestamoId === id ? null : id;
+  }
+
+  toggleSeguroFaq(id: number): void {
+    this.expandedSeguroId = this.expandedSeguroId === id ? null : id;
+  }
+
+  onFaqHelp(): void {
+    this.onCloseFaq();
+  }
+
   updateMonthlyPayment(): void {
     // Calcular la cuota mensual usando la fórmula de amortización con interés compuesto
     // Cuota = P * (r * (1 + r)^n) / ((1 + r)^n - 1)
@@ -288,8 +254,8 @@ export class PrestamoCocheSimulacionComponent implements OnInit, AfterViewInit {
     const insurance = this.hasInsurance ? this.insuranceCost : 0;
     this.monthlyPayment = this.monthlyPayment + insurance;
     
-    // Redondear a 2 decimales
     this.monthlyPayment = Math.round(this.monthlyPayment * 100) / 100;
+    this.cdr.detectChanges();
   }
 
   get formattedAmount(): string {
