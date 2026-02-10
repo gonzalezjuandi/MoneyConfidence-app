@@ -87,6 +87,25 @@
         </div>
       </div>
 
+      <!-- Loan Purpose Section (siempre debajo de Cuenta de depósito) -->
+      <div class="resumen-section">
+        <div class="resumen-item resumen-item-dropdown" (click)="toggleLoanPurposeDropdown()">
+          <span class="resumen-label">Motivo del préstamo</span>
+          <div class="resumen-value-wrapper">
+            <span class="resumen-value">{{ data.loanPurpose || 'No seleccionado' }}</span>
+            <i data-lucide="chevron-down" class="w-4 h-4" [class.rotated]="showLoanPurposeDropdown"></i>
+          </div>
+          <div class="dropdown-menu" *ngIf="showLoanPurposeDropdown" (click)="$event.stopPropagation()">
+            <div class="dropdown-item" 
+                 *ngFor="let purpose of loanPurposeOptions"
+                 (click)="selectLoanPurpose(purpose)"
+                 [class.selected]="purpose === data.loanPurpose">
+              {{ purpose }}
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Insurance Section -->
       <div class="resumen-section" *ngIf="data.hasInsurance">
         <h3 class="resumen-section-title">Seguro Protección Vida capital constante</h3>
@@ -152,25 +171,6 @@
           Puedes modificarlo después de la contratación.
         </p>
         <a href="#" class="resumen-link" (click)="openDocumentViewer(); $event.preventDefault()">Ver documentación precontractual del seguro</a>
-      </div>
-
-      <!-- Loan Purpose Section -->
-      <div class="resumen-section">
-        <div class="resumen-item resumen-item-dropdown" (click)="toggleLoanPurposeDropdown()">
-          <span class="resumen-label">Motivo del préstamo</span>
-          <div class="resumen-value-wrapper">
-            <span class="resumen-value">{{ data.loanPurpose || 'No seleccionado' }}</span>
-            <i data-lucide="chevron-down" class="w-4 h-4" [class.rotated]="showLoanPurposeDropdown"></i>
-          </div>
-          <div class="dropdown-menu" *ngIf="showLoanPurposeDropdown" (click)="$event.stopPropagation()">
-            <div class="dropdown-item" 
-                 *ngFor="let purpose of loanPurposeOptions"
-                 (click)="selectLoanPurpose(purpose)"
-                 [class.selected]="purpose === data.loanPurpose">
-              {{ purpose }}
-            </div>
-          </div>
-        </div>
       </div>
 
       <!-- Legal Information -->
