@@ -80,11 +80,14 @@
 
       <!-- Importe no múltiplo de 500: titular y body como en múltiplo de 500, luego card de consentimiento -->
       <div class="form-section" *ngIf="!hasDeclaredMedicalCondition && !amountIsMultipleOf500 && !userAcceptedDataShare">
-        <h3 class="form-section-title">¿Quieres asegurar tu préstamo?</h3>
+        <h3 class="form-section-title">Añade un seguro a tu préstamo</h3>
         <p class="insurance-description">
           El Seguro Protección Vida capital constante cubre al titular del préstamo y las garantías son por fallecimiento e incapacidad absoluta.
         </p>
         <div class="insurance-consent-container">
+          <p class="insurance-consent-instruction">
+            Lee y marca la siguiente casilla para ver el precio personalizado del seguro para tu préstamo.
+          </p>
           <label class="insurance-consent-checkbox-label">
             <input type="checkbox"
                    class="insurance-consent-checkbox"
@@ -92,15 +95,17 @@
                    (change)="onDataShareCheckChange($event)">
             <span class="insurance-consent-checkbox-text">Me interesa conocer el precio personalizado del seguro Protección Vida Capital Constante que se comercializa junto al préstamo.</span>
           </label>
-          <div class="insurance-consent-info">
-            <i data-lucide="info" class="insurance-consent-info-icon" aria-hidden="true"></i>
+        </div>
+        <div class="insurance-consent-info">
+          <i data-lucide="info" class="insurance-consent-info-icon" aria-hidden="true"></i>
+          <div class="insurance-consent-info-content">
             <p class="insurance-consent-info-text">
-              Para poder facilitarte tu precio personalizado, el Banco comunicará a BancSabadell Vida tus datos identificativos y los relacionados con el préstamo.
+              Para poder facilitarte tu precio, el Banco comunicará a Banc Sabadell Vida tus datos identificativos y los relacionados con el préstamo con el fin de facilitarte el precio.
+            </p>
+            <p class="insurance-consent-legal">
+              Podrás ejercer tus derechos a través del correo electrónico DPO_BSVida&#64;BSVida.com y tienes más información de protección de datos en la página web <a href="https://www.sabadellsegurosypensiones.com" target="_blank" class="insurance-consent-link">www.sabadellsegurosypensiones.com</a>.
             </p>
           </div>
-          <p class="insurance-consent-legal">
-            Podrás ejercer tus derechos a través del correo electrónico DPO_BSVida&#64;BSVida.com y tienes más información de protección de datos en la página web www.sabadellsegurosypensiones.com.
-          </p>
         </div>
       </div>
 
@@ -128,7 +133,7 @@
                  [class.disabled]="isInsuranceDisabled">
           <label for="insurance-checkbox" class="insurance-label-wrapper" [class.disabled]="isInsuranceDisabled">
             <div class="insurance-checkbox-label">
-              Añadir Seguro Protección Vida capital constante
+              Añadir Seguro Protección Vida capital constante a tu solicitud
             </div>
             <div class="insurance-content">
               <div class="insurance-cost">
@@ -254,46 +259,53 @@
 
         <!-- Content -->
         <div class="drawer-content">
-          <div class="drawer-info-section drawer-intro-section">
-            <h4 class="drawer-intro-title">Proceso de contratación del seguro</h4>
-            <p class="drawer-intro-text">
-              El proceso de contratación del seguro es 100% digital y consta de 4 fases: simulación del seguro, declaración de salud para importes superiores a X€, visualización de la información del préstamo junto con el seguro si ha decidido añadirlo a su cesta y finalmente lectura de toda la documentación necesaria para la formalización del contrato de seguro y firma.
+          <div class="drawer-info-section">
+            <h4 class="drawer-info-title">¿Cómo se contrata?</h4>
+            <p class="drawer-info-text">
+              La contratación es 100% digital y consta de 4 pasos:
+            </p>
+            <ol class="drawer-info-list">
+              <li>Simulas del seguro.</li>
+              <li>Confirmas una declaración de salud.</li>
+              <li>Revisas la información del préstamo junto con el seguro, si decides incluirlo.</li>
+              <li>Lees y firmas toda la documentación necesaria para formalizar el contrato.</li>
+            </ol>
+          </div>
+
+          <div class="drawer-info-section">
+            <h4 class="drawer-info-title">¿Cuáles son las garantías y coberturas?</h4>
+            <ul class="drawer-info-list">
+              <li>Fallecimiento e Invalidez</li>
+              <li>Permanente Absoluta.</li>
+            </ul>
+          </div>
+
+          <div class="drawer-info-section">
+            <h4 class="drawer-info-title">Capital asegurado:</h4>
+            <p class="drawer-info-text">
+              El capital del seguro es igual al del préstamo y no cambia, salvo que solicites modificarlo en una oficina.
             </p>
           </div>
 
           <div class="drawer-info-section">
-            <h4 class="drawer-info-title">Garantías y coberturas</h4>
+            <h4 class="drawer-info-title">¿Quién ofrece el seguro?</h4>
+            <ul class="drawer-info-list">
+              <li><strong>Entidad aseguradora:</strong> Banc Sabadell Vida Sociedad Anónima de Seguros y Reaseguros.</li>
+              <li><strong>Entidad mediadora:</strong> Banc Sabadell Mediación, Operador de Banca-Seguros Vinculado del Grupo Banco Sabadell S.A.</li>
+            </ul>
+          </div>
+
+          <div class="drawer-info-section">
+            <h4 class="drawer-info-title">¿Cuándo entra en vigor?</h4>
             <p class="drawer-info-text">
-              Fallecimiento e Invalidez Permanente Absoluta.
+              La fecha de efecto del seguro será el mismo día en que formalizas el préstamo.
             </p>
           </div>
 
           <div class="drawer-info-section">
-            <h4 class="drawer-info-title">Capital asegurado</h4>
+            <h4 class="drawer-info-title">¿Puedo cancelarlo?</h4>
             <p class="drawer-info-text">
-              El capital asegurado es igual al capital del préstamo y permanece constante, a excepción de que el Asegurado solicite su modificación a través de una oficina.
-            </p>
-          </div>
-
-          <div class="drawer-info-section">
-            <h4 class="drawer-info-title">Entidad aseguradora y mediadora</h4>
-            <p class="drawer-info-text">
-              <strong>Entidad aseguradora:</strong> BanSabadell Vida Sociedad Anónima de Seguros y Reaseguros.<br>
-              <strong>Entidad mediadora:</strong> BanSabadell Mediación, Operador de Banca-Seguros Vinculado del Grupo Banco Sabadell S.A.
-            </p>
-          </div>
-
-          <div class="drawer-info-section">
-            <h4 class="drawer-info-title">Fecha de efecto</h4>
-            <p class="drawer-info-text">
-              La fecha de efecto del seguro será la fecha de formalización del préstamo.
-            </p>
-          </div>
-
-          <div class="drawer-info-section">
-            <h4 class="drawer-info-title">Cancelación del seguro</h4>
-            <p class="drawer-info-text">
-              El seguro se extingue con la amortización total anticipada del préstamo, salvo que comunique el deseo de mantener la vigencia. Además, puede solicitar la cancelación anual con al menos un mes de antelación a la fecha de vencimiento del seguro.
+              El seguro se cancela si amortizas todo el préstamo antes de tiempo, salvo que decidas seguir con él. También puedes solicitar la cancelación anual con al menos un mes de antelación a la fecha de vencimiento del seguro.
             </p>
           </div>
 

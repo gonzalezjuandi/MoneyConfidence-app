@@ -6,6 +6,12 @@
       </svg>
     </div>
     <h2 class="loading-title">{{ message }}</h2>
+    <ul class="loading-items" *ngIf="items && items.length > 0">
+      <li class="loading-item" 
+          *ngFor="let item of items; let i = index"
+          [style.animation-delay]="(i * 0.3) + 's'"
+          [class.fade-in]="true">{{ item }}</li>
+    </ul>
     <p class="loading-subtitle">{{ subtitle || 'Solo nos llevará unos segundos ¡No te vayas!' }}</p>
   </div>
 </div>

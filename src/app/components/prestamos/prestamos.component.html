@@ -24,6 +24,14 @@
     (closeRequested)="onCloseRequestedPrestamoCoche()">
   </app-prestamo-coche-resumen>
 
+  <!-- Préstamo Coche: Loading antes de Documentación -->
+  <app-prestamo-coche-loading
+    *ngIf="prestamoCocheView === 'document-loading'"
+    [message]="'Preparando la documentación de tu solicitud'"
+    [items]="prestamoCocheData?.hasInsurance ? ['1º Documentación relativa al préstamo.', '2ª Documentación relativa al seguro.'] : []"
+    [subtitle]="prestamoCocheData?.hasInsurance ? '¡No te vayas!' : 'Solo nos llevará unos segundos ¡No te vayas!'">
+  </app-prestamo-coche-loading>
+
   <!-- Préstamo Coche: Gestor Documental -->
   <app-prestamo-coche-document-manager
     *ngIf="prestamoCocheView === 'document-manager'"

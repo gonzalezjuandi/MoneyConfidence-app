@@ -10,6 +10,7 @@ declare var lucide: any;
 export class PrestamoCocheLoadingComponent implements AfterViewInit {
   @Input() message: string = 'Preparando la documentación del préstamo';
   @Input() subtitle: string = '';
+  @Input() items: string[] = [];
 
   ngAfterViewInit(): void {
     // Asegurar que la pantalla del flujo se muestre siempre desde arriba

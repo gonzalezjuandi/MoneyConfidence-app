@@ -22,7 +22,7 @@ export class PrestamosComponent implements AfterViewInit, OnInit {
   view: 'list' | 'simulation' = 'list';
   
   // Vista para Préstamo Coche
-  prestamoCocheView: 'none' | 'onboarding' | 'simulation' | 'resumen' | 'document-manager' | 'firma' | 'seguro-loading' | 'seguro-document-manager' | 'seguro-firma' | 'final-loading' | 'confirmacion' = 'none';
+  prestamoCocheView: 'none' | 'onboarding' | 'simulation' | 'resumen' | 'document-loading' | 'document-manager' | 'firma' | 'seguro-loading' | 'seguro-document-manager' | 'seguro-firma' | 'final-loading' | 'confirmacion' = 'none';
   
   // Datos del préstamo para pasar al resumen
   prestamoCocheData: any = null;
@@ -751,13 +751,22 @@ export class PrestamosComponent implements AfterViewInit, OnInit {
   }
 
   onPrestamoCocheResumenNext(): void {
-    // Navegar al gestor documental
-    this.prestamoCocheView = 'document-manager';
+    // Mostrar loading antes de navegar al gestor documental
+    this.prestamoCocheView = 'document-loading';
     if (typeof lucide !== 'undefined') {
       setTimeout(() => {
         lucide.createIcons();
       }, 100);
     }
+    // Después de 7 segundos (tiempo suficiente para leer), navegar al gestor documental
+    setTimeout(() => {
+      this.prestamoCocheView = 'document-manager';
+      if (typeof lucide !== 'undefined') {
+        setTimeout(() => {
+          lucide.createIcons();
+        }, 100);
+      }
+    }, 7000);
   }
 
   onPrestamoCocheDocumentManagerComplete(): void {

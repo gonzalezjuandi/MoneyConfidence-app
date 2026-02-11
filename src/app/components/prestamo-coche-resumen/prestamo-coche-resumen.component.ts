@@ -83,8 +83,6 @@ export class PrestamoCocheResumenComponent implements OnInit, AfterViewInit, OnD
   showDocumentViewer = false;
   documentZoom = 100;
 
-  // Pantalla de carga
-  showLoadingScreen = false;
 
   // Modal FAQs
   showFaqModal = false;
@@ -308,21 +306,7 @@ export class PrestamoCocheResumenComponent implements OnInit, AfterViewInit, OnD
   }
 
   onNext(): void {
-    // Mostrar pantalla de carga
-    this.showLoadingScreen = true;
-    
-    // Simular carga durante 4-6 segundos (aleatorio entre 4 y 6)
-    const loadingTime = 4000 + Math.random() * 2000; // Entre 4000 y 6000 ms
-    
-    setTimeout(() => {
-      // Después de la carga, conectar con el gestor documental
-      this.showLoadingScreen = false;
-      this.connectToDocumentManager();
-    }, loadingTime);
-  }
-
-  connectToDocumentManager(): void {
-    // Emitir evento para navegar al gestor documental (flujo propio)
+    // Emitir evento directamente - el loading se maneja en el componente padre
     this.next.emit();
   }
 
@@ -394,7 +378,16 @@ export class PrestamoCocheResumenComponent implements OnInit, AfterViewInit, OnD
   }
 
   get termYears(): number {
-    return Math.round(this.data.termMonths / 12);
+    // Mapeo según lo mostrado en la simulación: 96→8, 70→7, 50→5, 30→3
+    const monthToYearMap: { [key: number]: number } = {
+      96: 8,
+      70: 7,
+      50: 5,
+      30: 3
+    };
+    
+    // Si está en el mapeo, usar ese valor; si no, calcular redondeando
+    return monthToYearMap[this.data.termMonths] ?? Math.round(this.data.termMonths / 12);
   }
 
   get formattedInsuranceAnnualPremium(): string {
