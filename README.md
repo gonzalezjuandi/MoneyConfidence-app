@@ -1,6 +1,6 @@
-# Tu Potencial Financiero - MVP
+# Money Confidence — MVP
 
-MVP web embebido dentro de la app bancaria de Banco Sabadell desarrollada en Angular. Este módulo permite a los usuarios conocer su potencial financiero mediante un wizard de 5-6 pantallas.
+MVP web embebido en una app bancaria (Angular). Flujo tipo wizard para conocer la salud financiera del usuario bajo la marca **Money Confidence**.
 
 ## 🎯 Características
 
@@ -68,7 +68,7 @@ Los estilos se cargan desde CDN en `index.html`.
 
 Para integrar este módulo en la app principal de Angular:
 
-1. Copiar el módulo `TuPotencialFinancieroModule` (si se crea como módulo independiente)
+1. Copiar el módulo `TuPotencialFinancieroModule` (nombre técnico del archivo; producto: Money Confidence)
 2. Importar en el módulo principal
 3. Usar el selector `<app-wizard></app-wizard>` donde se necesite
 

@@ -1,6 +1,6 @@
 /**
- * Módulo independiente para integración en app Angular principal
- * 
+ * Money Confidence — módulo para integración en app Angular principal
+ *
  * Para usar este módulo en otra aplicación Angular:
  * 
  * 1. Importar este módulo en el módulo principal:

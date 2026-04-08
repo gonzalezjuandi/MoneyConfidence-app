@@ -497,7 +497,7 @@
           </div>
         </div>
 
-        <!-- Acceso a Tu Potencial Financiero (si no tiene scoring) -->
+        <!-- Acceso a Money Confidence (si no tiene scoring) -->
         <div class="mb-6" *ngIf="!hasUpdatedPotential">
           <div class="financial-health-access">
             <div class="financial-health-access-icon">
@@ -505,13 +505,13 @@
             </div>
             <div class="financial-health-access-content">
               <p class="financial-health-access-text">
-                Calcula tu potencial financiero para ver tu salud financiera personalizada
+                Calcula con Money Confidence para ver tu salud financiera personalizada
               </p>
               <button type="button" 
                       class="financial-health-access-btn"
                       (click)="onIrAPotencialFinanciero()"
-                      aria-label="Calcular potencial financiero">
-                Calcular potencial financiero
+                      aria-label="Abrir Money Confidence">
+                Calcular con Money Confidence
                 <i data-lucide="arrow-right" class="w-4 h-4"></i>
               </button>
             </div>

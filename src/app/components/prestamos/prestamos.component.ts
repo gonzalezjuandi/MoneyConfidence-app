@@ -90,7 +90,7 @@ export class PrestamosComponent implements AfterViewInit, OnInit {
       const previousHasUpdated = this.hasUpdatedPotential;
       this.hasUpdatedPotential = state.hasUpdatedPotential || false;
       
-      // Si acaba de actualizar el potencial o si ya lo tenía, recalcular
+      // Si acaba de actualizar Money Confidence o si ya lo tenía, recalcular
       if (this.hasUpdatedPotential) {
         this.calculateFinancialHealth();
         // Reinicializar iconos si acaba de volver del flujo

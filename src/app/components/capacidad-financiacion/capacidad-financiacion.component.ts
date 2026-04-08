@@ -179,7 +179,7 @@ export class CapacidadFinanciacionComponent implements OnInit, AfterViewInit {
   }
 
   onContinuar(): void {
-    // Marcar que el usuario ha completado el flujo de Tu Potencial Financiero
+    // Marcar que el usuario ha completado el flujo de Money Confidence
     this.wizardState.markPotentialUpdated();
     this.next.emit();
   }
