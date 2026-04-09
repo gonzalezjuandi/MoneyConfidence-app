@@ -58,7 +58,7 @@ export function aggregateUpcomingPayments(items: UpcomingPaymentItem[]): {
   return { total, count: items.length };
 }
 
-/** Lista demo: total 450 € / 4 pagos; cuenta principal 4 ítems; familiar 2 ítems (60+40) incluidos en el total global */
+/** Lista demo: total 450 € / 4 pagos; *4422 → 3 cargos (410 €); *4425 → 1 cargo (40 €) */
 export const DEFAULT_UPCOMING_PAYMENTS_ITEMS: UpcomingPaymentItem[] = [
   {
     id: '1',
