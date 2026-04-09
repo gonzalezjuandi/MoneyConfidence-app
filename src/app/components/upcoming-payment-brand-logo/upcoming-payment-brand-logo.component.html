@@ -1,0 +1,109 @@
+<ng-container [ngSwitch]="variant">
+  <!-- Asisa: círculo azul oscuro + wordmark -->
+  <span *ngSwitchCase="'asisa'" class="upl" [class.upl--sm]="size === 'sm'" [class.upl--lg]="size === 'lg'" aria-hidden="true">
+    <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="20" fill="#0a2744" />
+      <text
+        x="20"
+        y="24"
+        text-anchor="middle"
+        fill="#ffffff"
+        font-size="8.5"
+        font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+        font-weight="700"
+      >
+        asisa
+      </text>
+      <text
+        x="30"
+        y="15"
+        fill="#ffffff"
+        font-size="6.5"
+        font-family="system-ui, sans-serif"
+        font-weight="700"
+      >
+        +
+      </text>
+    </svg>
+  </span>
+
+  <!-- Préstamos: azul vivo + "os" -->
+  <span *ngSwitchCase="'prestamos'" class="upl" [class.upl--sm]="size === 'sm'" [class.upl--lg]="size === 'lg'" aria-hidden="true">
+    <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="20" fill="#0095ff" />
+      <text
+        x="20"
+        y="26"
+        text-anchor="middle"
+        fill="#ffffff"
+        font-size="15"
+        font-family="Georgia, 'Times New Roman', serif"
+        font-style="italic"
+        font-weight="700"
+      >
+        os
+      </text>
+    </svg>
+  </span>
+
+  <!-- Aguas Barcelona: ondas -->
+  <span *ngSwitchCase="'aguas'" class="upl" [class.upl--sm]="size === 'sm'" [class.upl--lg]="size === 'lg'" aria-hidden="true">
+    <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="20" fill="#003b73" />
+      <path
+        d="M6 14.5c2.2-1.2 4.2-1.2 6.4 0s4.2 1.2 6.4 0 4.2-1.2 6.4 0 4.2 1.2 6.4 0 4.2-1.2 6.4 0"
+        fill="none"
+        stroke="#ffffff"
+        stroke-width="1.35"
+        stroke-linecap="round"
+      />
+      <path
+        d="M6 20c2.2-1.2 4.2-1.2 6.4 0s4.2 1.2 6.4 0 4.2-1.2 6.4 0 4.2 1.2 6.4 0 4.2-1.2 6.4 0 4.2 1.2 6.4 0"
+        fill="none"
+        stroke="#ffffff"
+        stroke-width="1.35"
+        stroke-linecap="round"
+      />
+      <path
+        d="M6 25.5c2.2-1.2 4.2-1.2 6.4 0s4.2 1.2 6.4 0 4.2-1.2 6.4 0 4.2 1.2 6.4 0 4.2-1.2 6.4 0 4.2 1.2 6.4 0"
+        fill="none"
+        stroke="#ffffff"
+        stroke-width="1.35"
+        stroke-linecap="round"
+      />
+    </svg>
+  </span>
+
+  <!-- Cashback: círculo blanco + icono € / ciclo -->
+  <span *ngSwitchCase="'cashback'" class="upl" [class.upl--sm]="size === 'sm'" [class.upl--lg]="size === 'lg'" aria-hidden="true">
+    <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="19" fill="#ffffff" stroke="#d1d5db" stroke-width="1" />
+      <path
+        d="M20 11a9 9 0 0 1 7.2 3.6M29 20h2.5M20 29a9 9 0 0 1-7.2-3.6M11 20H8.5"
+        fill="none"
+        stroke="#6b7280"
+        stroke-width="1.25"
+        stroke-linecap="round"
+      />
+      <path
+        d="M25 14l2.5-2.5M15 26l-2.5 2.5"
+        fill="none"
+        stroke="#6b7280"
+        stroke-width="1.25"
+        stroke-linecap="round"
+      />
+      <text
+        x="20"
+        y="24"
+        text-anchor="middle"
+        fill="#6b7280"
+        font-size="11"
+        font-weight="700"
+        font-family="system-ui, sans-serif"
+      >
+        €
+      </text>
+    </svg>
+  </span>
+
+</ng-container>

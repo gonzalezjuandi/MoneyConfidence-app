@@ -1,0 +1,63 @@
+<div
+  class="upd-backdrop"
+  *ngIf="item"
+  (click)="close()"
+  role="presentation"
+  aria-hidden="false"
+></div>
+
+<div class="upd-wrap" *ngIf="item" role="dialog" aria-modal="true" [attr.aria-labelledby]="'upd-title-' + item.id">
+  <div class="upd-sheet" (click)="$event.stopPropagation()">
+    <header class="upd-head">
+      <button type="button" class="upd-close" (click)="close()" aria-label="Cerrar">
+        <i data-lucide="x" class="upd-close-ic"></i>
+      </button>
+      <h2 class="upd-title" [id]="'upd-title-' + item.id">Detalle del pago</h2>
+      <div class="upd-head-spacer"></div>
+    </header>
+
+    <div class="upd-hero">
+      <app-upcoming-payment-brand-logo
+        *ngIf="item.logoVariant"
+        class="upd-brand-logo"
+        [variant]="item.logoVariant"
+        size="lg"
+      ></app-upcoming-payment-brand-logo>
+      <div *ngIf="!item.logoVariant" class="upd-logo" [style.background]="item.logoBg">{{ item.logo }}</div>
+      <p class="upd-name">{{ item.name }}</p>
+      <p class="upd-detail" *ngIf="item.detail">{{ item.detail }}</p>
+      <p class="upd-amount">-{{ formatMoney(item.amount) }} €</p>
+      <p class="upd-schedule">{{ item.schedule }}</p>
+      <span class="upd-tag">{{ item.label }}</span>
+    </div>
+
+    <div class="upd-card">
+      <h3 class="upd-card-title">Detalle del movimiento</h3>
+      <div class="upd-row">
+        <span class="upd-k">Concepto</span>
+        <span class="upd-v">{{ item.name }}</span>
+      </div>
+      <div class="upd-row">
+        <span class="upd-k">Importe previsto</span>
+        <span class="upd-v">-{{ formatMoney(item.amount) }} €</span>
+      </div>
+      <div class="upd-row">
+        <span class="upd-k">Fecha prevista</span>
+        <span class="upd-v">{{ item.schedule }}</span>
+      </div>
+      <div class="upd-row">
+        <span class="upd-k">Categoría</span>
+        <span class="upd-v">{{ item.label }}</span>
+      </div>
+      <div class="upd-row">
+        <span class="upd-k">Cuenta de cargo</span>
+        <span class="upd-v">{{ item.accountMask }}</span>
+      </div>
+    </div>
+
+    <p class="upd-foot">
+      <i data-lucide="info" class="upd-foot-ic"></i>
+      Los importes y fechas son orientativos y podrían variar o cancelarse.
+    </p>
+  </div>
+</div>

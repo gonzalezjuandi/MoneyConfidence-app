@@ -24,12 +24,26 @@ import { PrestamoCocheFirmaComponent } from './components/prestamo-coche-firma/p
 import { PrestamoCocheSeguroDocumentManagerComponent } from './components/prestamo-coche-seguro-document-manager/prestamo-coche-seguro-document-manager.component';
 import { PrestamoCocheLoadingComponent } from './components/prestamo-coche-loading/prestamo-coche-loading.component';
 import { PrestamoCocheConfirmacionComponent } from './components/prestamo-coche-confirmacion/prestamo-coche-confirmacion.component';
-import { LoginComponent } from './components/login/login.component';
+import { PostLoginFlowComponent } from './components/post-login-flow/post-login-flow.component';
+import { NotificationLockComponent } from './components/notification-lock/notification-lock.component';
+import { LoginFlowComponent } from './components/login-flow/login-flow.component';
+import { ProximosPagosComponent } from './components/proximos-pagos/proximos-pagos.component';
+import { GestionarPagosHubComponent } from './components/gestionar-pagos-hub/gestionar-pagos-hub.component';
+import { FraccionarComprasFlowComponent } from './components/fraccionar-compras-flow/fraccionar-compras-flow.component';
+import { UpcomingPaymentDetailSheetComponent } from './components/upcoming-payment-detail-sheet/upcoming-payment-detail-sheet.component';
+import { UpcomingPaymentBrandLogoComponent } from './components/upcoming-payment-brand-logo/upcoming-payment-brand-logo.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginComponent,
+    PostLoginFlowComponent,
+    NotificationLockComponent,
+    LoginFlowComponent,
+    ProximosPagosComponent,
+    GestionarPagosHubComponent,
+    FraccionarComprasFlowComponent,
+    UpcomingPaymentDetailSheetComponent,
+    UpcomingPaymentBrandLogoComponent,
     WizardComponent,
     PosicionGlobalComponent,
     ContratarComponent,

@@ -23,6 +23,85 @@ export interface RecommendedProduct {
   tipo: 'tarjeta' | 'prestamo' | 'credito';
 }
 
+export type EntryScreen = 'proximos-pagos' | 'posicion-global';
+export type PosicionGlobalCardView = 'total' | 'upcoming';
+
+/** Logos de marca (referencia Próximos pagos) */
+export type UpcomingPaymentLogoVariant = 'asisa' | 'prestamos' | 'aguas' | 'cashback';
+
+/** Movimiento previsto (Próximos pagos + pestaña Próximos en Cuentas) */
+export interface UpcomingPaymentItem {
+  id: string;
+  name: string;
+  amount: number;
+  label: string;
+  schedule: string;
+  /** Fallback si no hay logoVariant */
+  logo: string;
+  logoBg: string;
+  /** Logo vectorial de la referencia */
+  logoVariant?: UpcomingPaymentLogoVariant;
+  /** Segunda línea informativa (p. ej. número de cuota) */
+  detail?: string;
+  /** Texto tipo "Cuenta *4422" */
+  accountMask: string;
+  /** En qué cuentas del carrusel aplica; si falta, solo principal */
+  accounts?: ('principal' | 'familiar')[];
+}
+
+/** Lista demo alineada con referencia: total 450 € / 4 pagos */
+export const DEFAULT_UPCOMING_PAYMENTS_ITEMS: UpcomingPaymentItem[] = [
+  {
+    id: '1',
+    name: 'Asisa Asistencia',
+    amount: 100,
+    label: 'Domiciliación',
+    schedule: 'Previsto miércoles 15 Abr',
+    logo: 'A',
+    logoBg: '#0a2744',
+    logoVariant: 'asisa',
+    accountMask: 'Cuenta *4422',
+    accounts: ['principal']
+  },
+  {
+    id: '2',
+    name: 'Préstamos Adeudo',
+    detail: 'Cuota N.123456789',
+    amount: 250,
+    label: 'Préstamos',
+    schedule: 'Previsto viernes 17 Abr',
+    logo: 'P',
+    logoBg: '#0095ff',
+    logoVariant: 'prestamos',
+    accountMask: 'Cuenta *4422',
+    accounts: ['principal']
+  },
+  {
+    id: '3',
+    name: 'Aguas Barcelona',
+    amount: 60,
+    label: 'Domiciliación',
+    schedule: 'Previsto lunes 20 Abr',
+    logo: 'B',
+    logoBg: '#003b73',
+    logoVariant: 'aguas',
+    accountMask: 'Cuenta *4422',
+    accounts: ['principal', 'familiar']
+  },
+  {
+    id: '4',
+    name: 'Abono Cashback',
+    amount: 40,
+    label: 'Abono nómina',
+    schedule: 'Previsto jueves 30 Abr',
+    logo: 'C',
+    logoBg: '#ffffff',
+    logoVariant: 'cashback',
+    accountMask: 'Cuenta *4425',
+    accounts: ['principal', 'familiar']
+  }
+];
+
 export interface WizardState {
   currentStep: number;
   capacidadMaxima: number;
@@ -36,6 +115,20 @@ export interface WizardState {
   showPrestamoModal?: boolean; // Flag para mostrar modal de préstamo
   loanCompleted?: boolean; // Flag para indicar que el préstamo fue completado
   loanAmount?: number; // Monto del préstamo completado
+  /** Tras el login: primera pantalla del wizard (paso 1) */
+  entryScreen?: EntryScreen;
+  /** Toggle tarjeta principal en Posición global (saldo vs próximos pagos) */
+  posicionGlobalCardView?: PosicionGlobalCardView;
+  /** Total demo de próximos pagos (30 días), alineado con la captura */
+  upcomingPaymentsTotal?: number;
+  /** Número de pagos previstos en el periodo (lista Próximos pagos) */
+  upcomingPaymentsCount?: number;
+  /** Movimientos próximos 30 días (compartido Próximos pagos + Cuentas) */
+  upcomingPaymentsItems?: UpcomingPaymentItem[];
+  /** Detalle de un movimiento (panel compartido) */
+  selectedUpcomingPaymentId?: string | null;
+  /** Abrir el hub de Gestionar pagos directamente en la lista de Suscripciones */
+  gestionarPagosDirectoSuscripciones?: boolean;
 }
 
 @Injectable({
@@ -47,6 +140,13 @@ export class WizardStateService {
     capacidadMaxima: 18000,
     capacidadMensual: 350,
     plazoAnos: 5,
+    entryScreen: 'posicion-global',
+    posicionGlobalCardView: 'total',
+    upcomingPaymentsTotal: 450,
+    upcomingPaymentsCount: 4,
+    upcomingPaymentsItems: DEFAULT_UPCOMING_PAYMENTS_ITEMS,
+    selectedUpcomingPaymentId: null,
+    gestionarPagosDirectoSuscripciones: false,
     perfilFinanciero: {
       ingresos: 0,
       gastos: 0,
@@ -85,16 +185,84 @@ export class WizardStateService {
 
   nextStep(): void {
     const currentState = this.getCurrentState();
-    if (currentState.currentStep < 9) { // Total de 9 pasos
+    if (currentState.currentStep < 9) {
       this.setCurrentStep(currentState.currentStep + 1);
     }
   }
 
   previousStep(): void {
     const currentState = this.getCurrentState();
+    if (currentState.currentStep === 10) {
+      this.setCurrentStep(1);
+      return;
+    }
     if (currentState.currentStep > 1) {
       this.setCurrentStep(currentState.currentStep - 1);
     }
+  }
+
+  setEntryScreen(screen: EntryScreen): void {
+    const currentState = this.getCurrentState();
+    this.stateSubject.next({
+      ...currentState,
+      entryScreen: screen
+    });
+  }
+
+  setPosicionGlobalCardView(view: PosicionGlobalCardView): void {
+    const currentState = this.getCurrentState();
+    this.stateSubject.next({
+      ...currentState,
+      posicionGlobalCardView: view
+    });
+  }
+
+  togglePosicionGlobalCardView(): void {
+    const currentState = this.getCurrentState();
+    const next: PosicionGlobalCardView =
+      currentState.posicionGlobalCardView === 'upcoming' ? 'total' : 'upcoming';
+    this.setPosicionGlobalCardView(next);
+  }
+
+  setSelectedUpcomingPaymentId(id: string | null): void {
+    const currentState = this.getCurrentState();
+    this.stateSubject.next({
+      ...currentState,
+      selectedUpcomingPaymentId: id
+    });
+  }
+
+  /** Paso 10 (Gestionar pagos) abriendo la vista Suscripciones */
+  goToGestionarPagosSuscripciones(): void {
+    const currentState = this.getCurrentState();
+    this.stateSubject.next({
+      ...currentState,
+      currentStep: 10,
+      gestionarPagosDirectoSuscripciones: true
+    });
+  }
+
+  /** Paso 10 con el menú principal de Gestionar pagos (no salto a Suscripciones) */
+  goToGestionarPagosMenu(): void {
+    const currentState = this.getCurrentState();
+    this.stateSubject.next({
+      ...currentState,
+      currentStep: 10,
+      gestionarPagosDirectoSuscripciones: false
+    });
+  }
+
+  clearGestionarPagosDirectoSuscripciones(): void {
+    const currentState = this.getCurrentState();
+    this.stateSubject.next({
+      ...currentState,
+      gestionarPagosDirectoSuscripciones: false
+    });
+  }
+
+  getUpcomingPaymentById(id: string): UpcomingPaymentItem | undefined {
+    const items = this.getCurrentState().upcomingPaymentsItems ?? DEFAULT_UPCOMING_PAYMENTS_ITEMS;
+    return items.find(i => i.id === id);
   }
 
   updateProfile(profile: Partial<FinancialProfile>): void {

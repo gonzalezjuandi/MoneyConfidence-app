@@ -1,0 +1,461 @@
+<div class="gph-root">
+  <!-- Distributiva: módulos -->
+  <ng-container *ngIf="view === 'secciones'">
+    <header class="gph-header gph-header-nav">
+      <button type="button" class="gph-back" (click)="onBack()" aria-label="Volver">
+        <i data-lucide="arrow-left" class="gph-ic"></i>
+      </button>
+      <h1 class="gph-title gph-title-abs">Gestionar pagos</h1>
+      <div class="gph-header-util">
+        <button type="button" class="gph-util-btn" aria-label="Ocultar importes">
+          <i data-lucide="eye" class="gph-util-ic"></i>
+        </button>
+        <button type="button" class="gph-util-btn" aria-label="Ayuda">
+          <i data-lucide="message-circle" class="gph-util-ic"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="gph-module-list">
+      <button type="button" class="gph-module-card" (click)="openSuscripciones()">
+        <div class="gph-mod-icon"><i data-lucide="calendar" class="gph-mod-ic"></i></div>
+        <div class="gph-mod-body">
+          <span class="gph-mod-title">Suscripciones</span>
+          <span class="gph-mod-desc">Consulta, controla o cancela tus suscripciones activas.</span>
+        </div>
+        <i data-lucide="chevron-right" class="gph-chev"></i>
+      </button>
+
+      <button type="button" class="gph-module-card" disabled aria-disabled="true">
+        <div class="gph-mod-icon"><i data-lucide="home" class="gph-mod-ic"></i></div>
+        <div class="gph-mod-body">
+          <span class="gph-mod-title">Domiciliaciones de cuenta</span>
+          <span class="gph-mod-desc">Revisa tus recibos y gestiona tus domiciliaciones.</span>
+        </div>
+        <i data-lucide="chevron-right" class="gph-chev"></i>
+      </button>
+
+      <button type="button" class="gph-module-card" disabled aria-disabled="true">
+        <div class="gph-mod-icon"><i data-lucide="percent" class="gph-mod-ic"></i></div>
+        <div class="gph-mod-body">
+          <span class="gph-mod-title">Bizum</span>
+          <span class="gph-mod-desc">Gestiona tus pagos habituales, envía dinero y revisa tus contactos.</span>
+        </div>
+        <i data-lucide="chevron-right" class="gph-chev"></i>
+      </button>
+    </div>
+  </ng-container>
+
+  <!-- Tus suscripciones: bloque superior #FAFAFA, lista inferior blanca (referencia) -->
+  <ng-container *ngIf="view === 'suscripciones'">
+    <div class="gph-ref-screen gph-ref-screen--subs">
+      <div class="gph-subs-upper">
+        <div class="gph-statusbar" aria-hidden="true">
+          <span class="gph-status-time">9:41</span>
+          <div class="gph-status-icons">
+            <i data-lucide="signal" class="gph-sb-ic"></i>
+            <i data-lucide="wifi" class="gph-sb-ic"></i>
+            <i data-lucide="battery-medium" class="gph-sb-ic"></i>
+          </div>
+        </div>
+
+        <header class="gph-header gph-header-ref gph-header-nav">
+          <button type="button" class="gph-back gph-back-ref" (click)="onBack()" aria-label="Volver">
+            <i data-lucide="chevron-left" class="gph-ic gph-ic-blue"></i>
+          </button>
+          <h1 class="gph-title gph-title-abs gph-title-ref">Suscripciones</h1>
+          <div class="gph-header-util gph-header-util-ref">
+            <button type="button" class="gph-util-btn-ref" aria-label="Ocultar importes">
+              <i data-lucide="eye" class="gph-util-ic gph-ic-blue"></i>
+            </button>
+            <button type="button" class="gph-util-btn-ref" aria-label="Ayuda">
+              <i data-lucide="message-circle" class="gph-util-ic gph-ic-blue"></i>
+            </button>
+          </div>
+        </header>
+
+        <div class="gph-subs-head">
+          <h2 class="gph-section-title">Tus suscripciones</h2>
+          <div class="gph-subs-summary-center">
+            <p class="gph-subs-total-label">Total mensual previsto</p>
+            <p class="gph-subs-total-amount">
+              <span class="gph-subs-amount-main">{{ gastoMensualAmountMain }}</span
+              ><span class="gph-subs-amount-rest">{{ gastoMensualAmountRest }}</span>
+            </p>
+            <p class="gph-subs-total-meta">{{ suscripcionesActivasCount }} suscripciones</p>
+          </div>
+        </div>
+
+        <div class="gph-subtabs gph-subtabs-ref">
+          <button
+            type="button"
+            class="gph-subtab-ref"
+            [class.gph-subtab-ref-on]="subTab === 'activas'"
+            (click)="subTab = 'activas'"
+          >
+            Activas
+          </button>
+          <button
+            type="button"
+            class="gph-subtab-ref"
+            [class.gph-subtab-ref-on]="subTab === 'canceladas'"
+            (click)="subTab = 'canceladas'"
+          >
+            Canceladas
+          </button>
+        </div>
+      </div>
+
+      <div class="gph-subs-list-panel">
+        <ul class="gph-card-list" *ngIf="subTab === 'activas'">
+          <li *ngFor="let s of subscriptions">
+            <button type="button" class="gph-tx-row gph-tx-row--subs" (click)="openDetalle(s)">
+              <div class="gph-brand-avatar">
+                <img
+                  *ngIf="s.logoAsset"
+                  [src]="s.logoAsset"
+                  alt=""
+                  class="gph-logo-img"
+                  width="44"
+                  height="44"
+                />
+                <div *ngIf="!s.logoAsset" class="gph-avatar" [style.background]="s.logoColor">{{ s.logoInitial }}</div>
+              </div>
+              <div class="gph-tx-main">
+                <p class="gph-tx-name">{{ s.merchant }}</p>
+                <p class="gph-tx-sub" *ngIf="s.status !== 'pagos-bloqueados'">{{ s.lineSub }}</p>
+                <span class="gph-tag gph-tag-inline tag-pagos-bloqueados" *ngIf="s.status === 'pagos-bloqueados'"
+                  >Pagos bloqueados</span
+                >
+                <p class="gph-tx-price" *ngIf="s.status !== 'pagos-bloqueados'">{{ formatMoney(s.priceMonthly) }} €</p>
+              </div>
+              <i data-lucide="chevron-right" class="gph-row-chev gph-row-chev-only"></i>
+            </button>
+          </li>
+        </ul>
+
+        <ul class="gph-card-list gph-dimmed" *ngIf="subTab === 'canceladas'">
+          <li *ngFor="let c of cancelled">
+            <div class="gph-tx-row gph-tx-row--subs gph-tx-static">
+              <div class="gph-brand-avatar">
+                <img
+                  *ngIf="c.logoAsset"
+                  [src]="c.logoAsset"
+                  alt=""
+                  class="gph-logo-img gph-logo-img-dim"
+                  width="44"
+                  height="44"
+                />
+                <div *ngIf="!c.logoAsset" class="gph-avatar gph-avatar-dim" [style.background]="c.logoColor">
+                  {{ c.logoInitial }}
+                </div>
+              </div>
+              <div class="gph-tx-main">
+                <p class="gph-tx-name">{{ c.merchant }}</p>
+                <p class="gph-tx-sub">{{ c.lineSub }}</p>
+                <p class="gph-tx-price">{{ formatMoney(c.price) }} €</p>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Detalle -->
+  <ng-container *ngIf="view === 'detalle' && selected">
+    <div class="gph-ref-screen">
+      <div class="gph-statusbar" aria-hidden="true">
+        <span class="gph-status-time">9:41</span>
+        <div class="gph-status-icons">
+          <i data-lucide="signal" class="gph-sb-ic"></i>
+          <i data-lucide="wifi" class="gph-sb-ic"></i>
+          <i data-lucide="battery-medium" class="gph-sb-ic"></i>
+        </div>
+      </div>
+
+      <header class="gph-header gph-header-ref gph-header-nav">
+        <button type="button" class="gph-back gph-back-ref" (click)="onBack()" aria-label="Volver">
+          <i data-lucide="chevron-left" class="gph-ic gph-ic-blue"></i>
+        </button>
+        <h1 class="gph-title gph-title-abs gph-title-ref">Suscripción</h1>
+        <div class="gph-header-util gph-header-util-ref">
+          <button type="button" class="gph-util-btn-ref" aria-label="Ocultar importes">
+            <i data-lucide="eye" class="gph-util-ic gph-ic-blue"></i>
+          </button>
+          <button type="button" class="gph-util-btn-ref" aria-label="Ayuda">
+            <i data-lucide="message-circle" class="gph-util-ic gph-ic-blue"></i>
+          </button>
+        </div>
+      </header>
+
+      <div class="gph-ref-content gph-ref-content--detail">
+        <div class="gph-hero gph-hero-ref">
+          <div class="gph-hero-logo-wrap">
+            <img
+              *ngIf="selected.logoAsset"
+              [src]="selected.logoAsset"
+              alt=""
+              class="gph-hero-img"
+              width="72"
+              height="72"
+            />
+            <div *ngIf="!selected.logoAsset" class="gph-hero-logo" [style.background]="selected.logoColor">
+              {{ selected.logoInitial }}
+            </div>
+          </div>
+          <p class="gph-hero-name">{{ selected.displayName }}</p>
+          <p class="gph-hero-price">
+            <span class="gph-hero-price-amt">{{ formatMoney(selected.priceMonthly) }} €</span>
+            <span class="gph-hero-price-suf"> al mes</span>
+          </p>
+          <span class="gph-pill-neutral" *ngIf="selected.renewalTag && selected.status !== 'pagos-bloqueados'">{{
+            selected.renewalTag
+          }}</span>
+          <span
+            class="gph-tag gph-tag-lg"
+            *ngIf="!selected.renewalTag || selected.status === 'pagos-bloqueados'"
+            [ngClass]="statusClass(selected.status)"
+            >{{ statusLabel(selected.status) }}</span
+          >
+        </div>
+
+        <div class="gph-actions gph-actions-ref">
+          <button
+            *ngIf="selected.status !== 'pagos-bloqueados'"
+            type="button"
+            class="gph-act"
+            (click)="startBloquear()"
+          >
+            <span class="gph-act-ring"><i data-lucide="pause-circle" class="gph-act-svg"></i></span>
+            <span>Bloquear pagos futuros</span>
+          </button>
+          <button
+            type="button"
+            class="gph-act"
+            *ngIf="selected.status !== 'pagos-bloqueados'"
+            (click)="openGestionarPartner()"
+          >
+            <span class="gph-act-ring"><i data-lucide="external-link" class="gph-act-svg"></i></span>
+            <span>Gestionar suscripción</span>
+          </button>
+          <button type="button" class="gph-act">
+            <span class="gph-act-ring"><i data-lucide="share-2" class="gph-act-svg"></i></span>
+            <span>Compartir detalle</span>
+          </button>
+        </div>
+
+        <div class="gph-info-card gph-info-card-ref">
+          <h3 class="gph-info-title">Detalle del movimiento</h3>
+          <div class="gph-info-row">
+            <span class="gph-k">Concepto</span><span class="gph-v">{{ selected.concepto }}</span>
+          </div>
+          <div class="gph-info-row">
+            <span class="gph-k">Tarifa mensual</span><span class="gph-v">{{ formatMoney(selected.priceMonthly) }} €</span>
+          </div>
+          <div class="gph-info-row">
+            <span class="gph-k">Tarjeta asociada</span><span class="gph-v">{{ selected.tarjetaMasked }}</span>
+          </div>
+          <div class="gph-info-row">
+            <span class="gph-k">Fecha inicio</span><span class="gph-v">{{ selected.fechaInicio }}</span>
+          </div>
+          <div class="gph-info-row">
+            <span class="gph-k">Fecha de contratación</span><span class="gph-v">{{ selected.fechaContratacion }}</span>
+          </div>
+          <div class="gph-info-row">
+            <span class="gph-k">Fecha de próxima renovación</span><span class="gph-v">{{ selected.proximaCobro }}</span>
+          </div>
+          <div class="gph-info-row" *ngIf="selected.fechaBloqueo">
+            <span class="gph-k">Fecha de bloqueo</span><span class="gph-v">{{ selected.fechaBloqueo }}</span>
+          </div>
+        </div>
+
+        <p class="gph-detail-foot gph-detail-foot-ref" *ngIf="selected.footerHint && selected.status !== 'pagos-bloqueados'">
+          {{ selected.footerHint }}
+        </p>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Redirección al partner -->
+  <ng-container *ngIf="view === 'modalRedirigir' && selected">
+    <div class="gph-fullscreen gph-redir-sheet">
+      <header class="gph-redir-head">
+        <span class="gph-redir-title">Gestionar pagos</span>
+        <button type="button" class="gph-redir-close" (click)="onModalRedirigirAhoraNo()" aria-label="Cerrar">
+          <i data-lucide="x" class="gph-ic"></i>
+        </button>
+      </header>
+      <div class="gph-redir-inner">
+        <div class="gph-laptop-wrap">
+          <img
+            src="assets/gph-redir-laptop-rich.png"
+            alt=""
+            width="120"
+            height="120"
+            class="gph-laptop-img"
+          />
+        </div>
+        <h2 class="gph-redir-h2">
+          Te vamos a redirigir a <strong>{{ partnerLabel(selected.partnerHost) }}</strong>
+        </h2>
+        <p class="gph-redir-txt">
+          Vas a salir de la aplicación de Banco Sabadell para revisar un pago recurrente.
+        </p>
+        <button type="button" class="gph-btn-primary" (click)="onSalirAppAbrirPartner()">
+          Salir de la App y abrir {{ partnerLabel(selected.partnerHost) }}
+        </button>
+        <button type="button" class="gph-btn-ghost" (click)="onModalRedirigirAhoraNo()">Ahora no</button>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Simulación web del partner -->
+  <ng-container *ngIf="view === 'partnerWeb' && selected">
+    <div class="gph-fullscreen gph-fake-browser">
+      <div class="gph-browser-chrome">
+        <span class="gph-browser-url">
+          <i data-lucide="lock" class="gph-lock-ic"></i>
+          {{ selected.partnerHost }}
+        </span>
+      </div>
+      <div class="gph-partner-mock" [attr.data-brand]="selected.merchant">
+        <div class="gph-partner-top">
+          <img
+            *ngIf="selected.logoAsset"
+            [src]="selected.logoAsset"
+            alt=""
+            class="gph-partner-logo-img"
+            width="32"
+            height="32"
+          />
+          <span *ngIf="!selected.logoAsset" class="gph-partner-logo" [style.background]="selected.logoColor">{{
+            selected.logoInitial
+          }}</span>
+          <button type="button" class="gph-partner-close" aria-label="Cerrar">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div class="gph-partner-banner">
+          <i data-lucide="send" class="gph-banner-ic"></i>
+          <p>
+            Tienes varias opciones: cambiar de plan, gestionar método de pago o cancelar la suscripción desde el sitio
+            del partner.
+          </p>
+        </div>
+        <div class="gph-partner-card">
+          <p class="gph-pc-label">Cuenta</p>
+          <p class="gph-pc-plan">{{ selected.displayName }}</p>
+          <p class="gph-pc-sub">Próximo pago: {{ selected.proximaCobro }}</p>
+        </div>
+      </div>
+      <div class="gph-partner-footer">
+        <button type="button" class="gph-btn-primary gph-btn-wide" (click)="onVolverDesdePartnerWeb()">
+          Volver a Banco Sabadell
+        </button>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Tras volver: sincronizar cancelación -->
+  <ng-container *ngIf="view === 'confirmarCancelacion' && selected">
+    <div class="gph-fullscreen gph-confirm-full">
+      <header class="gph-header gph-header-nav">
+        <button type="button" class="gph-back" (click)="onCancelarSincronizacion()" aria-label="Volver">
+          <i data-lucide="arrow-left" class="gph-ic"></i>
+        </button>
+        <h1 class="gph-title gph-title-abs">Actualizar listado</h1>
+        <div class="gph-header-util" aria-hidden="true"></div>
+      </header>
+      <div class="gph-confirm-block">
+        <h2 class="gph-confirm-h2">¿Has cancelado en {{ partnerLabel(selected.partnerHost) }}?</h2>
+        <p class="gph-confirm-p">
+          Si has completado la baja en el sitio del partner, marca la suscripción como cancelada para que aparezca en
+          la pestaña Canceladas.
+        </p>
+        <button type="button" class="gph-btn-primary" (click)="confirmarCancelacionEnApp()">
+          Sí, marcar como cancelada
+        </button>
+        <button type="button" class="gph-btn-ghost" (click)="onCancelarSincronizacion()">No, volver al detalle</button>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Bloquear pagos: confirmación + modal firma sobre la misma pantalla -->
+  <ng-container *ngIf="(view === 'bloquear1' || view === 'bloquear2') && selected">
+    <div class="gph-fullscreen gph-bloquear-screen">
+      <header class="gph-bloquear-top">
+        <span class="gph-bloquear-top-spacer" aria-hidden="true"></span>
+        <button type="button" class="gph-bloquear-x" (click)="onMantenerPagos()" aria-label="Cerrar">
+          <i data-lucide="x" class="gph-bloquear-x-ic"></i>
+        </button>
+      </header>
+      <div class="gph-bloquear-body">
+        <div class="gph-bloquear-logo-wrap">
+          <img
+            *ngIf="selected.logoAsset"
+            [src]="selected.logoAsset"
+            alt=""
+            class="gph-bloquear-logo"
+            width="88"
+            height="88"
+          />
+          <div *ngIf="!selected.logoAsset" class="gph-bloquear-logo-fallback" [style.background]="selected.logoColor">
+            {{ selected.logoInitial }}
+          </div>
+        </div>
+        <h2 class="gph-bloquear-title">Vas a bloquear los pagos con {{ selected.displayName }}</h2>
+        <p class="gph-bloquear-p">
+          Desde ahora, rechazaremos todos los pagos con tarjeta a este proveedor.
+        </p>
+        <p class="gph-bloquear-p">
+          Podrás cambiarlo cuando quieras desde las opciones de tarjeta, en la sección de Pagos Bloqueados.
+        </p>
+        <div class="gph-bloquear-actions">
+          <button type="button" class="gph-btn-primary" (click)="onBloquearConfirm()">Bloquear pagos</button>
+          <button type="button" class="gph-btn-outline-blue" (click)="onMantenerPagos()">Mantener pagos</button>
+        </div>
+      </div>
+    </div>
+
+    <div
+      *ngIf="view === 'bloquear2'"
+      class="gph-modal-overlay gph-modal-overlay--firma"
+      (click)="onFirmaBackdropClick($event)"
+    >
+      <div class="gph-modal-sheet gph-modal-sheet-firma" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+        <div class="gph-modal-firma-head">
+          <div class="gph-modal-handle" aria-hidden="true"></div>
+          <button type="button" class="gph-modal-cancel" (click)="onFirmaCancel()">Cancelar</button>
+        </div>
+        <div class="gph-modal-icon gph-modal-icon--firma">
+          <img [src]="firmaCandadoAsset" alt="" width="80" height="80" class="gph-modal-firma-img" />
+        </div>
+        <h2 class="gph-modal-title">Esta acción necesita firma segura</h2>
+        <p class="gph-modal-txt">Necesitamos asegurarnos que tú eres tú</p>
+        <button type="button" class="gph-btn-primary" (click)="onContinuarFirmar()">Continuar para firmar</button>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-container *ngIf="view === 'bloquear3' && selected">
+    <div class="gph-fullscreen gph-success gph-success--result">
+      <div class="gph-success-main">
+        <div class="gph-success-badge" aria-hidden="true">
+          <i data-lucide="check" class="gph-success-check-ic"></i>
+        </div>
+        <h2 class="gph-success-title">Has bloqueado los pagos con {{ selected.displayName }}</h2>
+        <p class="gph-success-txt">
+          Recuerda que puedes cambiarlo cuando quieras desde las opciones de tarjeta, en la sección de Pagos Bloqueados.
+        </p>
+      </div>
+      <div class="gph-success-footer">
+        <button type="button" class="gph-btn-primary" (click)="onCerrarExito()">Cerrar</button>
+        <a href="#" class="gph-help-link gph-help-link--row" (click)="$event.preventDefault()">
+          <i data-lucide="headphones" class="gph-help-ic"></i>
+          <span>¿Necesitas ayuda?</span>
+        </a>
+      </div>
+    </div>
+  </ng-container>
+</div>

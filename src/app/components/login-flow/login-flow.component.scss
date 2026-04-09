@@ -1,0 +1,527 @@
+$lf-blue: #006dff;
+
+:host {
+  display: block;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+
+.lf-root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Marketing: altura acotada al viewport; scroll solo en copy+hero; panel Acceder fijo abajo */
+.lf-root.lf-marketing-root {
+  min-height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+}
+
+.lf-statusbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.4rem 1.25rem 0.2rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #111827;
+  background: #fff;
+  flex-shrink: 0;
+}
+
+.lf-status-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.lf-sb-ic {
+  width: 1rem;
+  height: 1rem;
+  stroke-width: 2;
+  color: #111827;
+}
+
+.lf-topbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0.35rem 1rem 0.5rem;
+  flex-shrink: 0;
+}
+
+.lf-top-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lf-ghost-ic {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  background: transparent;
+  color: $lf-blue;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.lf-ic {
+  width: 1.375rem;
+  height: 1.375rem;
+  stroke-width: 1.5;
+}
+
+.lf-marketing-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  width: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Panel inferior: Acceder siempre visible; sticky refuerza si el contenedor padre hace scroll */
+.lf-marketing-sticky-panel {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  flex-shrink: 0;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem 1rem;
+  padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
+  background: #ffffff;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 -6px 28px rgba(15, 23, 42, 0.08);
+}
+
+.lf-marketing-copy {
+  padding: 0.75rem 1.25rem 1rem;
+  text-align: left;
+  align-self: stretch;
+}
+
+/* Más aire vertical en pantallas estrechas (móvil) */
+@media (max-width: 639px) {
+  .lf-marketing-copy {
+    padding: 1.125rem 1.25rem 1.625rem;
+    min-height: 12.5rem;
+    box-sizing: border-box;
+  }
+}
+
+.lf-headline {
+  font-size: clamp(1.375rem, 4.2vw, 1.75rem);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 0 0 1.25rem;
+  max-width: 22rem;
+}
+
+.lf-headline-black {
+  color: #111827;
+  font-weight: 800;
+}
+
+.lf-headline-blue {
+  color: $lf-blue;
+  font-weight: 800;
+}
+
+.lf-btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.65rem 1.5rem;
+  border-radius: 9999px;
+  border: 1px solid $lf-blue;
+  background: #fff;
+  color: $lf-blue;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lf-btn-outline:hover {
+  background: rgba(0, 109, 255, 0.06);
+}
+
+.lf-hero-stage {
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 12rem;
+  overflow: hidden;
+  padding: 0 0.5rem;
+  background: #fcfbfb;
+}
+
+/* Imagen compuesta (figura + círculo azul) en assets/login-marketing-hero.png */
+.lf-hero-img {
+  display: block;
+  width: min(100%, 20rem);
+  height: auto;
+  max-height: min(48vh, 32rem);
+  object-fit: contain;
+  object-position: bottom center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.lf-btn-primary-full {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 1rem 1.25rem;
+  border: none;
+  border-radius: 9999px;
+  background: $lf-blue;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  box-shadow: 0 10px 28px rgba(0, 109, 255, 0.38);
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Password — referencia login Sabadell */
+.lf-password {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.lf-password .lf-statusbar {
+  padding-top: 0.35rem;
+}
+
+.lf-pw-header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0.35rem 1rem 0.25rem;
+  flex-shrink: 0;
+}
+
+.lf-pw-header-spacer {
+  flex: 1;
+}
+
+.lf-top-actions--outlined {
+  gap: 0.65rem;
+}
+
+.lf-ghost-ic--ring {
+  border: 1.5px solid $lf-blue;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.lf-pw-brand {
+  display: flex;
+  justify-content: center;
+  padding: 0.35rem 1rem 0.5rem;
+}
+
+.lf-pw-logo {
+  height: 32px;
+  width: auto;
+  object-fit: contain;
+}
+
+.lf-pw-body {
+  flex: 1;
+  padding: 1.25rem 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-height: 0;
+}
+
+.lf-avatar {
+  width: 4.25rem;
+  height: 4.25rem;
+  border-radius: 50%;
+  background: #f3f4f6;
+  border: 1px solid #d1d5db;
+  color: #4b5563;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.875rem;
+}
+
+.lf-greeting {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+}
+
+.lf-profile-line {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  margin: 0.35rem 0 0;
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+.lf-profile-change-wrap {
+  margin: 0.35rem 0 1.75rem;
+}
+
+.lf-strong {
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.lf-link {
+  color: $lf-blue;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9375rem;
+}
+
+.lf-form {
+  width: 100%;
+  max-width: 360px;
+  text-align: left;
+}
+
+.lf-input-wrap {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  padding: 0 0.5rem 0 0;
+  background: #fff;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.lf-input-main {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
+.lf-float-label {
+  position: absolute;
+  left: 0.9rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1rem;
+  font-weight: 400;
+  color: #9ca3af;
+  pointer-events: none;
+  transition:
+    top 0.2s ease,
+    transform 0.2s ease,
+    font-size 0.2s ease,
+    color 0.2s ease;
+  transform-origin: left center;
+}
+
+.lf-input-wrap--float .lf-float-label {
+  top: 0.45rem;
+  transform: none;
+  font-size: 0.6875rem;
+  color: #9ca3af;
+}
+
+.lf-input-focus {
+  border-color: #006dff;
+  box-shadow: 0 0 0 3px rgba(0, 109, 255, 0.1);
+}
+
+.lf-input {
+  width: 100%;
+  border: none;
+  padding: 0.95rem 0 0.65rem 0.9rem;
+  font-size: 1rem;
+  outline: none;
+  min-width: 0;
+  background: transparent;
+  color: #111827;
+}
+
+.lf-input-wrap:not(.lf-input-wrap--float) .lf-input {
+  padding-top: 0.95rem;
+  padding-bottom: 0.95rem;
+}
+
+.lf-input-wrap--float .lf-input {
+  padding-top: 1.2rem;
+  padding-bottom: 0.55rem;
+}
+
+.lf-eye-btn {
+  border: none;
+  background: none;
+  padding: 0.35rem 0.65rem 0.35rem 0.25rem;
+  align-self: center;
+  color: $lf-blue;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: color 0.15s ease;
+}
+
+.lf-eye-btn--dark {
+  color: #111827;
+}
+
+.lf-eye-ic {
+  width: 1.375rem;
+  height: 1.375rem;
+  stroke-width: 1.75;
+}
+
+.lf-error {
+  font-size: 0.8125rem;
+  color: #b91c1c;
+  margin-top: 0.5rem;
+}
+
+/* Entrar: desactivado azul desaturado; activo azul intenso (mock 188–190) */
+.lf-enter-btn {
+  width: 100%;
+  margin-top: 1.35rem;
+  padding: 0.95rem 1.25rem;
+  border: none;
+  border-radius: 9999px;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  background: #d4e7fd;
+  color: #fff;
+  cursor: not-allowed;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.lf-enter-active {
+  background: $lf-blue;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(0, 109, 255, 0.35);
+}
+
+.lf-forgot {
+  margin-top: 1.5rem;
+  font-size: 0.875rem;
+  color: $lf-blue;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.lf-pw-footer {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 2.5rem;
+  padding: 1.25rem 1.5rem calc(0.5rem + env(safe-area-inset-bottom));
+  margin-top: auto;
+}
+
+.lf-footer-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 6.5rem;
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.lf-footer-circle {
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 50%;
+  border: 1.5px solid $lf-blue;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $lf-blue;
+  box-sizing: border-box;
+}
+
+.lf-footer-circle--sos {
+  font-family: inherit;
+}
+
+.lf-footer-sos {
+  font-size: 0.6875rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: $lf-blue;
+}
+
+.lf-footer-ic {
+  width: 1.35rem;
+  height: 1.35rem;
+  stroke-width: 2;
+}
+
+.lf-footer-lbl {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  line-height: 1.25;
+  color: #111827;
+  text-align: center;
+}
+
+.lf-home-indicator {
+  width: 8.5rem;
+  height: 0.3rem;
+  border-radius: 9999px;
+  background: #000;
+  margin: 0 auto 0.35rem;
+  opacity: 0.35;
+}
+
+.lf-fullblue {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #006dff;
+}
+
+.lf-branding {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.lf-brand-logo {
+  max-width: 200px;
+  height: auto;
+  filter: brightness(0) invert(1);
+}

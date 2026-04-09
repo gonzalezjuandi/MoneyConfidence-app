@@ -20,12 +20,95 @@
       </div>
     </header>
 
-    <!-- Main Balance -->
-    <div class="px-6 pt-2 pb-8 text-center">
-      <p class="text-sm text-gray-500 font-normal">Saldo total</p>
-      <h1 class="text-4xl text-gray-900 font-normal tracking-tight mt-1">
-        {{ saldoTotalFormatted }} €
-      </h1>
+    <!-- Saldo / próximos: swipe solo en el hero; la píldora en vista saldo es un botón a Próximos pagos -->
+    <div class="px-6 pt-2 pb-6 text-center">
+      <div class="balance-swipe-inner">
+        <div
+          class="balance-swipe-zone"
+          (pointerdown)="onBalanceSwipePointerDown($event)"
+          (pointermove)="onBalanceSwipePointerMove($event)"
+          (pointerup)="onBalanceSwipePointerUp($event)"
+          (pointercancel)="onBalanceSwipePointerCancel($event)"
+        >
+          <!-- Misma rejilla tipográfica en ambas vistas para evitar saltos al hacer swipe -->
+          <div class="balance-hero-stage">
+            <ng-container *ngIf="posicionCardView === 'total'">
+              <p class="balance-hero-label">Tu saldo total</p>
+              <h1 class="balance-hero-numeric text-4xl text-gray-900 font-normal tracking-tight">
+                {{ saldoTotalFormatted }} €
+              </h1>
+              <div class="balance-hero-sub">
+                <p class="balance-hero-ahorrado">
+                  Ahorrado/invertido:
+                  <span class="balance-hero-ahorrado-amt">{{ ahorradoInvertidoFormatted }} €</span>
+                </p>
+              </div>
+            </ng-container>
+            <ng-container *ngIf="posicionCardView === 'upcoming'">
+              <p class="balance-hero-label">Próximos pagos</p>
+              <h1 class="balance-hero-numeric text-4xl text-gray-900 font-normal tracking-tight">
+                {{ upcomingTotalFormatted }} €
+              </h1>
+              <div class="balance-hero-sub balance-hero-sub--link" (pointerdown)="$event.stopPropagation()">
+                <button type="button" class="balance-manage-link" (click)="onGestionarGastos()">
+                  Gestionar gastos
+                </button>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- Vista saldo: comercios + importe + flecha azul; clic → Próximos pagos -->
+        <button
+          *ngIf="posicionCardView === 'total'"
+          type="button"
+          class="balance-entry-pill balance-entry-pill--total balance-entry-pill--static"
+          (click)="onGestionarGastos()"
+          aria-label="Ir a Próximos pagos"
+        >
+          <div class="balance-pill-merchants" aria-hidden="true">
+            <span *ngFor="let it of pillMerchantPreview; let i = index" class="balance-pill-merchant" [style.zIndex]="10 - i">
+              <app-upcoming-payment-brand-logo *ngIf="it.logoVariant" [variant]="it.logoVariant" size="sm"></app-upcoming-payment-brand-logo>
+            </span>
+          </div>
+          <div class="balance-pill-body balance-pill-body--total">
+            <span class="balance-pill-text balance-pill-text--with-amount">
+              Próximos pagos:
+              <span class="balance-pill-amount">{{ upcomingTotalFormatted }} €</span>
+            </span>
+          </div>
+          <span class="balance-pill-next" aria-hidden="true">
+            <i data-lucide="chevron-right" class="balance-pill-next-icon"></i>
+          </span>
+        </button>
+
+        <!-- Vista próximos pagos: vuelta al saldo (swipe en hero o esta píldora) -->
+        <div
+          *ngIf="posicionCardView === 'upcoming'"
+          class="balance-entry-pill balance-entry-pill--upcoming"
+          role="button"
+          tabindex="0"
+          aria-label="Ver saldo total"
+          (keydown.enter)="onToggleBalanceCard()"
+          (keydown.space)="$event.preventDefault(); onToggleBalanceCard()"
+          (click)="onToggleBalanceCard()"
+        >
+          <div class="balance-pill-edge balance-pill-edge--lead"></div>
+          <div class="balance-pill-body">
+            <span class="balance-pill-text balance-pill-text--muted">Tu saldo total: {{ saldoTotalFormatted }} €</span>
+          </div>
+          <div class="balance-pill-edge balance-pill-edge--trail">
+            <span
+              class="balance-pill-chevron"
+              [class.balance-pill-chevron--dragging]="pillPointerActive"
+              [style.transform]="'translateX(' + pillDragOffset + 'px)'"
+              aria-hidden="true"
+            >
+              <i data-lucide="chevron-left" class="balance-pill-chevron-icon"></i>
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Quick Actions -->
@@ -188,11 +271,11 @@
           <div class="tarjeta-progress-info">
             <div class="tarjeta-info-item">
               <span class="tarjeta-info-label">Disponible</span>
-              <p class="tarjeta-info-value">2.000,00 €</p>
+              <p class="tarjeta-info-value">350,00 €</p>
             </div>
             <div class="tarjeta-info-item tarjeta-info-item-right">
               <span class="tarjeta-info-label">Gastado</span>
-              <p class="tarjeta-info-value tarjeta-info-value-secondary">200,00 €</p>
+              <p class="tarjeta-info-value tarjeta-info-value-secondary">50,00 €</p>
             </div>
           </div>
         </div>
@@ -204,47 +287,6 @@
             <p class="text-sm text-gray-900">Cashback en tus compras diarias.</p>
           </div>
           <i data-lucide="chevron-right" class="w-4 h-4 text-gray-900"></i>
-        </div>
-      </div>
-    </div>
-
-    <!-- Financing Section -->
-    <div class="px-6 mt-8">
-      <h3 class="text-sm text-gray-500 mb-1">Financiación</h3>
-      <h2 class="text-lg font-medium text-gray-900 mb-3">Hipotecas</h2>
-
-      <div class="bg-white rounded-2xl p-5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-gray-100 mb-4">
-        <div class="flex items-center gap-2 mb-4">
-          <i data-lucide="users" class="w-3.5 h-3.5 text-gray-400"></i>
-          <span class="text-sm font-normal text-gray-900">Hipoteca Fija Bonificada</span>
-        </div>
-        <div class="flex justify-between items-end">
-          <div>
-            <span class="text-xs text-gray-500 block mb-1">Pendiente</span>
-            <span class="text-lg font-medium text-gray-900 tracking-tight">102.000,00 €</span>
-          </div>
-          <div class="text-right">
-            <span class="text-xs text-gray-500 block mb-1">Cuota</span>
-            <span class="text-sm text-gray-900">1250,00 € /mes</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Tu Potencial Financiero Entry Point -->
-      <div class="simulator-banner" (click)="onIrAPotencialFinanciero()">
-        <div class="simulator-image">
-          <img src="https://images.unsplash.com/photo-1554224155-6726b3ff858f?q=80&w=200&auto=format&fit=crop" alt="Potencial Financiero">
-        </div>
-        <div class="simulator-content">
-          <h4 class="text-sm font-semibold text-gray-900 mb-1">Conoce tu potencial financiero</h4>
-          <p class="text-xs text-gray-500 mb-3">Calcula cuánto podrías financiar hoy o en el futuro, según tus datos y perfil de riesgo.</p>
-          <button 
-            type="button"
-            class="text-xs text-primary-blue font-medium border border-primary-blue rounded-full px-4 py-1.5 hover:bg-primary-blue-light transition-colors w-full"
-            (click)="onIrAPotencialFinanciero(); $event.stopPropagation()"
-          >
-            Comenzar
-          </button>
         </div>
       </div>
     </div>
@@ -425,12 +467,69 @@
 
     <!-- Tabs -->
     <div class="accounts-tabs">
-      <button class="accounts-tab accounts-tab-active">Todos</button>
-      <button class="accounts-tab">Próximos</button>
+      <button
+        type="button"
+        class="accounts-tab"
+        [class.accounts-tab-active]="accountsMovementTab === 'todos'"
+        (click)="setAccountsMovementTab('todos')"
+      >
+        Todos
+      </button>
+      <button
+        type="button"
+        class="accounts-tab"
+        [class.accounts-tab-active]="accountsMovementTab === 'proximos'"
+        (click)="setAccountsMovementTab('proximos')"
+      >
+        Próximos
+      </button>
     </div>
 
-    <!-- Lista de movimientos -->
-    <div class="accounts-movements">
+    <!-- Próximos movimientos (misma fuente que Próximos pagos) -->
+    <div class="accounts-movements accounts-movements--upcoming" *ngIf="accountsMovementTab === 'proximos'">
+      <div class="acc-up-head">
+        <span class="acc-up-title">Previsión para los próximos 30 días</span>
+        <div class="acc-up-tools">
+          <button type="button" class="acc-up-tool" aria-label="Información">
+            <i data-lucide="info" class="acc-up-ic"></i>
+          </button>
+          <button type="button" class="acc-up-tool" aria-label="Buscar">
+            <i data-lucide="search" class="acc-up-ic"></i>
+          </button>
+        </div>
+      </div>
+      <p class="acc-up-disclaimer">
+        <i data-lucide="info" class="acc-up-disclaimer-ic"></i>
+        Los importes y fechas son orientativos y podrían variar o cancelarse.
+      </p>
+      <ul class="acc-up-list">
+        <li
+          *ngFor="let it of upcomingItemsForSelectedAccount"
+          class="acc-up-row"
+          (click)="openUpcomingPaymentDetail(it.id)"
+        >
+          <app-upcoming-payment-brand-logo
+            *ngIf="it.logoVariant"
+            [variant]="it.logoVariant"
+            size="md"
+          ></app-upcoming-payment-brand-logo>
+          <div *ngIf="!it.logoVariant" class="acc-up-logo" [style.background]="it.logoBg">{{ it.logo }}</div>
+          <div class="acc-up-main">
+            <p class="acc-up-name">{{ it.name }}</p>
+            <p class="acc-up-detail" *ngIf="it.detail">{{ it.detail }}</p>
+            <p class="acc-up-sub">{{ it.schedule }}</p>
+          </div>
+          <div class="acc-up-right">
+            <span class="acc-up-amt">-{{ formatUpcomingAmount(it.amount) }} €</span>
+            <span class="acc-up-tag">{{ it.label }}</span>
+            <span class="acc-up-account">{{ it.accountMask }}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Lista de movimientos (histórico) -->
+    <div class="accounts-movements" *ngIf="accountsMovementTab === 'todos'">
       <p class="accounts-section-title">Esta semana</p>
 
       <!-- Movimientos cuenta principal -->
@@ -464,7 +563,7 @@
           </div>
           <div class="movement-amount-block">
             <p class="movement-amount movement-amount-negative">-49,00 €</p>
-            <p class="movement-balance">35.000,00 €</p>
+            <p class="movement-balance">320,00 €</p>
           </div>
         </div>
 
@@ -477,8 +576,8 @@
             <p class="movement-date">Martes 12 Dic</p>
           </div>
           <div class="movement-amount-block">
-            <p class="movement-amount movement-amount-positive">+1.200,00 €</p>
-            <p class="movement-balance">36.200,00 €</p>
+            <p class="movement-amount movement-amount-positive">+200,00 €</p>
+            <p class="movement-balance">369,00 €</p>
           </div>
         </div>
 
@@ -491,25 +590,25 @@
             <p class="movement-date">Lunes 11 Dic</p>
           </div>
           <div class="movement-amount-block">
-            <p class="movement-amount movement-amount-negative">-48,50 €</p>
-            <p class="movement-balance">35.950,00 €</p>
+            <p class="movement-amount movement-amount-negative">-30,00 €</p>
+            <p class="movement-balance">169,00 €</p>
           </div>
         </div>
       </ng-container>
 
-      <!-- Movimientos cuenta familiar -->
+      <!-- Movimientos cuenta familiar (más reciente arriba; saldo actual 80,00 €) -->
       <ng-container *ngIf="selectedAccount === 'familiar'">
         <div class="movement-row">
-          <div class="movement-icon movement-icon-income">
-            <i data-lucide="users" class="w-4 h-4"></i>
+          <div class="movement-icon">
+            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
           </div>
           <div class="movement-main">
-            <p class="movement-title">Transferencia conjunta ahorro</p>
+            <p class="movement-title">Compra - Tienda hogar</p>
             <p class="movement-date">Martes 12 Dic</p>
           </div>
           <div class="movement-amount-block">
-            <p class="movement-amount movement-amount-positive">+300,00 €</p>
-            <p class="movement-balance">5.800,00 €</p>
+            <p class="movement-amount movement-amount-negative">-15,00 €</p>
+            <p class="movement-balance">80,00 €</p>
           </div>
         </div>
 
@@ -522,22 +621,22 @@
             <p class="movement-date">Lunes 11 Dic</p>
           </div>
           <div class="movement-amount-block">
-            <p class="movement-amount movement-amount-negative">-45,00 €</p>
-            <p class="movement-balance">5.500,00 €</p>
+            <p class="movement-amount movement-amount-negative">-25,00 €</p>
+            <p class="movement-balance">95,00 €</p>
           </div>
         </div>
 
         <div class="movement-row">
-          <div class="movement-icon">
-            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+          <div class="movement-icon movement-icon-income">
+            <i data-lucide="users" class="w-4 h-4"></i>
           </div>
           <div class="movement-main">
-            <p class="movement-title">Compra - Tienda hogar</p>
+            <p class="movement-title">Transferencia conjunta ahorro</p>
             <p class="movement-date">Domingo 10 Dic</p>
           </div>
           <div class="movement-amount-block">
-            <p class="movement-amount movement-amount-negative">-120,00 €</p>
-            <p class="movement-balance">5.200,00 €</p>
+            <p class="movement-amount movement-amount-positive">+60,00 €</p>
+            <p class="movement-balance">120,00 €</p>
           </div>
         </div>
       </ng-container>

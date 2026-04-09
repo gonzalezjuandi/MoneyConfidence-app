@@ -43,4 +43,8 @@ export class WizardComponent implements OnInit {
   goToStep(step: number): void {
     this.wizardState.setCurrentStep(step);
   }
+
+  goToGestionarPagos(): void {
+    this.wizardState.goToGestionarPagosMenu();
+  }
 }

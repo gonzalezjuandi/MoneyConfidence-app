@@ -1,0 +1,86 @@
+import {
+  Component,
+  EventEmitter,
+  Output,
+  OnDestroy,
+  AfterViewInit,
+  ChangeDetectorRef
+} from '@angular/core';
+
+declare var lucide: any;
+
+@Component({
+  selector: 'app-login-flow',
+  templateUrl: './login-flow.component.html',
+  styleUrls: ['./login-flow.component.scss']
+})
+export class LoginFlowComponent implements AfterViewInit, OnDestroy {
+  @Output() loggedIn = new EventEmitter<void>();
+
+  phase: 'marketing' | 'password' | 'transition' | 'branding' = 'marketing';
+
+  password = '';
+  showPassword = false;
+  errorMessage = '';
+  passwordFocused = false;
+
+  private timers: ReturnType<typeof setTimeout>[] = [];
+
+  constructor(private cdr: ChangeDetectorRef) {}
+
+  ngAfterViewInit(): void {
+    this.icons();
+  }
+
+  ngOnDestroy(): void {
+    this.timers.forEach(t => clearTimeout(t));
+  }
+
+  onAcceder(): void {
+    this.phase = 'password';
+    this.password = '';
+    this.errorMessage = '';
+    this.cdr.markForCheck();
+    setTimeout(() => this.icons(), 50);
+  }
+
+  onTogglePassword(): void {
+    this.showPassword = !this.showPassword;
+    this.cdr.markForCheck();
+    this.timers.push(setTimeout(() => this.icons(), 50));
+  }
+
+  /** Demo: entrar sin validar contraseña; el botón permanece habilitado */
+  get canEnter(): boolean {
+    return true;
+  }
+
+  onSubmit(): void {
+    this.errorMessage = '';
+    this.phase = 'transition';
+    this.cdr.markForCheck();
+    this.timers.push(
+      setTimeout(() => {
+        this.phase = 'branding';
+        this.cdr.markForCheck();
+      }, 450)
+    );
+    this.timers.push(
+      setTimeout(() => {
+        this.loggedIn.emit();
+      }, 450 + 1400)
+    );
+  }
+
+  private icons(): void {
+    if (typeof lucide !== 'undefined') {
+      setTimeout(() => {
+        try {
+          lucide.createIcons();
+        } catch {
+          /* noop */
+        }
+      }, 40);
+    }
+  }
+}

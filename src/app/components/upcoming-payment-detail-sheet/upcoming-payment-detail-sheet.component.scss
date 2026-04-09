@@ -1,0 +1,186 @@
+.upd-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.upd-wrap {
+  position: fixed;
+  inset: 0;
+  z-index: 201;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.upd-sheet {
+  pointer-events: auto;
+  width: 100%;
+  max-width: 100%;
+  max-height: min(92vh, 720px);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 1.25rem 1.25rem 0 0;
+  padding: 0.75rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.12);
+}
+
+.upd-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.upd-close {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: none;
+  background: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #006dff;
+}
+
+.upd-close-ic {
+  width: 1.5rem;
+  height: 1.5rem;
+  stroke-width: 2;
+}
+
+.upd-title {
+  flex: 1;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.upd-head-spacer {
+  width: 2.5rem;
+}
+
+.upd-hero {
+  text-align: center;
+  padding: 0.5rem 0 1.25rem;
+}
+
+.upd-logo {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  margin: 0 auto 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+app-upcoming-payment-brand-logo.upd-brand-logo {
+  display: block;
+  width: fit-content;
+  margin: 0 auto 0.75rem;
+}
+
+.upd-detail {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: #4b5563;
+  margin: -0.15rem 0 0.5rem;
+  line-height: 1.35;
+}
+
+.upd-name {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.5rem;
+  line-height: 1.35;
+}
+
+.upd-amount {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.02em;
+}
+
+.upd-schedule {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+  margin: 0 0 0.75rem;
+}
+
+.upd-tag {
+  display: inline-block;
+  padding: 0.28rem 0.55rem;
+  border-radius: 0.5rem;
+  background: #f2f2f2;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: #4b5563;
+}
+
+.upd-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 1rem;
+  padding: 1rem 1.1rem;
+  margin-bottom: 1rem;
+}
+
+.upd-card-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 0.75rem;
+}
+
+.upd-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 0.8125rem;
+}
+
+.upd-row:last-child {
+  border-bottom: none;
+}
+
+.upd-k {
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.upd-v {
+  color: #111827;
+  text-align: right;
+}
+
+.upd-foot {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.35rem;
+  font-size: 0.6875rem;
+  color: #9ca3af;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.upd-foot-ic {
+  width: 0.875rem;
+  height: 0.875rem;
+  flex-shrink: 0;
+  margin-top: 0.1rem;
+  stroke-width: 2;
+}

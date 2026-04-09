@@ -1,0 +1,148 @@
+<!-- Login-inmediato (marketing) — referencia extractos / correspondencia -->
+<div class="lf-root lf-marketing-root" *ngIf="phase === 'marketing'">
+  <div class="lf-statusbar" aria-hidden="true">
+    <span class="lf-status-time">9:41</span>
+    <div class="lf-status-icons">
+      <i data-lucide="signal" class="lf-sb-ic"></i>
+      <i data-lucide="wifi" class="lf-sb-ic"></i>
+      <i data-lucide="battery-medium" class="lf-sb-ic"></i>
+    </div>
+  </div>
+
+  <header class="lf-topbar">
+    <div class="lf-top-actions">
+      <button type="button" class="lf-ghost-ic" aria-label="Visibilidad">
+        <i data-lucide="eye" class="lf-ic"></i>
+      </button>
+      <button type="button" class="lf-ghost-ic" aria-label="Ayuda">
+        <i data-lucide="message-circle" class="lf-ic"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="lf-marketing-body">
+    <div class="lf-marketing-copy">
+      <h1 class="lf-headline">
+        <span class="lf-headline-black">Consulta tu correspondencia y </span>
+        <span class="lf-headline-blue">descarga los extractos que desees</span>
+      </h1>
+      <button type="button" class="lf-btn-outline">Consultar</button>
+    </div>
+
+    <div class="lf-hero-stage">
+      <img
+        src="assets/login-marketing-hero.png"
+        alt=""
+        class="lf-hero-img"
+        width="512"
+        height="512"
+        decoding="async"
+      />
+    </div>
+  </div>
+
+  <div class="lf-marketing-sticky-panel">
+    <button type="button" class="lf-btn-primary-full" (click)="onAcceder()">Acceder</button>
+  </div>
+</div>
+
+<!-- Contraseña (Laura) — referencia app Sabadell -->
+<div class="lf-root lf-password" *ngIf="phase === 'password'">
+  <div class="lf-statusbar" aria-hidden="true">
+    <span class="lf-status-time">9:41</span>
+    <div class="lf-status-icons">
+      <i data-lucide="signal" class="lf-sb-ic"></i>
+      <i data-lucide="wifi" class="lf-sb-ic"></i>
+      <i data-lucide="battery-medium" class="lf-sb-ic"></i>
+    </div>
+  </div>
+
+  <header class="lf-pw-header">
+    <div class="lf-pw-header-spacer" aria-hidden="true"></div>
+    <div class="lf-top-actions lf-top-actions--outlined">
+      <button type="button" class="lf-ghost-ic lf-ghost-ic--ring" aria-label="Visibilidad">
+        <i data-lucide="eye" class="lf-ic"></i>
+      </button>
+      <button type="button" class="lf-ghost-ic lf-ghost-ic--ring" aria-label="Chat">
+        <i data-lucide="message-circle" class="lf-ic"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="lf-pw-brand">
+    <img src="assets/sabadell-logo.png" alt="Banco Sabadell" class="lf-pw-logo" />
+  </div>
+
+  <div class="lf-pw-body">
+    <div class="lf-avatar">LA</div>
+    <p class="lf-greeting">Hola, Laura</p>
+    <p class="lf-profile-line">Vas a entrar como <span class="lf-strong">Particular</span></p>
+    <p class="lf-profile-change-wrap">
+      <a href="#" class="lf-link" (click)="$event.preventDefault()">Cambiar</a>
+    </p>
+
+    <form (ngSubmit)="onSubmit()" class="lf-form">
+      <div
+        class="lf-input-wrap"
+        [class.lf-input-wrap--float]="passwordFocused || password.length > 0"
+        [class.lf-input-focus]="passwordFocused"
+      >
+        <div class="lf-input-main">
+          <label for="lf-pass" class="lf-float-label">Contraseña</label>
+          <input
+            id="lf-pass"
+            [type]="showPassword ? 'text' : 'password'"
+            [(ngModel)]="password"
+            name="password"
+            autocomplete="off"
+            class="lf-input"
+            (focus)="passwordFocused = true"
+            (blur)="passwordFocused = false"
+          />
+        </div>
+        <button
+          type="button"
+          class="lf-eye-btn"
+          [class.lf-eye-btn--dark]="password.length > 0"
+          (click)="onTogglePassword()"
+          aria-label="Mostrar u ocultar contraseña"
+        >
+          <i *ngIf="!showPassword" data-lucide="eye" class="lf-eye-ic"></i>
+          <i *ngIf="showPassword" data-lucide="eye-off" class="lf-eye-ic"></i>
+        </button>
+      </div>
+
+      <div class="lf-error" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+      <button type="submit" class="lf-enter-btn" [disabled]="!canEnter" [class.lf-enter-active]="canEnter">
+        Entrar
+      </button>
+    </form>
+
+    <a href="#" class="lf-forgot" (click)="$event.preventDefault()">¿Has olvidado tu contraseña?</a>
+  </div>
+
+  <footer class="lf-pw-footer">
+    <button type="button" class="lf-footer-item">
+      <span class="lf-footer-circle" aria-hidden="true">
+        <i data-lucide="map-pin" class="lf-footer-ic"></i>
+      </span>
+      <span class="lf-footer-lbl">Cajeros y oficinas</span>
+    </button>
+    <button type="button" class="lf-footer-item">
+      <span class="lf-footer-circle lf-footer-circle--sos" aria-hidden="true">
+        <span class="lf-footer-sos">SOS</span>
+      </span>
+      <span class="lf-footer-lbl">Emergencia</span>
+    </button>
+  </footer>
+  <div class="lf-home-indicator" aria-hidden="true"></div>
+</div>
+
+<!-- Transición azul 191 -->
+<div class="lf-fullblue" *ngIf="phase === 'transition'" aria-hidden="true"></div>
+
+<!-- Splash logo 192 -->
+<div class="lf-fullblue lf-branding" *ngIf="phase === 'branding'">
+  <img src="assets/sabadell-logo.png" alt="" class="lf-brand-logo" />
+</div>

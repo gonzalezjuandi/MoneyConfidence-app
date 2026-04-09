@@ -1,6 +1,8 @@
-<div class="wizard-container">
+<div class="wizard-root">
+  <app-upcoming-payment-detail-sheet></app-upcoming-payment-detail-sheet>
+  <div class="wizard-container">
   <!-- Progress Indicator -->
-  <div class="wizard-progress" *ngIf="currentStep > 3 && currentStep <= totalSteps">
+  <div class="wizard-progress" *ngIf="currentStep > 3 && currentStep <= 9">
     <div class="progress-bar">
       <div class="progress-fill" [style.width.%]="((currentStep - 3) / 6) * 100"></div>
     </div>
@@ -12,8 +14,20 @@
   <!-- Step Content -->
   <div class="wizard-content">
     <ng-container [ngSwitch]="currentStep">
-      <!-- Flujo inicial: Posición Global, Contratar, Préstamos -->
-      <app-posicion-global *ngSwitchCase="1" (next)="nextStep()" (goToPotencialFinanciero)="goToStep(4)"></app-posicion-global>
+      <!-- Paso 1: Próximos pagos o Posición global -->
+      <ng-container *ngSwitchCase="1">
+        <ng-container *ngIf="state$ | async as ws">
+          <app-proximos-pagos
+            *ngIf="ws.entryScreen === 'proximos-pagos'"
+            (openGestionarPagos)="goToGestionarPagos()"
+          ></app-proximos-pagos>
+          <app-posicion-global
+            *ngIf="ws.entryScreen !== 'proximos-pagos'"
+            (next)="nextStep()"
+            (goToPotencialFinanciero)="goToStep(4)"
+          ></app-posicion-global>
+        </ng-container>
+      </ng-container>
       <app-contratar *ngSwitchCase="2" (next)="nextStep()" (previous)="previousStep()"></app-contratar>
       <app-prestamos *ngSwitchCase="3" (next)="nextStep()" (previous)="previousStep()"></app-prestamos>
       
@@ -24,6 +38,8 @@
       <app-recomendaciones-productos *ngSwitchCase="7" (next)="nextStep()" (previous)="previousStep()"></app-recomendaciones-productos>
       <app-establecer-meta *ngSwitchCase="8" (next)="nextStep()" (previous)="previousStep()"></app-establecer-meta>
       <app-resumen *ngSwitchCase="9" (previous)="previousStep()"></app-resumen>
+      <app-gestionar-pagos-hub *ngSwitchCase="10" (close)="goToStep(1)"></app-gestionar-pagos-hub>
     </ng-container>
   </div>
+</div>
 </div>

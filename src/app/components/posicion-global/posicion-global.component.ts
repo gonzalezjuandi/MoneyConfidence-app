@@ -1,5 +1,9 @@
 import { Component, EventEmitter, Output, AfterViewInit, OnDestroy, ChangeDetectorRef, OnInit } from '@angular/core';
-import { WizardStateService } from '../../services/wizard-state.service';
+import {
+  WizardStateService,
+  UpcomingPaymentItem,
+  DEFAULT_UPCOMING_PAYMENTS_ITEMS
+} from '../../services/wizard-state.service';
 
 declare var lucide: any;
 
@@ -17,9 +21,12 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
   view: 'dashboard' | 'accounts' = 'dashboard';
   selectedAccount: 'principal' | 'familiar' = 'principal';
 
-  // Saldos base de las cuentas
-  private readonly saldoCuentaPrincipalBase = 35000;
-  private readonly saldoCuentaFamiliarBase = 5800;
+  // Saldos base: 400,00 € total entre cuentas (demo)
+  private readonly saldoCuentaPrincipalBase = 320;
+  private readonly saldoCuentaFamiliarBase = 80;
+
+  /** Ahorro/inversión mostrado en la tarjeta de resumen */
+  readonly ahorradoInvertido = 220;
 
   saldoCuentaPrincipal = this.saldoCuentaPrincipalBase;
   saldoCuentaFamiliar = this.saldoCuentaFamiliarBase;
@@ -29,11 +36,23 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
   showLoanMovement = false;
   lastLoanAmount: number | null = null;
 
+  /** Tarjeta resumen: saldo total vs próximos pagos (entry point) */
+  posicionCardView: 'total' | 'upcoming' = 'total';
+  upcomingPaymentsTotal = 450;
+  /** Alineado con la lista de Próximos pagos (wizard state) */
+  upcomingPaymentsCount = 4;
+  upcomingPaymentsItems: UpcomingPaymentItem[] = [...DEFAULT_UPCOMING_PAYMENTS_ITEMS];
+
+  /** Pestaña movimientos en vista Cuentas */
+  accountsMovementTab: 'todos' | 'proximos' = 'todos';
+
+  /** Saldo total en Inicio: siempre con ,00 */
   get saldoTotalFormatted(): string {
-    return this.saldoTotal.toLocaleString('es-ES', {
+    return new Intl.NumberFormat('es-ES', {
+      useGrouping: true,
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
-    });
+    }).format(this.saldoTotal);
   }
 
   get saldoCuentaPrincipalFormatted(): string {
@@ -50,6 +69,13 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
     });
   }
 
+  get ahorradoInvertidoFormatted(): string {
+    return this.ahorradoInvertido.toLocaleString('es-ES', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
+
   get lastLoanAmountFormatted(): string {
     if (!this.lastLoanAmount) {
       return '0,00';
@@ -59,6 +85,56 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
       maximumFractionDigits: 2
     });
   }
+
+  /** Importe de próximos pagos con signo negativo (p. ej. -450,00) */
+  get upcomingTotalFormatted(): string {
+    const n = -Math.abs(this.upcomingPaymentsTotal);
+    return n.toLocaleString('es-ES', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
+  }
+
+  /** Total como cargo (signo negativo), coherente con la captura de resumen */
+  get upcomingOutflowFormatted(): string {
+    const n = Math.abs(this.upcomingPaymentsTotal);
+    return (
+      '-' +
+      n.toLocaleString('es-ES', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      }) +
+      ' €'
+    );
+  }
+
+  get upcomingPaymentsCountLabel(): string {
+    const c = this.upcomingPaymentsCount;
+    return c === 1 ? '1 pago' : `${c} pagos`;
+  }
+
+  /** Hasta 3 comercios con logo para la píldora “Próximos pagos” en vista saldo */
+  get pillMerchantPreview(): UpcomingPaymentItem[] {
+    return this.upcomingPaymentsItems.filter(it => it.logoVariant).slice(0, 3);
+  }
+
+  /** Próximos movimientos filtrados por cuenta del carrusel */
+  get upcomingItemsForSelectedAccount(): UpcomingPaymentItem[] {
+    return this.upcomingPaymentsItems.filter(it => {
+      const a = it.accounts;
+      if (!a?.length) {
+        return this.selectedAccount === 'principal';
+      }
+      return a.includes(this.selectedAccount);
+    });
+  }
+
+  /** Arrastre horizontal saldo ↔ próximos pagos */
+  pillDragOffset = 0;
+  pillPointerActive = false;
+  private pillDragStartX = 0;
+  private readonly swipeThresholdPx = 48;
+  private readonly tapThresholdPx = 12;
 
   constructor(
     private cdr: ChangeDetectorRef,
@@ -81,7 +157,20 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
 
       this.showLoanMovement = !!state.loanCompleted && !!state.loanAmount;
       this.lastLoanAmount = state.loanAmount ?? null;
+
+      this.posicionCardView = state.posicionGlobalCardView ?? 'total';
+      if (state.upcomingPaymentsTotal != null) {
+        this.upcomingPaymentsTotal = state.upcomingPaymentsTotal;
+      }
+      if (state.upcomingPaymentsCount != null) {
+        this.upcomingPaymentsCount = state.upcomingPaymentsCount;
+      }
+      if (state.upcomingPaymentsItems?.length) {
+        this.upcomingPaymentsItems = [...state.upcomingPaymentsItems];
+      }
+
       this.cdr.markForCheck();
+      setTimeout(() => this.initializeIcons(), 80);
     });
 
     // Si venimos desde la confirmación de préstamo con "Ver ingreso en la cuenta",
@@ -146,6 +235,7 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
 
   onVolverDesdePosicionCuentas(): void {
     this.view = 'dashboard';
+    this.accountsMovementTab = 'todos';
     this.initializeIcons();
     this.cdr.markForCheck();
   }
@@ -199,5 +289,85 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
     // Ir directamente al proceso de préstamo con seguro (onboarding → simulación → documentación → firma)
     this.wizardState.setCurrentStep(3);
     sessionStorage.setItem('from-prestamo-modal', 'true');
+  }
+
+  onToggleBalanceCard(): void {
+    this.wizardState.togglePosicionGlobalCardView();
+  }
+
+  onBalanceSwipePointerDown(event: PointerEvent): void {
+    if (event.button !== 0) {
+      return;
+    }
+    this.pillPointerActive = true;
+    this.pillDragStartX = event.clientX;
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+  }
+
+  onBalanceSwipePointerMove(event: PointerEvent): void {
+    if (!this.pillPointerActive) {
+      return;
+    }
+    const raw = event.clientX - this.pillDragStartX;
+    this.pillDragOffset = Math.max(-72, Math.min(72, raw));
+    this.cdr.markForCheck();
+  }
+
+  onBalanceSwipePointerUp(event: PointerEvent): void {
+    if (!this.pillPointerActive) {
+      return;
+    }
+    const dx = event.clientX - this.pillDragStartX;
+    this.pillPointerActive = false;
+    this.pillDragOffset = 0;
+    try {
+      (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
+    } catch {
+      /* noop */
+    }
+
+    if (Math.abs(dx) < this.tapThresholdPx) {
+      this.wizardState.togglePosicionGlobalCardView();
+    } else if (dx < -this.swipeThresholdPx && this.posicionCardView === 'total') {
+      this.wizardState.setPosicionGlobalCardView('upcoming');
+    } else if (dx > this.swipeThresholdPx && this.posicionCardView === 'upcoming') {
+      this.wizardState.setPosicionGlobalCardView('total');
+    } else if (Math.abs(dx) >= this.swipeThresholdPx) {
+      this.wizardState.togglePosicionGlobalCardView();
+    }
+
+    this.cdr.markForCheck();
+  }
+
+  onBalanceSwipePointerCancel(event: PointerEvent): void {
+    this.pillPointerActive = false;
+    this.pillDragOffset = 0;
+    try {
+      (event.currentTarget as HTMLElement).releasePointerCapture(event.pointerId);
+    } catch {
+      /* noop */
+    }
+    this.cdr.markForCheck();
+  }
+
+  onGestionarGastos(): void {
+    this.wizardState.setEntryScreen('proximos-pagos');
+  }
+
+  setAccountsMovementTab(tab: 'todos' | 'proximos'): void {
+    this.accountsMovementTab = tab;
+    this.cdr.markForCheck();
+    setTimeout(() => this.initializeIcons(), 80);
+  }
+
+  openUpcomingPaymentDetail(id: string): void {
+    this.wizardState.setSelectedUpcomingPaymentId(id);
+  }
+
+  formatUpcomingAmount(n: number): string {
+    return n.toLocaleString('es-ES', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    });
   }
 }

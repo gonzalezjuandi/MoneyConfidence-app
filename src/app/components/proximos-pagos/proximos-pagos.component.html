@@ -1,0 +1,176 @@
+<div class="proximos-root">
+  <!-- Barra de estado (simulación iOS) -->
+  <div class="pp-statusbar" aria-hidden="true">
+    <span class="pp-status-time">9:41</span>
+    <div class="pp-status-icons">
+      <i data-lucide="signal" class="pp-sb-ic"></i>
+      <i data-lucide="wifi" class="pp-sb-ic"></i>
+      <i data-lucide="battery-medium" class="pp-sb-ic"></i>
+    </div>
+  </div>
+
+  <header class="pp-header pp-header-nav">
+    <button type="button" class="pp-back" (click)="onBack()" aria-label="Volver">
+      <i data-lucide="chevron-left" class="pp-icon pp-icon-blue"></i>
+    </button>
+    <h1 class="pp-header-center-title">Próximos pagos</h1>
+    <div class="pp-header-actions">
+      <button type="button" class="pp-icon-btn" aria-label="Ocultar importes">
+        <i data-lucide="eye" class="pp-icon pp-icon-blue"></i>
+      </button>
+      <button type="button" class="pp-icon-btn" aria-label="Ayuda">
+        <i data-lucide="message-circle" class="pp-icon pp-icon-blue"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="pp-content">
+    <div class="pp-page-title-row">
+      <h2 class="pp-page-title">Tus próximos pagos</h2>
+      <button
+        type="button"
+        class="pp-info-filled-btn pp-info-filled-btn--page"
+        (click)="openPageInfoDrawer()"
+        aria-label="Información sobre Tus próximos pagos"
+      >
+        <span class="pp-info-filled pp-info-filled--md" aria-hidden="true">i</span>
+      </button>
+    </div>
+
+    <div class="pp-chips no-scrollbar">
+      <button
+        type="button"
+        *ngFor="let c of accountChips"
+        class="pp-chip"
+        [class.pp-chip-dark]="selectedAccountKey === c.key"
+        (click)="selectAccountFilter(c.key)"
+      >
+        {{ c.label }}
+      </button>
+    </div>
+
+    <div class="pp-summary-stack">
+      <p class="pp-summary-label">Total pagos previstos próximos 30 días</p>
+      <p class="pp-summary-amount">-{{ formatMoney(displayUpcomingTotal) }} €</p>
+      <p class="pp-summary-meta">{{ displayUpcomingCountLabel }}</p>
+    </div>
+
+    <div class="pp-quick-actions">
+      <button type="button" class="pp-qa" (click)="openGestionarPagos.emit()">
+        <span class="pp-qa-icon"><i data-lucide="piggy-bank" class="pp-qa-ic"></i></span>
+        <span class="pp-qa-label">Crear reglas<br />de ahorro</span>
+      </button>
+      <button type="button" class="pp-qa" (click)="openFraccionarFlow()">
+        <span class="pp-qa-icon"><i data-lucide="credit-card" class="pp-qa-ic"></i></span>
+        <span class="pp-qa-label">Fraccionar<br />pagos</span>
+      </button>
+      <button type="button" class="pp-qa" (click)="onGestionarSuscripciones()">
+        <span class="pp-qa-icon"><i data-lucide="calendar" class="pp-qa-ic"></i></span>
+        <span class="pp-qa-label">Gestionar<br />suscripciones</span>
+      </button>
+    </div>
+
+    <button type="button" class="pp-banner-card" (click)="openFraccionarFlow()" aria-label="Abrir ayuda y fraccionar pagos">
+      <div class="pp-banner-icon-wrap">
+        <i data-lucide="bell" class="pp-banner-bell"></i>
+      </div>
+      <div class="pp-banner-text">
+        <p class="pp-banner-line">Se acercan varios pagos en los próximos días.</p>
+        <span class="pp-banner-link">¿Te ayudamos?</span>
+      </div>
+    </button>
+
+    <div class="pp-section-head">
+      <div class="pp-section-title-row">
+        <span class="pp-section-title">Previsión para los próximos 30 días</span>
+        <button
+          type="button"
+          class="pp-info-filled-btn"
+          (click)="openInfoDrawer()"
+          aria-label="Información sobre importes y fechas"
+        >
+          <span class="pp-info-filled" aria-hidden="true">i</span>
+        </button>
+      </div>
+    </div>
+    <p class="pp-disclaimer">
+      <i data-lucide="info" class="pp-disclaimer-ic"></i>
+      Los importes y fechas son orientativos y podrían variar o cancelarse
+    </p>
+    <ul class="pp-list">
+      <li
+        *ngFor="let it of filteredUpcomingItems"
+        class="pp-row pp-row-click"
+        (click)="openUpcomingDetail(it.id)"
+      >
+        <app-upcoming-payment-brand-logo
+          *ngIf="it.logoVariant"
+          [variant]="it.logoVariant"
+          size="md"
+        ></app-upcoming-payment-brand-logo>
+        <div *ngIf="!it.logoVariant" class="pp-logo" [style.background]="it.logoBg">{{ it.logo }}</div>
+        <div class="pp-row-main">
+          <p class="pp-row-name">{{ it.name }}</p>
+          <p class="pp-row-detail" *ngIf="it.detail">{{ it.detail }}</p>
+          <p class="pp-row-sub">{{ it.schedule }}</p>
+        </div>
+        <div class="pp-row-amount-col">
+          <span class="pp-row-amt">-{{ formatMoney(it.amount) }} €</span>
+          <span class="pp-tag">{{ it.label }}</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Drawers informativos -->
+  <div class="pp-drawer-layer" *ngIf="infoDrawer">
+    <div class="pp-drawer-backdrop" (click)="closeInfoDrawer()"></div>
+    <div
+      class="pp-drawer-sheet"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-labelledby]="infoDrawer === 'intro' ? 'pp-drawer-title-intro' : 'pp-drawer-title-importes'"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="pp-drawer-handle" aria-hidden="true"></div>
+      <button type="button" class="pp-drawer-close" (click)="closeInfoDrawer()" aria-label="Cerrar">
+        <i data-lucide="x" class="pp-drawer-x-ic"></i>
+      </button>
+
+      <ng-container *ngIf="infoDrawer === 'importes'">
+        <h2 id="pp-drawer-title-importes" class="pp-drawer-title">Importes y fechas estimadas</h2>
+        <p class="pp-drawer-body">
+          Ten en cuenta que los <strong>importes y fechas son orientativos</strong> según el tipo de movimiento y los
+          plazos habituales, algún importe <strong>podría variar o cancelarse</strong> desde que te lo mostramos hasta
+          que se cargue en cuenta.
+        </p>
+      </ng-container>
+
+      <ng-container *ngIf="infoDrawer === 'intro'">
+        <h2 id="pp-drawer-title-intro" class="pp-drawer-title">Tus próximos pagos</h2>
+        <div class="pp-drawer-prose">
+          <p>
+            Para que puedas organizarte, aquí verás
+            <strong>movimientos de los próximos 30 días que,</strong> generalmente, <strong>son recurrentes</strong> y
+            vinculados a productos del Banco Sabadell.
+          </p>
+          <p>
+            Por ejemplo, tenemos en cuenta
+            <strong>cuotas de préstamos o seguros, valores, transferencias programadas y comisiones.</strong>
+          </p>
+          <p>
+            Este listado <strong>es orientativo</strong>, algún importe podría variar o cancelarse desde que lo
+            mostramos hasta que se cargue en cuenta.
+          </p>
+        </div>
+      </ng-container>
+
+      <button type="button" class="pp-drawer-primary" (click)="closeInfoDrawer()">Entendido</button>
+    </div>
+  </div>
+
+  <app-fraccionar-compras-flow
+    *ngIf="showFraccionarFlow"
+    (closed)="onFraccionarClosed()"
+  ></app-fraccionar-compras-flow>
+</div>

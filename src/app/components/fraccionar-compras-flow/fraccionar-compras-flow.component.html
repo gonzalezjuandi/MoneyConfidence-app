@@ -1,0 +1,193 @@
+<div class="fc-root" role="dialog" aria-modal="true" aria-labelledby="fc-flow-title">
+  <!-- 1. Modal inicial (referencia: ilustración monedas + CTA) -->
+  <div class="fc-screen fc-screen-alert" *ngIf="step === 'alert'">
+    <button type="button" class="fc-close-x fc-close-x--alert" (click)="onClose()" aria-label="Cerrar">
+      <i data-lucide="x" class="fc-ic-close"></i>
+    </button>
+    <div class="fc-alert-body">
+      <div class="fc-alert-illus-wrap">
+        <img
+          src="assets/fraccionar-saving-illus.png"
+          alt=""
+          class="fc-alert-illus"
+          width="120"
+          height="120"
+          decoding="async"
+        />
+      </div>
+      <h2 id="fc-flow-title" class="fc-h2 fc-h2-alert">
+        Laura, puedes fraccionar uno de tus pagos para evitar imprevistos
+      </h2>
+      <p class="fc-sub fc-sub-alert">Hazlo en pocos pasos, con plazos de 3 a 24 meses.</p>
+    </div>
+    <div class="fc-alert-actions">
+      <button type="button" class="fc-btn-primary fc-btn-alert" (click)="fromAlertToIntro()">
+        Fraccionar pagos
+      </button>
+      <button type="button" class="fc-btn-outline fc-btn-alert" (click)="fromAlertMasInfo()">
+        Más información
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. Onboarding (referencia: tarjeta + checklist + rejilla + CTA sticky) -->
+  <div class="fc-screen fc-screen-intro" *ngIf="step === 'intro'">
+    <header class="fc-bar fc-bar-intro">
+      <span class="fc-bar-title" id="fc-flow-title">Fraccionar compras</span>
+      <div class="fc-bar-actions">
+        <button type="button" class="fc-icon-btn" aria-label="Ayuda">
+          <i data-lucide="message-circle" class="fc-ic"></i>
+        </button>
+        <button type="button" class="fc-icon-btn" (click)="onClose()" aria-label="Cerrar">
+          <i data-lucide="x" class="fc-ic"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="fc-intro-scroll">
+      <div class="fc-intro-card">
+        <div class="fc-intro-card-visual">
+          <img src="assets/fc-intro-hero.png" alt="" class="fc-intro-card-img" width="800" height="360" decoding="async" />
+        </div>
+        <div class="fc-intro-card-body">
+          <h2 class="fc-intro-card-headline">Nos adaptamos a tu ritmo</h2>
+          <ul class="fc-checklist">
+            <li>
+              <i data-lucide="check" class="fc-check-ic"></i>
+              <span>Fracciona un movimiento en tu cuenta o una compra con tarjeta de crédito</span>
+            </li>
+            <li>
+              <i data-lucide="check" class="fc-check-ic"></i>
+              <span>A partir de 50 €</span>
+            </li>
+            <li>
+              <i data-lucide="check" class="fc-check-ic"></i>
+              <span>Plazos de 3 a 24 meses</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="fc-intro-sublead">
+        Y es que con Banco Sabadell puedes fraccionar tus pagos de la forma más sencilla:
+      </p>
+
+      <div class="fc-feature-grid">
+        <div class="fc-feature-cell">
+          <div class="fc-feature-icon-wrap" aria-hidden="true">
+            <i data-lucide="credit-card" class="fc-feature-ic"></i>
+          </div>
+          <p class="fc-feature-txt">Compra lo que necesites con tu tarjeta de crédito</p>
+        </div>
+        <div class="fc-feature-cell">
+          <div class="fc-feature-icon-wrap" aria-hidden="true">
+            <i data-lucide="clipboard-list" class="fc-feature-ic"></i>
+          </div>
+          <p class="fc-feature-txt">Elige una cantidad fija para devolverlo</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="fc-sticky-cta">
+      <button type="button" class="fc-btn-primary fc-btn-intro-cta" (click)="fromIntroToLista()">Ir a fraccionar</button>
+    </div>
+  </div>
+
+  <!-- 3. Lista de movimientos -->
+  <div class="fc-screen" *ngIf="step === 'lista'">
+    <header class="fc-bar fc-bar-split">
+      <button type="button" class="fc-back" (click)="backFromLista()" aria-label="Volver">
+        <i data-lucide="chevron-left" class="fc-ic"></i>
+      </button>
+      <span class="fc-bar-title fc-bar-center">Fraccionar compras</span>
+      <button type="button" class="fc-icon-btn" aria-label="Ayuda">
+        <i data-lucide="message-circle" class="fc-ic"></i>
+      </button>
+    </header>
+    <div class="fc-lista-pad">
+      <div class="fc-search">
+        <i data-lucide="search" class="fc-search-ic"></i>
+        <input
+          type="search"
+          class="fc-search-input"
+          [(ngModel)]="searchQuery"
+          placeholder="Selecciona un movimiento a fraccionar"
+          autocomplete="off"
+        />
+      </div>
+      <ul class="fc-mov-list">
+        <li *ngFor="let m of filteredMovements" class="fc-mov-item">
+          <div class="fc-mov-row">
+            <div class="fc-mov-logo" [style.background]="m.logoBg">{{ m.logo }}</div>
+            <div class="fc-mov-main">
+              <p class="fc-mov-name">{{ m.name }}</p>
+              <p class="fc-mov-sub">{{ m.sub }}</p>
+            </div>
+            <span class="fc-mov-amt">-{{ formatMoney(m.amount) }} €</span>
+          </div>
+          <button type="button" class="fc-chip-frac" (click)="pickMovement(m)">Fraccionar</button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 4. Planes -->
+  <div class="fc-screen" *ngIf="step === 'planes' && selectedMovement">
+    <header class="fc-bar fc-bar-split">
+      <button type="button" class="fc-back" (click)="backFromPlanes()" aria-label="Volver">
+        <i data-lucide="chevron-left" class="fc-ic"></i>
+      </button>
+      <span class="fc-bar-title fc-bar-center">Fraccionar compras</span>
+      <button type="button" class="fc-icon-btn" (click)="onClose()" aria-label="Cerrar">
+        <i data-lucide="x" class="fc-ic"></i>
+      </button>
+    </header>
+    <div class="fc-planes-pad">
+      <div class="fc-planes-hero">
+        <div class="fc-user-plus">
+          <i data-lucide="user-plus" class="fc-user-ic"></i>
+        </div>
+        <p class="fc-planes-lead">
+          Fracciona este pago por <strong>{{ formatMoney(selectedMovement.amount) }} €</strong> en 3 meses o escoge la
+          cuota que mejor se adapte a ti
+        </p>
+        <p class="fc-tin">Interés estándar (TIN): 18 % anual</p>
+        <button type="button" class="fc-link-muted">Cómo funciona ›</button>
+      </div>
+      <ul class="fc-plan-cards">
+        <li *ngFor="let pl of plans">
+          <button type="button" class="fc-plan-card" (click)="selectPlan(pl)">
+            <div class="fc-plan-left">
+              <span class="fc-plan-monthly">{{ formatMoney(pl.monthly) }} €/mes</span>
+            </div>
+            <div class="fc-plan-right">
+              <span class="fc-plan-meses">en {{ pl.months }} meses</span>
+              <span class="fc-plan-total-label">Total estimado</span>
+              <span class="fc-plan-total-val">{{ formatMoney(pl.total) }} €</span>
+            </div>
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 5. Éxito -->
+  <div class="fc-screen fc-exito" *ngIf="step === 'exito'">
+    <header class="fc-exito-head">
+      <span>Fraccionamiento</span>
+    </header>
+    <div class="fc-exito-body">
+      <div class="fc-exito-check">
+        <i data-lucide="check" class="fc-check-mark"></i>
+      </div>
+      <h2 class="fc-exito-title">Tu compra ha sido fraccionada correctamente</h2>
+      <p class="fc-exito-txt">
+        El importe ya está disponible en tu cuenta. La primera cuota se cargará en la fecha indicada en el contrato.
+      </p>
+      <p class="fc-exito-balance">Nuevo saldo en cuenta <strong>{{ nuevoSaldo }} €</strong></p>
+    </div>
+    <div class="fc-sticky-cta">
+      <button type="button" class="fc-btn-primary" (click)="closeExito()">Cerrar</button>
+    </div>
+  </div>
+</div>
