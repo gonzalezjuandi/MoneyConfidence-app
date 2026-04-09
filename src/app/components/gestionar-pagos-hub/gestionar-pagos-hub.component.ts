@@ -242,9 +242,13 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
     }
     if (this.view === 'detalle') {
       this.importeInfoOpen = false;
-      this.view = 'suscripciones';
       this.selected = null;
-      this.initLucide();
+      // Misma salida que desde la lista Suscripciones: Pagos recurrentes (paso 1), no quedarse en el hub
+      this.wizardState.clearGestionarPagosDirectoSuscripciones();
+      this.wizardState.setEntryScreen('proximos-pagos');
+      this.wizardState.setCurrentStep(1);
+      this.subTab = 'activas';
+      void this.router.navigate(['/app', 'proximos-pagos']);
       return;
     }
     if (this.view === 'modalRedirigir' || this.view === 'partnerWeb') {

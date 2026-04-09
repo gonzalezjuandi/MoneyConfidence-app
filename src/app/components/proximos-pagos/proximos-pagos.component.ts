@@ -1,7 +1,5 @@
 import {
   Component,
-  EventEmitter,
-  Output,
   AfterViewInit,
   ChangeDetectorRef,
   OnDestroy,
@@ -35,8 +33,6 @@ interface RecurringSubRow {
   styleUrls: ['./proximos-pagos.component.scss']
 })
 export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy {
-  @Output() openGestionarPagos = new EventEmitter<void>();
-
   private wizardStateSub?: Subscription;
 
   showFraccionarFlow = false;

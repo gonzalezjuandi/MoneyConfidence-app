@@ -121,7 +121,4 @@ export class WizardComponent implements OnInit, OnDestroy {
     this.wizardState.setCurrentStep(step);
   }
 
-  goToGestionarPagos(): void {
-    this.wizardState.goToGestionarPagosMenu();
-  }
 }

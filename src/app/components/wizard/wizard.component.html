@@ -17,10 +17,7 @@
       <!-- Paso 1: Próximos pagos o Posición global -->
       <ng-container *ngSwitchCase="1">
         <ng-container *ngIf="state$ | async as ws">
-          <app-proximos-pagos
-            *ngIf="ws.entryScreen === 'proximos-pagos'"
-            (openGestionarPagos)="goToGestionarPagos()"
-          ></app-proximos-pagos>
+          <app-proximos-pagos *ngIf="ws.entryScreen === 'proximos-pagos'"></app-proximos-pagos>
           <app-posicion-global
             *ngIf="ws.entryScreen !== 'proximos-pagos'"
             (next)="nextStep()"
