@@ -1,35 +1,112 @@
-import { Component, OnInit } from '@angular/core';
-import { WizardStateService } from '../../services/wizard-state.service';
-import { Observable } from 'rxjs';
-import { WizardState } from '../../services/wizard-state.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Observable, Subject } from 'rxjs';
+import { distinctUntilChanged, filter, map, takeUntil } from 'rxjs/operators';
+import {
+  WizardStateService,
+  WizardState
+} from '../../services/wizard-state.service';
+import { slugToWizardPatch, wizardStateToSlug } from '../../app-routing.constants';
 
 @Component({
   selector: 'app-wizard',
   templateUrl: './wizard.component.html',
   styleUrls: ['./wizard.component.scss']
 })
-export class WizardComponent implements OnInit {
+export class WizardComponent implements OnInit, OnDestroy {
   state$: Observable<WizardState>;
   currentStep = 1;
-  totalSteps = 9; // Posición Global, Contratar, Préstamos, + 6 del MVP
+  totalSteps = 9;
 
-  constructor(private wizardState: WizardStateService) {
+  private readonly destroy$ = new Subject<void>();
+  /** Evita bucle URL ↔ estado al aplicar el segmento desde el navegador */
+  private pauseUrlSync = false;
+
+  constructor(
+    private wizardState: WizardStateService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     this.state$ = this.wizardState.state$;
   }
 
   ngOnInit(): void {
-    this.state$.subscribe(state => {
+    const initialSlug = this.route.snapshot.paramMap.get('pantalla');
+    if (initialSlug) {
+      const patch = slugToWizardPatch(initialSlug);
+      if (!patch) {
+        this.router.navigate(['/app', 'posicion-global'], { replaceUrl: true });
+      } else {
+        const expected = wizardStateToSlug(this.wizardState.getCurrentState());
+        if (initialSlug !== expected) {
+          this.pauseUrlSync = true;
+          this.wizardState.setCurrentStep(patch.step);
+          if (patch.entryScreen) {
+            this.wizardState.setEntryScreen(patch.entryScreen);
+          }
+          queueMicrotask(() => {
+            this.pauseUrlSync = false;
+          });
+        }
+      }
+    }
+
+    this.route.paramMap
+      .pipe(
+        map(pm => pm.get('pantalla')),
+        filter((slug): slug is string => !!slug),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(slug => {
+        const expected = wizardStateToSlug(this.wizardState.getCurrentState());
+        if (slug === expected) {
+          return;
+        }
+        const patch = slugToWizardPatch(slug);
+        if (!patch) {
+          this.router.navigate(['/app', 'posicion-global'], { replaceUrl: true });
+          return;
+        }
+        this.pauseUrlSync = true;
+        this.wizardState.setCurrentStep(patch.step);
+        if (patch.entryScreen) {
+          this.wizardState.setEntryScreen(patch.entryScreen);
+        }
+        queueMicrotask(() => {
+          this.pauseUrlSync = false;
+        });
+      });
+
+    this.state$
+      .pipe(
+        map(s => wizardStateToSlug(s)),
+        distinctUntilChanged(),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(slug => {
+        if (this.pauseUrlSync) {
+          return;
+        }
+        const urlSlug = this.route.snapshot.paramMap.get('pantalla');
+        if (urlSlug !== slug) {
+          this.router.navigate(['/app', slug]);
+        }
+      });
+
+    this.state$.pipe(takeUntil(this.destroy$)).subscribe(state => {
       this.currentStep = state.currentStep;
-      
-      // Navegación inteligente: si el usuario ya tiene scoring y accede al flujo (paso 4),
-      // redirigir directamente al resultado (paso 6)
       if (state.currentStep === 4 && state.hasUpdatedPotential) {
-        // Usar setTimeout para evitar cambios durante la detección
         setTimeout(() => {
           this.wizardState.setCurrentStep(6);
         }, 0);
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   nextStep(): void {

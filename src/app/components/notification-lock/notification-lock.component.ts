@@ -1,4 +1,5 @@
-import { Component, EventEmitter, Output, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 declare var lucide: any;
 
@@ -8,7 +9,7 @@ declare var lucide: any;
   styleUrls: ['./notification-lock.component.scss']
 })
 export class NotificationLockComponent implements AfterViewInit {
-  @Output() openFromNotification = new EventEmitter<void>();
+  constructor(private router: Router) {}
 
   ngAfterViewInit(): void {
     if (typeof lucide !== 'undefined') {
@@ -17,6 +18,6 @@ export class NotificationLockComponent implements AfterViewInit {
   }
 
   onOpenNotification(): void {
-    this.openFromNotification.emit();
+    this.router.navigate(['/acceso']);
   }
 }

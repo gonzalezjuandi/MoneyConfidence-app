@@ -107,54 +107,47 @@
       </div>
 
       <div class="gph-subs-list-panel">
-        <ul class="gph-card-list" *ngIf="subTab === 'activas'">
-          <li *ngFor="let s of subscriptions">
-            <button type="button" class="gph-tx-row gph-tx-row--subs" (click)="openDetalle(s)">
-              <div class="gph-brand-avatar">
-                <img
-                  *ngIf="s.logoAsset"
-                  [src]="s.logoAsset"
-                  alt=""
-                  class="gph-logo-img"
-                  width="44"
-                  height="44"
-                />
-                <div *ngIf="!s.logoAsset" class="gph-avatar" [style.background]="s.logoColor">{{ s.logoInitial }}</div>
-              </div>
-              <div class="gph-tx-main">
-                <p class="gph-tx-name">{{ s.merchant }}</p>
-                <p class="gph-tx-sub" *ngIf="s.status !== 'pagos-bloqueados'">{{ s.lineSub }}</p>
-                <span class="gph-tag gph-tag-inline tag-pagos-bloqueados" *ngIf="s.status === 'pagos-bloqueados'"
-                  >Pagos bloqueados</span
-                >
-                <p class="gph-tx-price" *ngIf="s.status !== 'pagos-bloqueados'">{{ formatMoney(s.priceMonthly) }} €</p>
-              </div>
-              <i data-lucide="chevron-right" class="gph-row-chev gph-row-chev-only"></i>
-            </button>
+        <!-- Mismo patrón visual que Próximos pagos (pp-list / pp-row) -->
+        <ul class="pp-list" *ngIf="subTab === 'activas'">
+          <li
+            *ngFor="let s of subscriptions"
+            class="pp-row pp-row-click"
+            (click)="openDetalle(s)"
+          >
+            <div class="pp-logo pp-logo--asset" *ngIf="s.logoAsset">
+              <img [src]="s.logoAsset" alt="" width="48" height="48" decoding="async" />
+            </div>
+            <div *ngIf="!s.logoAsset" class="pp-logo" [style.background]="s.logoColor">{{ s.logoInitial }}</div>
+            <div class="pp-row-main">
+              <p class="pp-row-name">{{ s.merchant }}</p>
+              <p class="pp-row-sub" *ngIf="s.status !== 'pagos-bloqueados'">{{ s.lineSub }}</p>
+            </div>
+            <div class="pp-row-amount-col" *ngIf="s.status !== 'pagos-bloqueados'">
+              <span class="pp-row-amt">-{{ formatMoney(s.priceMonthly) }} €</span>
+              <span class="pp-tag">Suscripción</span>
+            </div>
+            <div class="pp-row-amount-col" *ngIf="s.status === 'pagos-bloqueados'">
+              <span class="pp-row-amt pp-row-amt--muted">—</span>
+              <span class="pp-tag pp-tag--warning">Pagos bloqueados</span>
+            </div>
           </li>
         </ul>
 
-        <ul class="gph-card-list gph-dimmed" *ngIf="subTab === 'canceladas'">
-          <li *ngFor="let c of cancelled">
-            <div class="gph-tx-row gph-tx-row--subs gph-tx-static">
-              <div class="gph-brand-avatar">
-                <img
-                  *ngIf="c.logoAsset"
-                  [src]="c.logoAsset"
-                  alt=""
-                  class="gph-logo-img gph-logo-img-dim"
-                  width="44"
-                  height="44"
-                />
-                <div *ngIf="!c.logoAsset" class="gph-avatar gph-avatar-dim" [style.background]="c.logoColor">
-                  {{ c.logoInitial }}
-                </div>
-              </div>
-              <div class="gph-tx-main">
-                <p class="gph-tx-name">{{ c.merchant }}</p>
-                <p class="gph-tx-sub">{{ c.lineSub }}</p>
-                <p class="gph-tx-price">{{ formatMoney(c.price) }} €</p>
-              </div>
+        <ul class="pp-list gph-dimmed" *ngIf="subTab === 'canceladas'">
+          <li *ngFor="let c of cancelled" class="pp-row">
+            <div class="pp-logo pp-logo--asset" *ngIf="c.logoAsset">
+              <img [src]="c.logoAsset" alt="" width="48" height="48" decoding="async" class="gph-logo-img-dim" />
+            </div>
+            <div *ngIf="!c.logoAsset" class="pp-logo gph-avatar-dim" [style.background]="c.logoColor">
+              {{ c.logoInitial }}
+            </div>
+            <div class="pp-row-main">
+              <p class="pp-row-name">{{ c.merchant }}</p>
+              <p class="pp-row-sub">{{ c.lineSub }}</p>
+            </div>
+            <div class="pp-row-amount-col">
+              <span class="pp-row-amt">-{{ formatMoney(c.price) }} €</span>
+              <span class="pp-tag">Suscripción</span>
             </div>
           </li>
         </ul>
@@ -204,20 +197,30 @@
               {{ selected.logoInitial }}
             </div>
           </div>
-          <p class="gph-hero-name">{{ selected.displayName }}</p>
-          <p class="gph-hero-price">
-            <span class="gph-hero-price-amt">{{ formatMoney(selected.priceMonthly) }} €</span>
-            <span class="gph-hero-price-suf"> al mes</span>
-          </p>
-          <span class="gph-pill-neutral" *ngIf="selected.renewalTag && selected.status !== 'pagos-bloqueados'">{{
-            selected.renewalTag
+          <p class="gph-hero-name gph-hero-name--detail">{{ selected.displayName }}</p>
+          <span class="gph-hero-pill" *ngIf="selected.status !== 'pagos-bloqueados' && selected.lineSub">{{
+            selected.lineSub
           }}</span>
           <span
             class="gph-tag gph-tag-lg"
-            *ngIf="!selected.renewalTag || selected.status === 'pagos-bloqueados'"
+            *ngIf="selected.status === 'pagos-bloqueados'"
             [ngClass]="statusClass(selected.status)"
             >{{ statusLabel(selected.status) }}</span
           >
+          <p class="gph-hero-price-main" *ngIf="selected.status !== 'pagos-bloqueados'">
+            -{{ formatMoney(selected.priceMonthly) }} €/mes
+          </p>
+          <p class="gph-hero-price-main gph-hero-price-main--empty" *ngIf="selected.status === 'pagos-bloqueados'">—</p>
+          <button
+            *ngIf="selected.status !== 'pagos-bloqueados'"
+            type="button"
+            class="gph-hero-importe-link"
+            (click)="openImporteInfo()"
+            aria-label="Información sobre importe estimado"
+          >
+            <span class="gph-hero-importe-ic" aria-hidden="true">i</span>
+            <span>Importe estimado</span>
+          </button>
         </div>
 
         <div class="gph-actions gph-actions-ref">
@@ -268,11 +271,10 @@
           <div class="gph-info-row" *ngIf="selected.fechaBloqueo">
             <span class="gph-k">Fecha de bloqueo</span><span class="gph-v">{{ selected.fechaBloqueo }}</span>
           </div>
+          <p class="gph-info-card-hint" *ngIf="selected.footerHint && selected.status !== 'pagos-bloqueados'">
+            {{ selected.footerHint }}
+          </p>
         </div>
-
-        <p class="gph-detail-foot gph-detail-foot-ref" *ngIf="selected.footerHint && selected.status !== 'pagos-bloqueados'">
-          {{ selected.footerHint }}
-        </p>
       </div>
     </div>
   </ng-container>
@@ -458,4 +460,28 @@
       </div>
     </div>
   </ng-container>
+
+  <!-- Importes y fechas estimadas (mismo contenido que en Pagos recurrentes) -->
+  <div class="gph-importe-layer" *ngIf="importeInfoOpen">
+    <div class="gph-importe-backdrop" (click)="closeImporteInfo()"></div>
+    <div
+      class="gph-importe-sheet"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="gph-importe-title"
+      (click)="$event.stopPropagation()"
+    >
+      <div class="gph-importe-handle" aria-hidden="true"></div>
+      <button type="button" class="gph-importe-close" (click)="closeImporteInfo()" aria-label="Cerrar">
+        <i data-lucide="x" class="gph-importe-x-ic"></i>
+      </button>
+      <h2 id="gph-importe-title" class="gph-importe-title">Importes y fechas estimadas</h2>
+      <p class="gph-importe-body">
+        Ten en cuenta que los <strong>importes y fechas son orientativos</strong> según el tipo de movimiento y los plazos
+        habituales, algún importe <strong>podría variar o cancelarse</strong> desde que te lo mostramos hasta que se
+        cargue en cuenta.
+      </p>
+      <button type="button" class="gph-btn-primary gph-importe-primary" (click)="closeImporteInfo()">Entendido</button>
+    </div>
+  </div>
 </div>

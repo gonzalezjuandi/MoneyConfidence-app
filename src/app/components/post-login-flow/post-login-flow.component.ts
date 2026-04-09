@@ -1,12 +1,12 @@
 import {
   Component,
-  EventEmitter,
   OnDestroy,
   OnInit,
-  Output,
   AfterViewInit,
   ChangeDetectorRef
 } from '@angular/core';
+import { Router } from '@angular/router';
+import { WizardStateService } from '../../services/wizard-state.service';
 
 declare var lucide: any;
 
@@ -16,13 +16,15 @@ declare var lucide: any;
   styleUrls: ['./post-login-flow.component.scss']
 })
 export class PostLoginFlowComponent implements OnInit, OnDestroy, AfterViewInit {
-  @Output() completed = new EventEmitter<'review' | 'skip'>();
-
   phase: 'splash' | 'loading' | 'modal' = 'splash';
 
   private timers: ReturnType<typeof setTimeout>[] = [];
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private wizardState: WizardStateService
+  ) {}
 
   ngOnInit(): void {
     this.timers.push(
@@ -49,11 +51,17 @@ export class PostLoginFlowComponent implements OnInit, OnDestroy, AfterViewInit 
   }
 
   onReview(): void {
-    this.completed.emit('review');
+    this.wizardState.reset();
+    this.wizardState.setEntryScreen('proximos-pagos');
+    this.wizardState.setPosicionGlobalCardView('total');
+    this.router.navigate(['/app', 'proximos-pagos']);
   }
 
   onSkip(): void {
-    this.completed.emit('skip');
+    this.wizardState.reset();
+    this.wizardState.setEntryScreen('posicion-global');
+    this.wizardState.setPosicionGlobalCardView('total');
+    this.router.navigate(['/app', 'posicion-global']);
   }
 
   private refreshIcons(): void {

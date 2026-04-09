@@ -1,11 +1,10 @@
 import {
   Component,
-  EventEmitter,
-  Output,
   OnDestroy,
   AfterViewInit,
   ChangeDetectorRef
 } from '@angular/core';
+import { Router } from '@angular/router';
 
 declare var lucide: any;
 
@@ -15,8 +14,6 @@ declare var lucide: any;
   styleUrls: ['./login-flow.component.scss']
 })
 export class LoginFlowComponent implements AfterViewInit, OnDestroy {
-  @Output() loggedIn = new EventEmitter<void>();
-
   phase: 'marketing' | 'password' | 'transition' | 'branding' = 'marketing';
 
   password = '';
@@ -26,7 +23,10 @@ export class LoginFlowComponent implements AfterViewInit, OnDestroy {
 
   private timers: ReturnType<typeof setTimeout>[] = [];
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  constructor(
+    private cdr: ChangeDetectorRef,
+    private router: Router
+  ) {}
 
   ngAfterViewInit(): void {
     this.icons();
@@ -67,7 +67,7 @@ export class LoginFlowComponent implements AfterViewInit, OnDestroy {
     );
     this.timers.push(
       setTimeout(() => {
-        this.loggedIn.emit();
+        this.router.navigate(['/bienvenida']);
       }, 450 + 1400)
     );
   }

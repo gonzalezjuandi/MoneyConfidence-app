@@ -291,19 +291,19 @@
       </div>
     </div>
 
-    <!-- Insurance Section -->
+    <!-- Ahorro e inversión (alineado con resumen «Ahorrado/invertido» del hero) -->
     <div class="px-6 mt-8">
-      <h3 class="text-lg font-medium text-gray-900 mb-3">Seguros</h3>
+      <h3 class="text-lg font-medium text-gray-900">Ahorro e inversión</h3>
+      <p class="text-xs text-gray-500 mt-1 mb-3">Saldos a cierre de mercado</p>
       <div class="bg-white rounded-2xl p-5 shadow-[0_2px_8px_-2px_rgba(0,0,0,0.05)] border border-gray-100">
-        <div class="flex gap-4">
-          <div class="mt-1">
-            <i data-lucide="car-front" class="w-[18px] h-[18px] text-gray-700"></i>
-          </div>
+        <div class="flex justify-between items-start gap-4">
           <div>
-            <p class="text-sm font-normal text-gray-900 mb-0.5">Sabadell Blink Seguro Auto</p>
-            <p class="text-xs text-gray-500">Vehículo asegurado</p>
-            <p class="text-sm text-gray-900 mt-0.5">Seat León 8679FFL</p>
+            <p class="text-sm font-normal text-gray-900">Ahorro Sabadell</p>
+            <p class="text-xs text-gray-500 mt-0.5">1 cuenta</p>
           </div>
+          <span class="text-sm font-normal text-gray-900 tracking-tight shrink-0 tabular-nums">
+            {{ ahorradoInvertidoFormatted }} €
+          </span>
         </div>
       </div>
     </div>
@@ -502,6 +502,11 @@
         <i data-lucide="info" class="acc-up-disclaimer-ic"></i>
         Los importes y fechas son orientativos y podrían variar o cancelarse.
       </p>
+      <div class="acc-up-summary">
+        <p class="acc-up-summary-label">Total pagos previstos próximos 30 días</p>
+        <p class="acc-up-summary-amt">-{{ formatUpcomingAmount(upcomingFilteredTotal) }} €</p>
+        <p class="acc-up-summary-meta">{{ upcomingFilteredCountLabel }}</p>
+      </div>
       <ul class="acc-up-list">
         <li
           *ngFor="let it of upcomingItemsForSelectedAccount"

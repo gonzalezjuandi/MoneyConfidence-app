@@ -13,7 +13,7 @@
     <button type="button" class="pp-back" (click)="onBack()" aria-label="Volver">
       <i data-lucide="chevron-left" class="pp-icon pp-icon-blue"></i>
     </button>
-    <h1 class="pp-header-center-title">Próximos pagos</h1>
+    <h1 class="pp-header-center-title">Pagos recurrentes</h1>
     <div class="pp-header-actions">
       <button type="button" class="pp-icon-btn" aria-label="Ocultar importes">
         <i data-lucide="eye" class="pp-icon pp-icon-blue"></i>
@@ -25,52 +25,29 @@
   </header>
 
   <div class="pp-content">
-    <div class="pp-page-title-row">
-      <h2 class="pp-page-title">Tus próximos pagos</h2>
-      <button
-        type="button"
-        class="pp-info-filled-btn pp-info-filled-btn--page"
-        (click)="openPageInfoDrawer()"
-        aria-label="Información sobre Tus próximos pagos"
-      >
-        <span class="pp-info-filled pp-info-filled--md" aria-hidden="true">i</span>
-      </button>
-    </div>
-
-    <div class="pp-chips no-scrollbar">
-      <button
-        type="button"
-        *ngFor="let c of accountChips"
-        class="pp-chip"
-        [class.pp-chip-dark]="selectedAccountKey === c.key"
-        (click)="selectAccountFilter(c.key)"
-      >
-        {{ c.label }}
-      </button>
-    </div>
-
     <div class="pp-summary-stack">
-      <p class="pp-summary-label">Total pagos previstos próximos 30 días</p>
+      <p class="pp-summary-label">Total estimado próximos 30 días</p>
       <p class="pp-summary-amount">-{{ formatMoney(displayUpcomingTotal) }} €</p>
       <p class="pp-summary-meta">{{ displayUpcomingCountLabel }}</p>
     </div>
 
-    <div class="pp-quick-actions">
+    <div class="pp-quick-actions pp-quick-actions--two">
       <button type="button" class="pp-qa" (click)="openGestionarPagos.emit()">
         <span class="pp-qa-icon"><i data-lucide="piggy-bank" class="pp-qa-ic"></i></span>
         <span class="pp-qa-label">Crear reglas<br />de ahorro</span>
       </button>
       <button type="button" class="pp-qa" (click)="openFraccionarFlow()">
-        <span class="pp-qa-icon"><i data-lucide="credit-card" class="pp-qa-ic"></i></span>
+        <span class="pp-qa-icon"><i data-lucide="coins" class="pp-qa-ic"></i></span>
         <span class="pp-qa-label">Fraccionar<br />pagos</span>
-      </button>
-      <button type="button" class="pp-qa" (click)="onGestionarSuscripciones()">
-        <span class="pp-qa-icon"><i data-lucide="calendar" class="pp-qa-ic"></i></span>
-        <span class="pp-qa-label">Gestionar<br />suscripciones</span>
       </button>
     </div>
 
-    <button type="button" class="pp-banner-card" (click)="openFraccionarFlow()" aria-label="Abrir ayuda y fraccionar pagos">
+    <button
+      type="button"
+      class="pp-banner-card"
+      (click)="openFraccionarFlow()"
+      aria-label="Abrir ayuda y fraccionar pagos"
+    >
       <div class="pp-banner-icon-wrap">
         <i data-lucide="bell" class="pp-banner-bell"></i>
       </div>
@@ -80,46 +57,106 @@
       </div>
     </button>
 
-    <div class="pp-section-head">
-      <div class="pp-section-title-row">
-        <span class="pp-section-title">Previsión para los próximos 30 días</span>
+    <div class="pp-tabs-line" role="tablist" aria-label="Tipo de pagos recurrentes">
+      <button
+        type="button"
+        role="tab"
+        class="pp-tab"
+        [class.pp-tab-on]="mainTab === 'proximos'"
+        [attr.aria-selected]="mainTab === 'proximos'"
+        (click)="selectMainTab('proximos')"
+      >
+        Próximos pagos
+      </button>
+      <button
+        type="button"
+        role="tab"
+        class="pp-tab"
+        [class.pp-tab-on]="mainTab === 'suscripciones'"
+        [attr.aria-selected]="mainTab === 'suscripciones'"
+        (click)="selectMainTab('suscripciones')"
+      >
+        Suscripciones
+      </button>
+    </div>
+
+    <ng-container *ngIf="mainTab === 'proximos'">
+      <div class="pp-chips no-scrollbar">
         <button
           type="button"
-          class="pp-info-filled-btn"
-          (click)="openInfoDrawer()"
-          aria-label="Información sobre importes y fechas"
+          *ngFor="let c of accountChips"
+          class="pp-chip"
+          [class.pp-chip-dark]="selectedAccountKey === c.key"
+          (click)="selectAccountFilter(c.key)"
         >
-          <span class="pp-info-filled" aria-hidden="true">i</span>
+          {{ c.label }}
         </button>
       </div>
-    </div>
-    <p class="pp-disclaimer">
-      <i data-lucide="info" class="pp-disclaimer-ic"></i>
-      Los importes y fechas son orientativos y podrían variar o cancelarse
-    </p>
-    <ul class="pp-list">
-      <li
-        *ngFor="let it of filteredUpcomingItems"
-        class="pp-row pp-row-click"
-        (click)="openUpcomingDetail(it.id)"
-      >
-        <app-upcoming-payment-brand-logo
-          *ngIf="it.logoVariant"
-          [variant]="it.logoVariant"
-          size="md"
-        ></app-upcoming-payment-brand-logo>
-        <div *ngIf="!it.logoVariant" class="pp-logo" [style.background]="it.logoBg">{{ it.logo }}</div>
-        <div class="pp-row-main">
-          <p class="pp-row-name">{{ it.name }}</p>
-          <p class="pp-row-detail" *ngIf="it.detail">{{ it.detail }}</p>
-          <p class="pp-row-sub">{{ it.schedule }}</p>
+
+      <div class="pp-section-head">
+        <div class="pp-section-title-row">
+          <span class="pp-section-title">Previsión para los próximos 30 días</span>
+          <button
+            type="button"
+            class="pp-info-filled-btn"
+            (click)="openInfoDrawer()"
+            aria-label="Información sobre importes y fechas"
+          >
+            <span class="pp-info-filled" aria-hidden="true">i</span>
+          </button>
         </div>
-        <div class="pp-row-amount-col">
-          <span class="pp-row-amt">-{{ formatMoney(it.amount) }} €</span>
-          <span class="pp-tag">{{ it.label }}</span>
-        </div>
-      </li>
-    </ul>
+      </div>
+      <p class="pp-disclaimer">
+        <i data-lucide="info" class="pp-disclaimer-ic"></i>
+        Los importes y fechas son orientativos y podrían variar o cancelarse
+      </p>
+      <ul class="pp-list">
+        <li
+          *ngFor="let it of filteredUpcomingItems"
+          class="pp-row pp-row-click"
+          (click)="openUpcomingDetail(it.id)"
+        >
+          <app-upcoming-payment-brand-logo
+            *ngIf="it.logoVariant"
+            [variant]="it.logoVariant"
+            size="md"
+          ></app-upcoming-payment-brand-logo>
+          <div *ngIf="!it.logoVariant" class="pp-logo" [style.background]="it.logoBg">{{ it.logo }}</div>
+          <div class="pp-row-main">
+            <p class="pp-row-name">{{ it.name }}</p>
+            <p class="pp-row-detail" *ngIf="it.detail">{{ it.detail }}</p>
+            <p class="pp-row-sub">{{ it.schedule }}</p>
+          </div>
+          <div class="pp-row-amount-col">
+            <span class="pp-row-amt">-{{ formatMoney(it.amount) }} €</span>
+            <span class="pp-tag">{{ it.label }}</span>
+          </div>
+        </li>
+      </ul>
+    </ng-container>
+
+    <ng-container *ngIf="mainTab === 'suscripciones'">
+      <h2 class="pp-subs-heading">Activas</h2>
+      <ul class="pp-list">
+        <li
+          *ngFor="let s of recurringSubs"
+          class="pp-row pp-row-click"
+          (click)="onRecurringSubClick(s.id)"
+        >
+          <div class="pp-logo pp-logo--asset" *ngIf="s.logoAsset">
+            <img [src]="s.logoAsset" alt="" width="48" height="48" decoding="async" />
+          </div>
+          <div *ngIf="!s.logoAsset" class="pp-logo" [style.background]="s.logoColor">{{ s.logoInitial }}</div>
+          <div class="pp-row-main">
+            <p class="pp-row-name">{{ s.merchant }}</p>
+            <p class="pp-row-sub" *ngIf="s.lineSub">{{ s.lineSub }}</p>
+          </div>
+          <div class="pp-row-amount-col pp-row-amount-col--solo">
+            <span class="pp-row-amt">-{{ formatMoney(s.priceMonthly) }} €</span>
+          </div>
+        </li>
+      </ul>
+    </ng-container>
   </div>
 
   <!-- Drawers informativos -->
@@ -129,7 +166,7 @@
       class="pp-drawer-sheet"
       role="dialog"
       aria-modal="true"
-      [attr.aria-labelledby]="infoDrawer === 'intro' ? 'pp-drawer-title-intro' : 'pp-drawer-title-importes'"
+      aria-labelledby="pp-drawer-title-importes"
       (click)="$event.stopPropagation()"
     >
       <div class="pp-drawer-handle" aria-hidden="true"></div>
@@ -137,33 +174,12 @@
         <i data-lucide="x" class="pp-drawer-x-ic"></i>
       </button>
 
-      <ng-container *ngIf="infoDrawer === 'importes'">
-        <h2 id="pp-drawer-title-importes" class="pp-drawer-title">Importes y fechas estimadas</h2>
-        <p class="pp-drawer-body">
-          Ten en cuenta que los <strong>importes y fechas son orientativos</strong> según el tipo de movimiento y los
-          plazos habituales, algún importe <strong>podría variar o cancelarse</strong> desde que te lo mostramos hasta
-          que se cargue en cuenta.
-        </p>
-      </ng-container>
-
-      <ng-container *ngIf="infoDrawer === 'intro'">
-        <h2 id="pp-drawer-title-intro" class="pp-drawer-title">Tus próximos pagos</h2>
-        <div class="pp-drawer-prose">
-          <p>
-            Para que puedas organizarte, aquí verás
-            <strong>movimientos de los próximos 30 días que,</strong> generalmente, <strong>son recurrentes</strong> y
-            vinculados a productos del Banco Sabadell.
-          </p>
-          <p>
-            Por ejemplo, tenemos en cuenta
-            <strong>cuotas de préstamos o seguros, valores, transferencias programadas y comisiones.</strong>
-          </p>
-          <p>
-            Este listado <strong>es orientativo</strong>, algún importe podría variar o cancelarse desde que lo
-            mostramos hasta que se cargue en cuenta.
-          </p>
-        </div>
-      </ng-container>
+      <h2 id="pp-drawer-title-importes" class="pp-drawer-title">Importes y fechas estimadas</h2>
+      <p class="pp-drawer-body">
+        Ten en cuenta que los <strong>importes y fechas son orientativos</strong> según el tipo de movimiento y los
+        plazos habituales, algún importe <strong>podría variar o cancelarse</strong> desde que te lo mostramos hasta
+        que se cargue en cuenta.
+      </p>
 
       <button type="button" class="pp-drawer-primary" (click)="closeInfoDrawer()">Entendido</button>
     </div>

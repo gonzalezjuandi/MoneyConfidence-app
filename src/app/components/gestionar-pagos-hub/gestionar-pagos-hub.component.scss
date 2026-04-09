@@ -1,3 +1,5 @@
+$gph-blue: #006dff;
+
 .gph-root {
   min-height: 100vh;
   background: #f3f4f6;
@@ -534,6 +536,15 @@
   text-align: right;
 }
 
+.gph-info-card-hint {
+  margin: 1rem 0 0;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f3f4f6;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: #9ca3af;
+}
+
 .gph-fullscreen {
   min-height: 100vh;
   background: #fff;
@@ -969,13 +980,6 @@ $gph-ref-page: #fafafa;
   background: #fafafa;
 }
 
-.gph-subs-list-panel {
-  flex: 1;
-  min-height: 0;
-  background: #ffffff;
-  width: 100%;
-}
-
 .gph-subs-list-panel .gph-card-list {
   margin: 0;
   width: 100%;
@@ -984,17 +988,147 @@ $gph-ref-page: #fafafa;
   background: #ffffff;
 }
 
-.gph-tx-row--subs {
-  padding: 1.125rem 1rem;
-  align-items: center;
-}
+/* —— Lista activas/canceladas: mismo patrón que Próximos pagos —— */
+$gph-pp-text: #111827;
+$gph-pp-text-secondary: #6b7280;
 
-.gph-subs-list-panel .gph-tx-name {
-  font-weight: 700;
-}
+.gph-subs-list-panel {
+  flex: 1;
+  min-height: 0;
+  background: #ffffff;
+  width: 100%;
+  .pp-list {
+    list-style: none;
+    margin: 0 -1rem;
+    padding: 0;
+    width: calc(100% + 2rem);
+    max-width: none;
+    box-sizing: border-box;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+  }
 
-.gph-subs-list-panel .gph-tx-price {
-  font-weight: 700;
+  .pp-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding: 1.125rem 1rem;
+    border-bottom: 1px solid #e8e8ed;
+    background: #fff;
+  }
+
+  .pp-row:last-child {
+    border-bottom: none;
+  }
+
+  .pp-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 700;
+  }
+
+  .pp-logo--asset {
+    padding: 0;
+    overflow: hidden;
+    background: #fff;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+  }
+
+  .pp-row-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .pp-row-name {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: $gph-pp-text;
+    line-height: 1.35;
+    margin: 0;
+  }
+
+  .pp-row-sub {
+    font-size: 0.8125rem;
+    color: #9ca3af;
+    margin: 0;
+    line-height: 1.35;
+  }
+
+  .pp-row-amount-col {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: flex-start;
+    gap: 0.45rem;
+    padding-top: 0.05rem;
+    text-align: right;
+    flex-shrink: 0;
+    min-width: 5.5rem;
+  }
+
+  .pp-row-amt {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #000;
+    white-space: nowrap;
+    letter-spacing: -0.02em;
+  }
+
+  .pp-row-amt--muted {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #9ca3af;
+  }
+
+  .pp-tag {
+    display: inline-block;
+    margin-top: 0;
+    padding: 0.28rem 0.55rem;
+    border-radius: 0.5rem;
+    background: #f2f2f2;
+    border: none;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    color: $gph-pp-text-secondary;
+    align-self: flex-end;
+    text-align: right;
+  }
+
+  .pp-tag--warning {
+    background: #fee2e2;
+    color: #991b1b;
+  }
+
+  .pp-row-click {
+    cursor: pointer;
+    border: none;
+    background: none;
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    margin: 0;
+    display: flex;
+    align-items: flex-start;
+    list-style: none;
+  }
 }
 
 .gph-statusbar {
@@ -1161,8 +1295,8 @@ $gph-ref-page: #fafafa;
 }
 
 .gph-hero-ref {
-  text-align: left;
-  align-items: flex-start;
+  text-align: center;
+  align-items: center;
   padding: 1.25rem 0 1rem;
   display: flex;
   flex-direction: column;
@@ -1176,7 +1310,9 @@ $gph-ref-page: #fafafa;
 }
 
 .gph-hero-logo-wrap {
-  margin: 0 0 0.75rem;
+  margin: 0 auto 0.75rem;
+  display: flex;
+  justify-content: center;
 }
 
 .gph-hero-img {
@@ -1191,14 +1327,76 @@ $gph-ref-page: #fafafa;
   margin: 0;
 }
 
-.gph-hero-ref .gph-hero-name {
-  font-size: 1.25rem;
-  font-weight: 700;
+.gph-hero-ref .gph-hero-name--detail {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #6b7280;
+  margin: 0 0 0.5rem;
 }
 
-.gph-hero-ref .gph-pill-neutral,
+.gph-hero-pill {
+  display: inline-block;
+  align-self: center;
+  margin-top: 0.25rem;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: #374151;
+  border: 1px solid #e5e7eb;
+  border-radius: 9999px;
+  background: #fff;
+  line-height: 1.25;
+}
+
 .gph-hero-ref .gph-tag-lg {
-  align-self: flex-start;
+  align-self: center;
+  margin-top: 0.25rem;
+}
+
+.gph-hero-price-main {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0.75rem 0 0;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.gph-hero-price-main--empty {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #9ca3af;
+}
+
+.gph-hero-importe-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin: 0.5rem 0 0;
+  padding: 0.25rem;
+  border: none;
+  background: none;
+  font: inherit;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: $gph-blue;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.gph-hero-importe-ic {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  border: 1.5px solid $gph-blue;
+  font-size: 0.65rem;
+  font-weight: 700;
+  font-style: normal;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .gph-hero-price {
@@ -1237,7 +1435,6 @@ $gph-ref-page: #fafafa;
 }
 
 /* —— Bloquear pagos: confirmación + bottom sheet firma —— */
-$gph-blue: #006dff;
 
 .gph-bloquear-screen {
   display: flex;
@@ -1497,4 +1694,85 @@ $gph-blue: #006dff;
   height: 1.125rem;
   color: $gph-blue;
   stroke-width: 2;
+}
+
+/* Bottom sheet: importes y fechas estimadas (alineado con Próximos pagos) */
+.gph-importe-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 240;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.gph-importe-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.gph-importe-sheet {
+  position: relative;
+  width: 100%;
+  max-height: min(88vh, 560px);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 1.25rem 1.25rem 0 0;
+  padding: 0.5rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.12);
+  z-index: 1;
+}
+
+.gph-importe-handle {
+  width: 2.25rem;
+  height: 0.25rem;
+  border-radius: 9999px;
+  background: #e5e7eb;
+  margin: 0.35rem auto 0.75rem;
+}
+
+.gph-importe-close {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.75rem;
+  border: none;
+  background: none;
+  padding: 0.35rem;
+  color: $gph-blue;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gph-importe-x-ic {
+  width: 1.5rem;
+  height: 1.5rem;
+  stroke-width: 2;
+}
+
+.gph-importe-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 2.5rem 1rem 0;
+  line-height: 1.25;
+  text-align: left;
+}
+
+.gph-importe-body {
+  font-size: 0.9375rem;
+  color: #111827;
+  line-height: 1.5;
+  margin: 0 0 1.5rem;
+  text-align: left;
+}
+
+.gph-importe-body strong {
+  font-weight: 700;
+}
+
+.gph-importe-primary {
+  margin-bottom: 0;
 }

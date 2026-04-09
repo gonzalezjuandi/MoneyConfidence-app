@@ -198,6 +198,19 @@ $pp-bg-page: #ffffff;
   gap: 0.35rem;
 }
 
+/* Referencia: dos acciones circulares centradas */
+.pp-quick-actions--two {
+  justify-content: center;
+  gap: 2.25rem;
+  margin-bottom: 0.5rem;
+  padding: 0 0.5rem;
+}
+
+.pp-quick-actions--two .pp-qa {
+  flex: 0 1 auto;
+  max-width: 7.5rem;
+}
+
 .pp-qa {
   flex: 1;
   max-width: 110px;
@@ -248,6 +261,7 @@ $pp-bg-page: #ffffff;
   border-radius: 1rem;
   border: 1px solid #ebebef;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+  margin-top: 0.35rem;
   margin-bottom: 1.25rem;
   cursor: pointer;
   text-align: left;
@@ -299,10 +313,20 @@ $pp-bg-page: #ffffff;
 }
 
 /* Próximos / Pagados: dos mitades 50 %, texto centrado, subrayado grueso azul en activa y fino gris en inactiva */
+.pp-subs-heading {
+  font-size: 1rem;
+  font-weight: 700;
+  color: $pp-text;
+  margin: 0 0 0.65rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
 .pp-tabs-line {
   display: flex;
   width: 100%;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
+  margin-top: 0.15rem;
   background: #fff;
 }
 
@@ -466,6 +490,19 @@ $pp-bg-page: #ffffff;
   font-weight: 700;
 }
 
+.pp-logo--asset {
+  padding: 0;
+  overflow: hidden;
+  background: #fff;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
 .pp-row-main {
   flex: 1;
   min-width: 0;
@@ -533,6 +570,12 @@ $pp-bg-page: #ffffff;
   text-align: right;
   flex-shrink: 0;
   min-width: 5.5rem;
+}
+
+.pp-row-amount-col--solo {
+  gap: 0;
+  min-width: 4.25rem;
+  justify-content: flex-start;
 }
 
 .pp-row-account {

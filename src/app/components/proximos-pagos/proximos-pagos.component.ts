@@ -7,14 +7,27 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import {
   WizardStateService,
   UpcomingPaymentItem,
-  DEFAULT_UPCOMING_PAYMENTS_ITEMS
+  DEFAULT_UPCOMING_PAYMENTS_ITEMS,
+  aggregateUpcomingPayments
 } from '../../services/wizard-state.service';
 
 declare var lucide: any;
+
+/** Filas demo de suscripciones (misma fuente visual que Gestionar pagos) */
+interface RecurringSubRow {
+  id: string;
+  merchant: string;
+  lineSub?: string;
+  priceMonthly: number;
+  logoAsset?: string;
+  logoInitial: string;
+  logoColor: string;
+}
 
 @Component({
   selector: 'app-proximos-pagos',
@@ -27,6 +40,31 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
   private wizardStateSub?: Subscription;
 
   showFraccionarFlow = false;
+
+  /** Pestaña principal: próximos cargos vs suscripciones */
+  mainTab: 'proximos' | 'suscripciones' = 'proximos';
+
+  /** Suscripciones activas (demo) */
+  readonly recurringSubs: RecurringSubRow[] = [
+    {
+      id: 'sub-1',
+      merchant: 'Netflix',
+      lineSub: 'Mensual, se renueva 21 Abr',
+      priceMonthly: 17.99,
+      logoInitial: 'N',
+      logoColor: '#E50914',
+      logoAsset: 'assets/gph-logo-netflix.png'
+    },
+    {
+      id: 'sub-3',
+      merchant: 'HBO Max',
+      lineSub: 'Mensual, se renueva 1 May',
+      priceMonthly: 8.99,
+      logoInitial: 'H',
+      logoColor: '#8B5CF6',
+      logoAsset: 'assets/gph-logo-hbo.png'
+    }
+  ];
 
   /** Alineado con chips de cuenta en Posición global / Cuentas */
   readonly accountChips: {
@@ -45,12 +83,13 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
 
   upcomingItems: UpcomingPaymentItem[] = [...DEFAULT_UPCOMING_PAYMENTS_ITEMS];
 
-  /** Drawer: importes/fechas (sección lista) | intro (título de página) */
-  infoDrawer: null | 'importes' | 'intro' = null;
+  /** Drawer informativo importes/fechas */
+  infoDrawer: null | 'importes' = null;
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private wizardState: WizardStateService
+    private wizardState: WizardStateService,
+    private router: Router
   ) {
     const s = this.wizardState.getCurrentState();
     if (s.upcomingPaymentsTotal != null) {
@@ -61,6 +100,9 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     if (s.upcomingPaymentsItems?.length) {
       this.upcomingItems = [...s.upcomingPaymentsItems];
+      const agg = aggregateUpcomingPayments(this.upcomingItems);
+      this.upcomingTotal = agg.total;
+      this.upcomingCount = agg.count;
     }
   }
 
@@ -74,6 +116,9 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
       }
       if (state.upcomingPaymentsItems?.length) {
         this.upcomingItems = [...state.upcomingPaymentsItems];
+        const agg = aggregateUpcomingPayments(this.upcomingItems);
+        this.upcomingTotal = agg.total;
+        this.upcomingCount = agg.count;
       }
       this.cdr.markForCheck();
     });
@@ -103,12 +148,6 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
 
   openInfoDrawer(): void {
     this.infoDrawer = 'importes';
-    this.cdr.markForCheck();
-    setTimeout(() => this.initLucide(), 80);
-  }
-
-  openPageInfoDrawer(): void {
-    this.infoDrawer = 'intro';
     this.cdr.markForCheck();
     setTimeout(() => this.initLucide(), 80);
   }
@@ -158,12 +197,22 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
     });
   }
 
+  /** Vuelve al inicio (Posición global / dashboard) */
   onBack(): void {
+    this.wizardState.setPosicionGlobalCardView('total');
     this.wizardState.setEntryScreen('posicion-global');
+    void this.router.navigate(['/app', 'posicion-global']);
   }
 
-  onGestionarSuscripciones(): void {
-    this.wizardState.goToGestionarPagosSuscripciones();
+  selectMainTab(tab: 'proximos' | 'suscripciones'): void {
+    this.mainTab = tab;
+    this.cdr.markForCheck();
+    setTimeout(() => this.initLucide(), 80);
+  }
+
+  /** Abre el hub en el detalle de la suscripción (mismos datos que en Gestionar pagos) */
+  onRecurringSubClick(subscriptionId: string): void {
+    this.wizardState.goToGestionarPagosSuscripcionDetalle(subscriptionId);
   }
 
   openFraccionarFlow(): void {

@@ -4,6 +4,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { WizardComponent } from './components/wizard/wizard.component';
 import { PosicionGlobalComponent } from './components/posicion-global/posicion-global.component';
@@ -66,6 +67,7 @@ import { UpcomingPaymentBrandLogoComponent } from './components/upcoming-payment
   ],
   imports: [
     BrowserModule,
+    AppRoutingModule,
     BrowserAnimationsModule,
     CommonModule,
     FormsModule,

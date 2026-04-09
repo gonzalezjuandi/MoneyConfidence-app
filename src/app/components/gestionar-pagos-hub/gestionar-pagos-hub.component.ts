@@ -7,6 +7,7 @@ import {
   OnDestroy,
   OnInit
 } from '@angular/core';
+import { Router } from '@angular/router';
 import { WizardStateService } from '../../services/wizard-state.service';
 
 declare var lucide: any;
@@ -72,6 +73,9 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
 
   selected: SubscriptionDetail | null = null;
 
+  /** Sheet informativo «Importes y fechas estimadas» (mismo contenido que en Próximos pagos). */
+  importeInfoOpen = false;
+
   subscriptions: SubscriptionDetail[] = [
     {
       id: 'sub-1',
@@ -81,7 +85,7 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
       logoColor: '#E50914',
       logoAsset: 'assets/gph-logo-netflix.png',
       priceMonthly: 17.99,
-      lineSub: 'Mensual, se renueva 20 Abr',
+      lineSub: 'Mensual, se renueva 20 abril',
       status: 'activa',
       concepto: 'Netflix',
       tarjetaMasked: 'Crédito ••••1234',
@@ -148,14 +152,26 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private wizardState: WizardStateService
+    private wizardState: WizardStateService,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
-    if (this.wizardState.getCurrentState().gestionarPagosDirectoSuscripciones) {
+    const state = this.wizardState.getCurrentState();
+    if (state.gestionarPagosDirectoSuscripciones) {
+      const openDetalleId = state.gestionarPagosAbrirSuscripcionId;
       this.view = 'suscripciones';
       this.subTab = 'activas';
       this.wizardState.clearGestionarPagosDirectoSuscripciones();
+      if (openDetalleId) {
+        const sub = this.subscriptions.find(s => s.id === openDetalleId);
+        if (sub) {
+          this.selected = { ...sub };
+          this.view = 'detalle';
+        }
+      }
+      this.cdr.markForCheck();
+      setTimeout(() => this.initLucide(), 100);
     }
   }
 
@@ -217,13 +233,15 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
       return;
     }
     if (this.view === 'suscripciones') {
-      // Volver a la pantalla Próximos pagos (paso 1), no al listado interno del hub
+      // Pagos recurrentes (paso 1, pestaña / ruta alineada)
       this.wizardState.setEntryScreen('proximos-pagos');
       this.wizardState.setCurrentStep(1);
       this.subTab = 'activas';
+      void this.router.navigate(['/app', 'proximos-pagos']);
       return;
     }
     if (this.view === 'detalle') {
+      this.importeInfoOpen = false;
       this.view = 'suscripciones';
       this.selected = null;
       this.initLucide();
@@ -262,15 +280,26 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
   }
 
   openDetalle(sub: SubscriptionDetail): void {
+    this.importeInfoOpen = false;
     this.selected = { ...sub };
     this.view = 'detalle';
     this.initLucide();
+  }
+
+  openImporteInfo(): void {
+    this.importeInfoOpen = true;
+    this.initLucide();
+  }
+
+  closeImporteInfo(): void {
+    this.importeInfoOpen = false;
   }
 
   openGestionarPartner(): void {
     if (!this.selected || this.selected.status === 'pagos-bloqueados') {
       return;
     }
+    this.importeInfoOpen = false;
     this.view = 'modalRedirigir';
     this.initLucide();
   }
@@ -322,6 +351,7 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
   }
 
   startBloquear(): void {
+    this.importeInfoOpen = false;
     this.view = 'bloquear1';
     this.initLucide();
   }

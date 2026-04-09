@@ -27,7 +27,7 @@ export type EntryScreen = 'proximos-pagos' | 'posicion-global';
 export type PosicionGlobalCardView = 'total' | 'upcoming';
 
 /** Logos de marca (referencia Próximos pagos) */
-export type UpcomingPaymentLogoVariant = 'asisa' | 'prestamos' | 'aguas' | 'cashback';
+export type UpcomingPaymentLogoVariant = 'asisa' | 'prestamos' | 'aguas' | 'telecom';
 
 /** Movimiento previsto (Próximos pagos + pestaña Próximos en Cuentas) */
 export interface UpcomingPaymentItem {
@@ -49,7 +49,16 @@ export interface UpcomingPaymentItem {
   accounts?: ('principal' | 'familiar')[];
 }
 
-/** Lista demo alineada con referencia: total 450 € / 4 pagos */
+/** Suma y recuento coherentes con la lista (evita totales desincronizados al filtrar por cuenta) */
+export function aggregateUpcomingPayments(items: UpcomingPaymentItem[]): {
+  total: number;
+  count: number;
+} {
+  const total = items.reduce((sum, it) => sum + it.amount, 0);
+  return { total, count: items.length };
+}
+
+/** Lista demo: total 450 € / 4 pagos; cuenta principal 4 ítems; familiar 2 ítems (60+40) incluidos en el total global */
 export const DEFAULT_UPCOMING_PAYMENTS_ITEMS: UpcomingPaymentItem[] = [
   {
     id: '1',
@@ -90,13 +99,13 @@ export const DEFAULT_UPCOMING_PAYMENTS_ITEMS: UpcomingPaymentItem[] = [
   },
   {
     id: '4',
-    name: 'Abono Cashback',
+    name: 'Fibra y línea móvil',
     amount: 40,
-    label: 'Abono nómina',
+    label: 'Domiciliación',
     schedule: 'Previsto jueves 30 Abr',
-    logo: 'C',
-    logoBg: '#ffffff',
-    logoVariant: 'cashback',
+    logo: 'T',
+    logoBg: '#1e3a5f',
+    logoVariant: 'telecom',
     accountMask: 'Cuenta *4425',
     accounts: ['principal', 'familiar']
   }
@@ -129,24 +138,29 @@ export interface WizardState {
   selectedUpcomingPaymentId?: string | null;
   /** Abrir el hub de Gestionar pagos directamente en la lista de Suscripciones */
   gestionarPagosDirectoSuscripciones?: boolean;
+  /** Si viene informado con directo suscripciones, abrir el detalle de esa suscripción (id demo del hub) */
+  gestionarPagosAbrirSuscripcionId?: string | null;
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class WizardStateService {
-  private initialState: WizardState = {
+  private initialState: WizardState = (() => {
+    const agg = aggregateUpcomingPayments(DEFAULT_UPCOMING_PAYMENTS_ITEMS);
+    return {
     currentStep: 1, // Posición Global
     capacidadMaxima: 18000,
     capacidadMensual: 350,
     plazoAnos: 5,
     entryScreen: 'posicion-global',
     posicionGlobalCardView: 'total',
-    upcomingPaymentsTotal: 450,
-    upcomingPaymentsCount: 4,
+    upcomingPaymentsTotal: agg.total,
+    upcomingPaymentsCount: agg.count,
     upcomingPaymentsItems: DEFAULT_UPCOMING_PAYMENTS_ITEMS,
     selectedUpcomingPaymentId: null,
     gestionarPagosDirectoSuscripciones: false,
+    gestionarPagosAbrirSuscripcionId: null,
     perfilFinanciero: {
       ingresos: 0,
       gastos: 0,
@@ -154,6 +168,7 @@ export class WizardStateService {
       otrosBancos: false
     }
   };
+  })();
 
   private stateSubject = new BehaviorSubject<WizardState>(this.initialState);
   public state$: Observable<WizardState> = this.stateSubject.asObservable();
@@ -238,7 +253,19 @@ export class WizardStateService {
     this.stateSubject.next({
       ...currentState,
       currentStep: 10,
-      gestionarPagosDirectoSuscripciones: true
+      gestionarPagosDirectoSuscripciones: true,
+      gestionarPagosAbrirSuscripcionId: null
+    });
+  }
+
+  /** Paso 10: Suscripciones y detalle de una suscripción concreta (mismo id que en el hub) */
+  goToGestionarPagosSuscripcionDetalle(subscriptionId: string): void {
+    const currentState = this.getCurrentState();
+    this.stateSubject.next({
+      ...currentState,
+      currentStep: 10,
+      gestionarPagosDirectoSuscripciones: true,
+      gestionarPagosAbrirSuscripcionId: subscriptionId
     });
   }
 
@@ -248,7 +275,8 @@ export class WizardStateService {
     this.stateSubject.next({
       ...currentState,
       currentStep: 10,
-      gestionarPagosDirectoSuscripciones: false
+      gestionarPagosDirectoSuscripciones: false,
+      gestionarPagosAbrirSuscripcionId: null
     });
   }
 
@@ -256,7 +284,8 @@ export class WizardStateService {
     const currentState = this.getCurrentState();
     this.stateSubject.next({
       ...currentState,
-      gestionarPagosDirectoSuscripciones: false
+      gestionarPagosDirectoSuscripciones: false,
+      gestionarPagosAbrirSuscripcionId: null
     });
   }
 

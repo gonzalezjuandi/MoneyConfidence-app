@@ -2,7 +2,8 @@ import { Component, EventEmitter, Output, AfterViewInit, OnDestroy, ChangeDetect
 import {
   WizardStateService,
   UpcomingPaymentItem,
-  DEFAULT_UPCOMING_PAYMENTS_ITEMS
+  DEFAULT_UPCOMING_PAYMENTS_ITEMS,
+  aggregateUpcomingPayments
 } from '../../services/wizard-state.service';
 
 declare var lucide: any;
@@ -86,9 +87,14 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
     });
   }
 
+  /** Suma global de la lista (todas las cuentas); coherente con chip «Todas» en Próximos pagos */
+  get upcomingPaymentsSumAll(): number {
+    return this.upcomingPaymentsItems.reduce((s, it) => s + it.amount, 0);
+  }
+
   /** Importe de próximos pagos con signo negativo (p. ej. -450,00) */
   get upcomingTotalFormatted(): string {
-    const n = -Math.abs(this.upcomingPaymentsTotal);
+    const n = -Math.abs(this.upcomingPaymentsSumAll);
     return n.toLocaleString('es-ES', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
@@ -97,7 +103,7 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
 
   /** Total como cargo (signo negativo), coherente con la captura de resumen */
   get upcomingOutflowFormatted(): string {
-    const n = Math.abs(this.upcomingPaymentsTotal);
+    const n = Math.abs(this.upcomingPaymentsSumAll);
     return (
       '-' +
       n.toLocaleString('es-ES', {
@@ -109,7 +115,17 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
   }
 
   get upcomingPaymentsCountLabel(): string {
-    const c = this.upcomingPaymentsCount;
+    const c = this.upcomingPaymentsItems.length;
+    return c === 1 ? '1 pago' : `${c} pagos`;
+  }
+
+  /** Total para la cuenta del carrusel (misma regla que Próximos pagos al filtrar) */
+  get upcomingFilteredTotal(): number {
+    return this.upcomingItemsForSelectedAccount.reduce((s, it) => s + it.amount, 0);
+  }
+
+  get upcomingFilteredCountLabel(): string {
+    const c = this.upcomingItemsForSelectedAccount.length;
     return c === 1 ? '1 pago' : `${c} pagos`;
   }
 
@@ -159,14 +175,18 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
       this.lastLoanAmount = state.loanAmount ?? null;
 
       this.posicionCardView = state.posicionGlobalCardView ?? 'total';
-      if (state.upcomingPaymentsTotal != null) {
-        this.upcomingPaymentsTotal = state.upcomingPaymentsTotal;
-      }
-      if (state.upcomingPaymentsCount != null) {
-        this.upcomingPaymentsCount = state.upcomingPaymentsCount;
-      }
       if (state.upcomingPaymentsItems?.length) {
         this.upcomingPaymentsItems = [...state.upcomingPaymentsItems];
+        const agg = aggregateUpcomingPayments(this.upcomingPaymentsItems);
+        this.upcomingPaymentsTotal = agg.total;
+        this.upcomingPaymentsCount = agg.count;
+      } else {
+        if (state.upcomingPaymentsTotal != null) {
+          this.upcomingPaymentsTotal = state.upcomingPaymentsTotal;
+        }
+        if (state.upcomingPaymentsCount != null) {
+          this.upcomingPaymentsCount = state.upcomingPaymentsCount;
+        }
       }
 
       this.cdr.markForCheck();

@@ -1,10 +1,1 @@
-<app-notification-lock
-  *ngIf="appPhase === 'notification'"
-  (openFromNotification)="onOpenFromNotification()"
-></app-notification-lock>
-<app-login-flow *ngIf="appPhase === 'login'" (loggedIn)="onLoggedIn()"></app-login-flow>
-<app-post-login-flow
-  *ngIf="appPhase === 'postLogin'"
-  (completed)="onPostLoginComplete($event)"
-></app-post-login-flow>
-<app-wizard *ngIf="appPhase === 'main'"></app-wizard>
+<router-outlet></router-outlet>
