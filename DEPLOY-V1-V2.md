@@ -7,27 +7,29 @@
 | **Local** | `npm run start:v1` (o `npm start`) | `npm run start:v2` |
 | **Entorno Angular** | `environment.prod.ts` | `environment.v2.prod.ts` (vía `angular.json` → `v2-production`) |
 
-## Vercel: dos proyectos, dos enlaces
+## Vercel: un solo proyecto y previews por rama
 
-Cada proyecto en Vercel debe tener **su propio** comando de build:
+El comando por defecto **`npm run build`** ejecuta `scripts/vercel-build.cjs`, que usa **`VERCEL_GIT_COMMIT_REF`** (nombre de la rama que Vercel está construyendo):
 
-1. **Proyecto URL V1** (p. ej. `moneyconfidence-v1.vercel.app`)
-   - Rama sugerida: `main` o `MoneyConfidence-v1`
-   - **Build Command:** `npm run build:v1`
-   - **Output directory:** `dist/money-confidence`
-   - Install: `npm ci`
+| Rama | Bundle |
+|------|--------|
+| `V2` o `MoneyConfidence-v2` | **V2** |
+| `main`, `MoneyConfidence-v1`, otras | **V1** |
 
-2. **Proyecto URL V2** (p. ej. `moneyconfidence-v2.vercel.app`)
-   - Rama sugerida: `V2` o `MoneyConfidence-v2`
-   - **Build Command:** `npm run build:v2`
-   - **Output directory:** `dist/money-confidence`
-   - Install: `npm ci`
+- En **Project → Settings → Build**, deja **Build Command** vacío o `npm run build` (no fuerces solo `build:v1` si quieres previews V2).
+- **Output directory:** `dist/money-confidence`.
+- Cada **preview** en la pestaña Deployments tiene su URL: abre la de la rama `V2` o `MoneyConfidence-v2` para probar V2.
 
-El archivo `vercel.json` del repo (rewrites SPA) vale para **ambos** proyectos.
+Tras subir este cambio, haz **Redeploy** de los previews V2 o un push nuevo para que el build use el script nuevo.
 
-**Importante:** si el build no usa `build:v2`, el bundle seguirá siendo V1 aunque la rama se llame `V2`.
+## Vercel: dos proyectos fijos (alternativa)
+
+Dos dominios de producción distintos:
+
+1. Proyecto V1: **Build Command** `npm run build:v1`, rama p. ej. `main`.
+2. Proyecto V2: **Build Command** `npm run build:v2`, rama p. ej. `V2`.
 
 ## Resumen técnico
 
-- Los flags están en `src/environments/`; los guards (`v2-experience.guards.ts`) solo redirigen cuando el bundle es V2.
-- Misma base de código; la variante la elige **solo** el `configuration` del build.
+- Los flags están en `src/environments/`; los guards solo aplican en bundle V2.
+- La variante la fija el **configuration** de Angular (`production` vs `v2-production`).

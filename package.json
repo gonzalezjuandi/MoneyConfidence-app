@@ -8,7 +8,7 @@
     "dev": "ng serve",
     "start:v1": "ng serve",
     "start:v2": "ng serve --configuration=v2",
-    "build": "npm run build:v1",
+    "build": "node scripts/vercel-build.cjs",
     "build:v1": "ng build --configuration=production",
     "build:v2": "ng build --configuration=v2-production",
     "watch": "ng build --watch --configuration development",
