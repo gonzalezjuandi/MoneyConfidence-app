@@ -128,7 +128,7 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
     return this.filterUpcomingByAccount(this.upcomingItems, this.selectedAccountKey);
   }
 
-  /** Total estimado según chip seleccionado (suma de importes de la lista filtrada). */
+  /** Suma de cargos próximos según chip (solo lista «Próximos pagos»). */
   get displayUpcomingTotal(): number {
     return this.filteredUpcomingItems.reduce((s, it) => s + it.amount, 0);
   }
@@ -137,8 +137,25 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
     return this.filteredUpcomingItems.length;
   }
 
-  get displayUpcomingCountLabel(): string {
-    const c = this.displayUpcomingCount;
+  /** Importe mensual combinado de suscripciones activas (pestaña Suscripciones). */
+  get recurringSubsMonthlyTotal(): number {
+    return this.recurringSubs.reduce((s, r) => s + r.priceMonthly, 0);
+  }
+
+  /**
+   * Bloque «Total estimado próximos 30 días»: cargos previstos (filtrados por chip)
+   * más importes de suscripciones activas.
+   */
+  get displaySummaryTotal(): number {
+    return this.displayUpcomingTotal + this.recurringSubsMonthlyTotal;
+  }
+
+  get displaySummaryCount(): number {
+    return this.displayUpcomingCount + this.recurringSubs.length;
+  }
+
+  get displaySummaryCountLabel(): string {
+    const c = this.displaySummaryCount;
     return c === 1 ? '1 pago' : `${c} pagos`;
   }
 
