@@ -11,21 +11,17 @@ import {
   WizardStateService,
   UpcomingPaymentItem,
   DEFAULT_UPCOMING_PAYMENTS_ITEMS,
-  aggregateUpcomingPayments
+  DEFAULT_RECURRING_SUBSCRIPTIONS,
+  combineUpcomingAndSubscriptions30d,
+  RecurringSubscriptionItem
 } from '../../services/wizard-state.service';
 
 declare var lucide: any;
 
-/** Filas demo de suscripciones (misma fuente visual que Gestionar pagos) */
-interface RecurringSubRow {
-  id: string;
-  merchant: string;
-  lineSub?: string;
-  priceMonthly: number;
-  logoAsset?: string;
-  logoInitial: string;
-  logoColor: string;
-}
+const PP_INITIAL_30D = combineUpcomingAndSubscriptions30d(
+  DEFAULT_UPCOMING_PAYMENTS_ITEMS,
+  DEFAULT_RECURRING_SUBSCRIPTIONS
+);
 
 @Component({
   selector: 'app-proximos-pagos',
@@ -40,27 +36,8 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
   /** Pestaña principal: próximos cargos vs suscripciones */
   mainTab: 'proximos' | 'suscripciones' = 'proximos';
 
-  /** Suscripciones activas (demo) */
-  readonly recurringSubs: RecurringSubRow[] = [
-    {
-      id: 'sub-1',
-      merchant: 'Netflix',
-      lineSub: 'Mensual, se renueva 21 Abr',
-      priceMonthly: 17.99,
-      logoInitial: 'N',
-      logoColor: '#E50914',
-      logoAsset: 'assets/gph-logo-netflix.png'
-    },
-    {
-      id: 'sub-3',
-      merchant: 'HBO Max',
-      lineSub: 'Mensual, se renueva 1 May',
-      priceMonthly: 8.99,
-      logoInitial: 'H',
-      logoColor: '#8B5CF6',
-      logoAsset: 'assets/gph-logo-hbo.png'
-    }
-  ];
+  /** Suscripciones activas (demo) — wizard / Posición global */
+  readonly recurringSubs: RecurringSubscriptionItem[] = DEFAULT_RECURRING_SUBSCRIPTIONS;
 
   /** Alineado con chips de cuenta en Posición global / Cuentas */
   readonly accountChips: {
@@ -74,8 +51,8 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
 
   selectedAccountKey: 'all' | 'principal' | 'familiar' = 'all';
 
-  upcomingTotal = 450;
-  upcomingCount = 4;
+  upcomingTotal = PP_INITIAL_30D.total;
+  upcomingCount = PP_INITIAL_30D.count;
 
   upcomingItems: UpcomingPaymentItem[] = [...DEFAULT_UPCOMING_PAYMENTS_ITEMS];
 
@@ -96,9 +73,12 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
     }
     if (s.upcomingPaymentsItems?.length) {
       this.upcomingItems = [...s.upcomingPaymentsItems];
-      const agg = aggregateUpcomingPayments(this.upcomingItems);
-      this.upcomingTotal = agg.total;
-      this.upcomingCount = agg.count;
+      const combined = combineUpcomingAndSubscriptions30d(
+        this.upcomingItems,
+        this.recurringSubs
+      );
+      this.upcomingTotal = combined.total;
+      this.upcomingCount = combined.count;
     }
   }
 
@@ -112,9 +92,12 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
       }
       if (state.upcomingPaymentsItems?.length) {
         this.upcomingItems = [...state.upcomingPaymentsItems];
-        const agg = aggregateUpcomingPayments(this.upcomingItems);
-        this.upcomingTotal = agg.total;
-        this.upcomingCount = agg.count;
+        const combined = combineUpcomingAndSubscriptions30d(
+          this.upcomingItems,
+          this.recurringSubs
+        );
+        this.upcomingTotal = combined.total;
+        this.upcomingCount = combined.count;
       }
       this.cdr.markForCheck();
     });

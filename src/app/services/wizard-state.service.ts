@@ -58,6 +58,56 @@ export function aggregateUpcomingPayments(items: UpcomingPaymentItem[]): {
   return { total, count: items.length };
 }
 
+/** Suscripción recurrente demo (misma fuente: Próximos pagos, Posición global, Gestionar pagos) */
+export interface RecurringSubscriptionItem {
+  id: string;
+  merchant: string;
+  lineSub?: string;
+  priceMonthly: number;
+  logoInitial: string;
+  logoColor: string;
+  logoAsset?: string;
+}
+
+export function aggregateRecurringSubscriptionsMonthly(
+  subs: RecurringSubscriptionItem[]
+): { total: number; count: number } {
+  const total = subs.reduce((sum, s) => sum + s.priceMonthly, 0);
+  return { total, count: subs.length };
+}
+
+/** Total «30 días» transversal: cargos previstos + cuotas mensuales de suscripciones */
+export function combineUpcomingAndSubscriptions30d(
+  items: UpcomingPaymentItem[],
+  subs: RecurringSubscriptionItem[]
+): { total: number; count: number } {
+  const u = aggregateUpcomingPayments(items);
+  const s = aggregateRecurringSubscriptionsMonthly(subs);
+  return { total: u.total + s.total, count: u.count + s.count };
+}
+
+/** Lista demo de suscripciones activas (importes alineados con el hub) */
+export const DEFAULT_RECURRING_SUBSCRIPTIONS: RecurringSubscriptionItem[] = [
+  {
+    id: 'sub-1',
+    merchant: 'Netflix',
+    lineSub: 'Mensual, se renueva 21 Abr',
+    priceMonthly: 17.99,
+    logoInitial: 'N',
+    logoColor: '#E50914',
+    logoAsset: 'assets/gph-logo-netflix.png'
+  },
+  {
+    id: 'sub-3',
+    merchant: 'HBO Max',
+    lineSub: 'Mensual, se renueva 1 May',
+    priceMonthly: 8.99,
+    logoInitial: 'H',
+    logoColor: '#8B5CF6',
+    logoAsset: 'assets/gph-logo-hbo.png'
+  }
+];
+
 /** Lista demo: total 450 € / 4 pagos; *4422 → 3 cargos (410 €); *4425 → 1 cargo (40 €) */
 export const DEFAULT_UPCOMING_PAYMENTS_ITEMS: UpcomingPaymentItem[] = [
   {
@@ -134,6 +184,8 @@ export interface WizardState {
   upcomingPaymentsCount?: number;
   /** Movimientos próximos 30 días (compartido Próximos pagos + Cuentas) */
   upcomingPaymentsItems?: UpcomingPaymentItem[];
+  /** Suscripciones activas demo; incluidas en totales 30 días junto con upcoming */
+  recurringSubscriptionItems?: RecurringSubscriptionItem[];
   /** Detalle de un movimiento (panel compartido) */
   selectedUpcomingPaymentId?: string | null;
   /** Abrir el hub de Gestionar pagos directamente en la lista de Suscripciones */
@@ -147,7 +199,9 @@ export interface WizardState {
 })
 export class WizardStateService {
   private initialState: WizardState = (() => {
-    const agg = aggregateUpcomingPayments(DEFAULT_UPCOMING_PAYMENTS_ITEMS);
+    const items = DEFAULT_UPCOMING_PAYMENTS_ITEMS;
+    const subs = DEFAULT_RECURRING_SUBSCRIPTIONS;
+    const combined = combineUpcomingAndSubscriptions30d(items, subs);
     return {
     currentStep: 1, // Posición Global
     capacidadMaxima: 18000,
@@ -155,9 +209,10 @@ export class WizardStateService {
     plazoAnos: 5,
     entryScreen: 'posicion-global',
     posicionGlobalCardView: 'total',
-    upcomingPaymentsTotal: agg.total,
-    upcomingPaymentsCount: agg.count,
-    upcomingPaymentsItems: DEFAULT_UPCOMING_PAYMENTS_ITEMS,
+    upcomingPaymentsTotal: combined.total,
+    upcomingPaymentsCount: combined.count,
+    upcomingPaymentsItems: items,
+    recurringSubscriptionItems: subs,
     selectedUpcomingPaymentId: null,
     gestionarPagosDirectoSuscripciones: false,
     gestionarPagosAbrirSuscripcionId: null,

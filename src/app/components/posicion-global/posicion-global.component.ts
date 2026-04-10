@@ -3,10 +3,17 @@ import {
   WizardStateService,
   UpcomingPaymentItem,
   DEFAULT_UPCOMING_PAYMENTS_ITEMS,
-  aggregateUpcomingPayments
+  DEFAULT_RECURRING_SUBSCRIPTIONS,
+  RecurringSubscriptionItem,
+  combineUpcomingAndSubscriptions30d
 } from '../../services/wizard-state.service';
 
 declare var lucide: any;
+
+const INITIAL_30D_COMBINED = combineUpcomingAndSubscriptions30d(
+  DEFAULT_UPCOMING_PAYMENTS_ITEMS,
+  DEFAULT_RECURRING_SUBSCRIPTIONS
+);
 
 @Component({
   selector: 'app-posicion-global',
@@ -39,10 +46,12 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
 
   /** Tarjeta resumen: saldo total vs próximos pagos (entry point) */
   posicionCardView: 'total' | 'upcoming' = 'total';
-  upcomingPaymentsTotal = 450;
+  upcomingPaymentsTotal = INITIAL_30D_COMBINED.total;
   /** Alineado con la lista de Próximos pagos (wizard state) */
-  upcomingPaymentsCount = 4;
+  upcomingPaymentsCount = INITIAL_30D_COMBINED.count;
   upcomingPaymentsItems: UpcomingPaymentItem[] = [...DEFAULT_UPCOMING_PAYMENTS_ITEMS];
+  /** Suscripciones demo — mismos importes que Próximos pagos / wizard */
+  recurringSubscriptionItems: RecurringSubscriptionItem[] = [...DEFAULT_RECURRING_SUBSCRIPTIONS];
 
   /** Pestaña movimientos en vista Cuentas */
   accountsMovementTab: 'todos' | 'proximos' = 'todos';
@@ -87,14 +96,23 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
     });
   }
 
-  /** Suma global de la lista (todas las cuentas); coherente con chip «Todas» en Próximos pagos */
+  /** Suma solo cargos «próximos» (lista movimientos), sin suscripciones */
   get upcomingPaymentsSumAll(): number {
     return this.upcomingPaymentsItems.reduce((s, it) => s + it.amount, 0);
   }
 
-  /** Importe de próximos pagos con signo negativo (p. ej. -450,00) */
+  get recurringSubscriptionsMonthlySum(): number {
+    return this.recurringSubscriptionItems.reduce((s, r) => s + r.priceMonthly, 0);
+  }
+
+  /** Total 30 días transversal (Próximos pagos + suscripciones), coherente con `displaySummaryTotal` */
+  get combined30DayTotal(): number {
+    return this.upcomingPaymentsSumAll + this.recurringSubscriptionsMonthlySum;
+  }
+
+  /** Importe de próximos pagos con signo negativo (p. ej. -476,98) */
   get upcomingTotalFormatted(): string {
-    const n = -Math.abs(this.upcomingPaymentsSumAll);
+    const n = -Math.abs(this.combined30DayTotal);
     return n.toLocaleString('es-ES', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
@@ -103,7 +121,7 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
 
   /** Total como cargo (signo negativo), coherente con la captura de resumen */
   get upcomingOutflowFormatted(): string {
-    const n = Math.abs(this.upcomingPaymentsSumAll);
+    const n = Math.abs(this.combined30DayTotal);
     return (
       '-' +
       n.toLocaleString('es-ES', {
@@ -124,8 +142,18 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
     return this.upcomingItemsForSelectedAccount.reduce((s, it) => s + it.amount, 0);
   }
 
+  /** Previsión cuenta + suscripciones (misma lógica que resumen Próximos pagos con chip) */
+  get upcomingFilteredTotalWithSubs(): number {
+    return this.upcomingFilteredTotal + this.recurringSubscriptionsMonthlySum;
+  }
+
   get upcomingFilteredCountLabel(): string {
     const c = this.upcomingItemsForSelectedAccount.length;
+    return c === 1 ? '1 pago' : `${c} pagos`;
+  }
+
+  get upcomingFilteredCountWithSubsLabel(): string {
+    const c = this.upcomingItemsForSelectedAccount.length + this.recurringSubscriptionItems.length;
     return c === 1 ? '1 pago' : `${c} pagos`;
   }
 
@@ -175,11 +203,17 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
       this.lastLoanAmount = state.loanAmount ?? null;
 
       this.posicionCardView = state.posicionGlobalCardView ?? 'total';
+      if (state.recurringSubscriptionItems?.length) {
+        this.recurringSubscriptionItems = [...state.recurringSubscriptionItems];
+      }
       if (state.upcomingPaymentsItems?.length) {
         this.upcomingPaymentsItems = [...state.upcomingPaymentsItems];
-        const agg = aggregateUpcomingPayments(this.upcomingPaymentsItems);
-        this.upcomingPaymentsTotal = agg.total;
-        this.upcomingPaymentsCount = agg.count;
+        const combined = combineUpcomingAndSubscriptions30d(
+          this.upcomingPaymentsItems,
+          this.recurringSubscriptionItems
+        );
+        this.upcomingPaymentsTotal = combined.total;
+        this.upcomingPaymentsCount = combined.count;
       } else {
         if (state.upcomingPaymentsTotal != null) {
           this.upcomingPaymentsTotal = state.upcomingPaymentsTotal;
