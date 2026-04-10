@@ -17,7 +17,7 @@ El comando por defecto **`npm run build`** ejecuta `scripts/vercel-build.cjs`, q
 | `main`, `MoneyConfidence-v1`, otras | **V1** |
 
 - En **Project → Settings → Build**, deja **Build Command** vacío o `npm run build` (no fuerces solo `build:v1` si quieres previews V2).
-- **Output directory:** `dist/money-confidence`.
+- **Output directory:** activa *Override* y pon **`dist/money-confidence`**. El preset Angular de Vercel sugiere `dist`, pero este proyecto genera en **`dist/money-confidence`** (`angular.json`).
 - Cada **preview** en la pestaña Deployments tiene su URL: abre la de la rama `V2` o `MoneyConfidence-v2` para probar V2.
 
 Tras subir este cambio, haz **Redeploy** de los previews V2 o un push nuevo para que el build use el script nuevo.
