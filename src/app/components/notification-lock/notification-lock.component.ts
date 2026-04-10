@@ -1,5 +1,6 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
 
 declare var lucide: any;
 
@@ -8,8 +9,14 @@ declare var lucide: any;
   templateUrl: './notification-lock.component.html',
   styleUrls: ['./notification-lock.component.scss']
 })
-export class NotificationLockComponent implements AfterViewInit {
+export class NotificationLockComponent implements OnInit, AfterViewInit {
   constructor(private router: Router) {}
+
+  ngOnInit(): void {
+    if (environment.entryFromLogin) {
+      void this.router.navigateByUrl('/acceso', { replaceUrl: true });
+    }
+  }
 
   ngAfterViewInit(): void {
     if (typeof lucide !== 'undefined') {

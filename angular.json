@@ -48,7 +48,13 @@
                   "maximumError": "2mb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.prod.ts"
+                }
+              ]
             },
             "development": {
               "buildOptimizer": false,
@@ -60,6 +66,45 @@
               "budgets": [
                 { "type": "initial", "maximumWarning": "500kb", "maximumError": "1mb" },
                 { "type": "anyComponentStyle", "maximumWarning": "1mb", "maximumError": "2mb" }
+              ]
+            },
+            "v2": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "vendorChunk": true,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "namedChunks": true,
+              "budgets": [
+                { "type": "initial", "maximumWarning": "500kb", "maximumError": "1mb" },
+                { "type": "anyComponentStyle", "maximumWarning": "1mb", "maximumError": "2mb" }
+              ],
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.v2.ts"
+                }
+              ]
+            },
+            "v2-production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "500kb",
+                  "maximumError": "1mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "1mb",
+                  "maximumError": "2mb"
+                }
+              ],
+              "outputHashing": "all",
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.v2.prod.ts"
+                }
               ]
             }
           },
@@ -73,6 +118,9 @@
             },
             "development": {
               "buildTarget": "money-confidence:build:development"
+            },
+            "v2": {
+              "buildTarget": "money-confidence:build:v2"
             }
           },
           "defaultConfiguration": "development"

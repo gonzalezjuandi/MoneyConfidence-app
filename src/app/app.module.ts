@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { AppEntryRedirectComponent } from './components/app-entry-redirect/app-entry-redirect.component';
 import { WizardComponent } from './components/wizard/wizard.component';
 import { PosicionGlobalComponent } from './components/posicion-global/posicion-global.component';
 import { ContratarComponent } from './components/contratar/contratar.component';
@@ -37,6 +38,7 @@ import { UpcomingPaymentBrandLogoComponent } from './components/upcoming-payment
 @NgModule({
   declarations: [
     AppComponent,
+    AppEntryRedirectComponent,
     PostLoginFlowComponent,
     NotificationLockComponent,
     LoginFlowComponent,

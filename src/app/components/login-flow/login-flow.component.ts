@@ -5,6 +5,8 @@ import {
   ChangeDetectorRef
 } from '@angular/core';
 import { Router } from '@angular/router';
+import { environment } from '../../../environments/environment';
+import { WizardStateService } from '../../services/wizard-state.service';
 
 declare var lucide: any;
 
@@ -25,7 +27,8 @@ export class LoginFlowComponent implements AfterViewInit, OnDestroy {
 
   constructor(
     private cdr: ChangeDetectorRef,
-    private router: Router
+    private router: Router,
+    private wizardState: WizardStateService
   ) {}
 
   ngAfterViewInit(): void {
@@ -65,10 +68,18 @@ export class LoginFlowComponent implements AfterViewInit, OnDestroy {
         this.cdr.markForCheck();
       }, 450)
     );
+    const afterLoginMs = 450 + 1400;
     this.timers.push(
       setTimeout(() => {
-        this.router.navigate(['/bienvenida']);
-      }, 450 + 1400)
+        if (environment.skipPostLoginSpendingModal) {
+          this.wizardState.reset();
+          this.wizardState.setEntryScreen('posicion-global');
+          this.wizardState.setPosicionGlobalCardView('total');
+          void this.router.navigate(['/app', 'posicion-global']);
+        } else {
+          void this.router.navigate(['/bienvenida']);
+        }
+      }, afterLoginMs)
     );
   }
 
