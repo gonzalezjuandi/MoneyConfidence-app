@@ -5,12 +5,24 @@ import { NotificationLockComponent } from './components/notification-lock/notifi
 import { LoginFlowComponent } from './components/login-flow/login-flow.component';
 import { PostLoginFlowComponent } from './components/post-login-flow/post-login-flow.component';
 import { WizardComponent } from './components/wizard/wizard.component';
+import {
+  v2SkipBienvenidaGuard,
+  v2SkipNotificationScreenGuard
+} from './guards/v2-experience.guards';
 
 const routes: Routes = [
   { path: '', pathMatch: 'full', component: AppEntryRedirectComponent },
-  { path: 'notificacion', component: NotificationLockComponent },
+  {
+    path: 'notificacion',
+    component: NotificationLockComponent,
+    canActivate: [v2SkipNotificationScreenGuard]
+  },
   { path: 'acceso', component: LoginFlowComponent },
-  { path: 'bienvenida', component: PostLoginFlowComponent },
+  {
+    path: 'bienvenida',
+    component: PostLoginFlowComponent,
+    canActivate: [v2SkipBienvenidaGuard]
+  },
   { path: 'app/:pantalla', component: WizardComponent },
   { path: '**', component: AppEntryRedirectComponent }
 ];
