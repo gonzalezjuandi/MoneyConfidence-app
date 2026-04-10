@@ -1,4 +1,4 @@
-/** Build V2 (desarrollo): login como entrada; sin modal de aviso de gastos; inicio directo. */
+/** Desarrollo V2 — mismo comportamiento que `environment.v2.prod.ts` (sin push ni modal). */
 export const environment = {
   production: false,
   experience: 'v2' as const,

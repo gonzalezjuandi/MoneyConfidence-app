@@ -1,13 +1,15 @@
 {
   "name": "money-confidence",
   "version": "1.0.0",
-  "description": "MVP MoneyConfidence - Banco Sabadell",
+  "description": "MVP MoneyConfidence — V1: push + notificación + modal; V2: solo login → inicio. Ver DEPLOY-V1-V2.md",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "dev": "ng serve",
+    "start:v1": "ng serve",
     "start:v2": "ng serve --configuration=v2",
-    "build": "ng build --configuration=production",
+    "build": "npm run build:v1",
+    "build:v1": "ng build --configuration=production",
     "build:v2": "ng build --configuration=v2-production",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
