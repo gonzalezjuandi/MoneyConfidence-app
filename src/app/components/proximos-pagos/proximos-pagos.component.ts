@@ -160,9 +160,8 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   /**
-   * Chips alineados con las máscaras de cuenta (*4422 Sabadell vs *4425 familiar).
-   * La lógica anterior usaba `accounts[]` y casi todos los ítems tenían `principal`,
-   * así que «Todas» y «Cuenta Sabadell» mostraban lo mismo.
+   * Misma regla que `upcomingItemsForSelectedAccount` en Posición global / Cuentas:
+   * un cargo pertenece a la cuenta si `accounts` la incluye (compartidos cuentan en ambas).
    */
   private filterUpcomingByAccount(
     items: UpcomingPaymentItem[],
@@ -171,33 +170,13 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
     if (key === 'all') {
       return [...items];
     }
-    if (key === 'principal') {
-      return items.filter(it => this.matchesPrincipalAccountChip(it));
-    }
-    return items.filter(it => this.matchesFamiliarAccountChip(it));
-  }
-
-  /** Chip «Cuenta Sabadell *4422» — cargos asociados a esa máscara */
-  private matchesPrincipalAccountChip(it: UpcomingPaymentItem): boolean {
-    const m = it.accountMask?.trim();
-    if (m) {
-      return m.includes('4422');
-    }
-    const a = it.accounts;
-    if (!a?.length) {
-      return true;
-    }
-    return a.includes('principal') && !a.includes('familiar');
-  }
-
-  /** Chip «Cuenta familiar *4425» */
-  private matchesFamiliarAccountChip(it: UpcomingPaymentItem): boolean {
-    const m = it.accountMask?.trim();
-    if (m) {
-      return m.includes('4425');
-    }
-    const a = it.accounts;
-    return !!a?.includes('familiar') && !a?.includes('principal');
+    return items.filter(it => {
+      const a = it.accounts;
+      if (!a?.length) {
+        return key === 'principal';
+      }
+      return a.includes(key);
+    });
   }
 
   ngAfterViewInit(): void {
