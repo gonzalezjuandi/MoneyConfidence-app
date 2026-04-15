@@ -6,58 +6,94 @@
   aria-hidden="false"
 ></div>
 
-<div class="upd-wrap" *ngIf="item" role="dialog" aria-modal="true" [attr.aria-labelledby]="'upd-title-' + item.id">
-  <div class="upd-sheet" (click)="$event.stopPropagation()">
-    <header class="upd-head">
-      <button type="button" class="upd-close" (click)="close()" aria-label="Cerrar">
-        <i data-lucide="x" class="upd-close-ic"></i>
+<div class="upd-panel" *ngIf="item" role="dialog" aria-modal="true" [attr.aria-labelledby]="'upd-title-' + item.id">
+  <div class="upd-panel-inner" (click)="$event.stopPropagation()">
+    <div class="upd-statusbar" aria-hidden="true">
+      <span class="upd-status-time">9:41</span>
+      <div class="upd-status-icons">
+        <i data-lucide="signal" class="upd-sb-ic"></i>
+        <i data-lucide="wifi" class="upd-sb-ic"></i>
+        <i data-lucide="battery-medium" class="upd-sb-ic"></i>
+      </div>
+    </div>
+
+    <header class="upd-nav">
+      <button type="button" class="upd-nav-back" (click)="close()" aria-label="Cerrar">
+        <i data-lucide="chevron-left" class="upd-nav-back-ic"></i>
       </button>
-      <h2 class="upd-title" [id]="'upd-title-' + item.id">Detalle del pago</h2>
-      <div class="upd-head-spacer"></div>
+      <h2 class="upd-nav-title" [id]="'upd-title-' + item.id">Próximo movimiento</h2>
+      <div class="upd-nav-actions">
+        <button type="button" class="upd-nav-icon" aria-label="Ocultar importes">
+          <i data-lucide="eye" class="upd-nav-ic"></i>
+        </button>
+        <button type="button" class="upd-nav-icon" aria-label="Ayuda">
+          <i data-lucide="message-circle" class="upd-nav-ic"></i>
+        </button>
+      </div>
     </header>
 
-    <div class="upd-hero">
-      <app-upcoming-payment-brand-logo
-        *ngIf="item.logoVariant"
-        class="upd-brand-logo"
-        [variant]="item.logoVariant"
-        size="lg"
-      ></app-upcoming-payment-brand-logo>
-      <div *ngIf="!item.logoVariant" class="upd-logo" [style.background]="item.logoBg">{{ item.logo }}</div>
-      <p class="upd-name">{{ item.name }}</p>
-      <p class="upd-detail" *ngIf="item.detail">{{ item.detail }}</p>
-      <p class="upd-amount">-{{ formatMoney(item.amount) }} €</p>
-      <p class="upd-schedule">{{ item.schedule }}</p>
-      <span class="upd-tag">{{ item.label }}</span>
-    </div>
+    <div class="upd-scroll">
+      <div class="upd-hero">
+        <app-upcoming-payment-brand-logo
+          *ngIf="item.logoVariant"
+          class="upd-brand-logo"
+          [variant]="item.logoVariant"
+          size="lg"
+        ></app-upcoming-payment-brand-logo>
+        <div *ngIf="!item.logoVariant" class="upd-logo" [style.background]="item.logoBg">{{ item.logo }}</div>
 
-    <div class="upd-card">
-      <h3 class="upd-card-title">Detalle del movimiento</h3>
-      <div class="upd-row">
-        <span class="upd-k">Concepto</span>
-        <span class="upd-v">{{ item.name }}</span>
-      </div>
-      <div class="upd-row">
-        <span class="upd-k">Importe previsto</span>
-        <span class="upd-v">-{{ formatMoney(item.amount) }} €</span>
-      </div>
-      <div class="upd-row">
-        <span class="upd-k">Fecha prevista</span>
-        <span class="upd-v">{{ item.schedule }}</span>
-      </div>
-      <div class="upd-row">
-        <span class="upd-k">Categoría</span>
-        <span class="upd-v">{{ item.label }}</span>
-      </div>
-      <div class="upd-row">
-        <span class="upd-k">Cuenta de cargo</span>
-        <span class="upd-v">{{ item.accountMask }}</span>
-      </div>
-    </div>
+        <p class="upd-merchant">{{ item.name }}</p>
 
-    <p class="upd-foot">
-      <i data-lucide="info" class="upd-foot-ic"></i>
-      Los importes y fechas son orientativos y podrían variar o cancelarse.
-    </p>
+        <span class="upd-badge-provisional">Información provisional</span>
+
+        <p class="upd-amount">-{{ formatMoney(item.amount) }} €</p>
+
+        <div class="upd-estimado-row">
+          <span class="upd-estimado-i" aria-hidden="true">i</span>
+          <span class="upd-estimado-text">Importe estimado</span>
+        </div>
+
+        <p class="upd-schedule-long">{{ scheduleLongDisplay }}</p>
+        <p class="upd-cuenta-mask">{{ cuentaEnmascarada }}</p>
+      </div>
+
+      <section class="upd-detail-block" aria-labelledby="upd-detail-heading">
+        <h3 id="upd-detail-heading" class="upd-detail-heading">Detalle del movimiento</h3>
+
+        <div class="upd-card">
+          <div class="upd-field">
+            <span class="upd-field-label">Concepto</span>
+            <span class="upd-field-value">{{ conceptoDetalle }}</span>
+          </div>
+          <div class="upd-field" [class.upd-field--before-toggle]="!detailExpanded">
+            <span class="upd-field-label">Cuenta</span>
+            <span class="upd-field-value upd-field-value--iban">{{ ibanDisplay }}</span>
+          </div>
+
+          <ng-container *ngIf="detailExpanded">
+            <div class="upd-field">
+              <span class="upd-field-label">Titular de la cuenta</span>
+              <span class="upd-field-value">{{ titularDisplay }}</span>
+            </div>
+            <div class="upd-field">
+              <span class="upd-field-label">Producto</span>
+              <span class="upd-field-value">{{ productoDisplay }}</span>
+            </div>
+            <div class="upd-field upd-field--last">
+              <span class="upd-field-label">Referencia</span>
+              <span class="upd-field-value upd-field-value--ref">{{ referenciaDisplay }}</span>
+            </div>
+          </ng-container>
+
+          <button type="button" class="upd-toggle" (click)="toggleDetailExpanded()">
+            <span>{{ detailExpanded ? 'Mostrar menos' : 'Mostrar más' }}</span>
+            <i
+              class="upd-toggle-ic"
+              [attr.data-lucide]="detailExpanded ? 'chevron-up' : 'chevron-down'"
+            ></i>
+          </button>
+        </div>
+      </section>
+    </div>
   </div>
 </div>

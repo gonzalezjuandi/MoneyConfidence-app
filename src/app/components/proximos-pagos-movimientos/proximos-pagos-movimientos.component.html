@@ -1,0 +1,192 @@
+<ng-container *ngIf="!isHabitualesView">
+  <div class="ppm-root">
+    <div class="ppm-statusbar" aria-hidden="true">
+      <span class="ppm-status-time">9:41</span>
+      <div class="ppm-status-icons">
+        <i data-lucide="signal" class="ppm-sb-ic"></i>
+        <i data-lucide="wifi" class="ppm-sb-ic"></i>
+        <i data-lucide="battery-medium" class="ppm-sb-ic"></i>
+      </div>
+    </div>
+
+    <header class="ppm-header ppm-header-nav">
+      <button type="button" class="ppm-back" (click)="onBack()" aria-label="Volver">
+        <i data-lucide="chevron-left" class="ppm-icon ppm-icon-blue"></i>
+      </button>
+      <h1 class="ppm-header-center-title">Próximos pagos</h1>
+      <div class="ppm-header-actions">
+        <button type="button" class="ppm-icon-btn" aria-label="Ocultar importes">
+          <i data-lucide="eye" class="ppm-icon ppm-icon-blue"></i>
+        </button>
+        <button type="button" class="ppm-icon-btn" aria-label="Ayuda">
+          <i data-lucide="message-circle" class="ppm-icon ppm-icon-blue"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="ppm-scroll">
+      <h2 class="ppm-page-title">Tus próximos pagos</h2>
+
+      <div class="ppm-chips no-scrollbar">
+        <button
+          type="button"
+          *ngFor="let c of accountChips"
+          class="ppm-chip"
+          [class.ppm-chip-dark]="selectedAccountKey === c.key"
+          (click)="selectAccountFilter(c.key)"
+        >
+          {{ c.label }}
+        </button>
+      </div>
+
+      <div class="ppm-forecast-bar">
+        <span class="ppm-forecast-title">Previsión para los próximos 30 días</span>
+        <button
+          type="button"
+          class="ppm-info-filled-btn"
+          (click)="openInfoDrawer()"
+          aria-label="Información sobre importes y fechas"
+        >
+          <span class="ppm-info-filled" aria-hidden="true">i</span>
+        </button>
+      </div>
+
+      <ul class="ppm-list">
+        <li
+          *ngFor="let it of filteredUpcomingItems"
+          class="ppm-row ppm-row-click"
+          (click)="openUpcomingDetail(it.id)"
+        >
+          <app-upcoming-payment-brand-logo
+            *ngIf="it.logoVariant"
+            [variant]="it.logoVariant"
+            size="md"
+          ></app-upcoming-payment-brand-logo>
+          <div *ngIf="!it.logoVariant" class="ppm-logo" [style.background]="it.logoBg">{{ it.logo }}</div>
+          <div class="ppm-row-main">
+            <p class="ppm-row-name">{{ it.name }}</p>
+            <p class="ppm-row-detail" *ngIf="it.detail">{{ it.detail }}</p>
+            <p class="ppm-row-sub">{{ it.schedule }}</p>
+          </div>
+          <div class="ppm-row-amount-col">
+            <span class="ppm-row-amt">-{{ formatMoney(it.amount) }} €</span>
+            <span class="ppm-row-account">{{ it.accountMask }}</span>
+            <span class="ppm-tag">{{ it.label }}</span>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="ppm-drawer-layer" *ngIf="infoDrawer">
+      <div class="ppm-drawer-backdrop" (click)="closeInfoDrawer()"></div>
+      <div
+        class="ppm-drawer-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="ppm-drawer-title-importes"
+        (click)="$event.stopPropagation()"
+      >
+        <div class="ppm-drawer-handle" aria-hidden="true"></div>
+        <button type="button" class="ppm-drawer-close" (click)="closeInfoDrawer()" aria-label="Cerrar">
+          <i data-lucide="x" class="ppm-drawer-x-ic"></i>
+        </button>
+
+        <h2 id="ppm-drawer-title-importes" class="ppm-drawer-title">Importes y fechas estimadas</h2>
+        <p class="ppm-drawer-body">
+          Ten en cuenta que los <strong>importes y fechas son orientativos</strong> según el tipo de movimiento y los
+          plazos habituales, algún importe <strong>podría variar o cancelarse</strong> desde que te lo mostramos hasta
+          que se cargue en cuenta.
+        </p>
+
+        <button type="button" class="ppm-drawer-primary" (click)="closeInfoDrawer()">Entendido</button>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-container *ngIf="isHabitualesView">
+  <div class="gphab-root">
+    <div class="gphab-statusbar" aria-hidden="true">
+      <span class="gphab-status-time">9:41</span>
+      <div class="gphab-status-icons">
+        <i data-lucide="signal" class="gphab-sb-ic"></i>
+        <i data-lucide="wifi" class="gphab-sb-ic"></i>
+        <i data-lucide="battery-medium" class="gphab-sb-ic"></i>
+      </div>
+    </div>
+
+    <header class="gphab-header gphab-header-nav">
+      <button type="button" class="gphab-back" (click)="onBack()" aria-label="Volver">
+        <i data-lucide="chevron-left" class="gphab-icon gphab-icon-blue"></i>
+      </button>
+      <h1 class="gphab-header-center-title">Gestionar pagos</h1>
+      <div class="gphab-header-actions">
+        <button type="button" class="gphab-icon-btn" aria-label="Ocultar importes">
+          <i data-lucide="eye" class="gphab-icon gphab-icon-blue"></i>
+        </button>
+        <button type="button" class="gphab-icon-btn" aria-label="Ayuda">
+          <i data-lucide="message-circle" class="gphab-icon gphab-icon-blue"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="gphab-scroll">
+      <h2 class="gphab-page-title">Gestiona tus pagos habituales</h2>
+      <p class="gphab-page-sub">
+        Tienes {{ activeHabitualPaymentsCount }}
+        {{ activeHabitualPaymentsCount === 1 ? 'pago activo' : 'pagos activos' }}
+      </p>
+
+      <div class="gphab-chips-row no-scrollbar">
+        <button type="button" class="gphab-filter-btn" aria-label="Filtros">
+          <i data-lucide="list-filter" class="gphab-icon gphab-icon-blue"></i>
+        </button>
+        <button
+          type="button"
+          *ngFor="let t of habitualCategoryTabs"
+          class="gphab-chip"
+          [class.gphab-chip-dark]="selectedHabitualCategory === t.key"
+          (click)="selectHabitualCategory(t.key)"
+        >
+          {{ t.label }}
+        </button>
+      </div>
+
+      <ul class="gphab-list">
+        <li
+          *ngFor="let it of filteredHabitualItems"
+          class="gphab-row"
+          [class.gphab-row-click]="!!it.linkedSubscriptionId"
+          (click)="onHabitualRowClick(it)"
+        >
+          <img
+            *ngIf="it.logoAsset"
+            [src]="it.logoAsset"
+            [alt]="it.merchant"
+            class="gphab-logo-img"
+            width="48"
+            height="48"
+          />
+          <div
+            *ngIf="!it.logoAsset"
+            class="gphab-logo"
+            [style.background]="it.logoColor ?? '#6b7280'"
+          >
+            {{ it.logoInitial }}
+          </div>
+          <div class="gphab-row-main">
+            <p class="gphab-row-name">{{ it.merchant }}</p>
+            <p class="gphab-row-sub">{{ it.lineSub }}</p>
+          </div>
+          <div class="gphab-row-meta">
+            <span *ngIf="it.status === 'activa' && it.amount != null" class="gphab-row-amt">
+              {{ formatMoney(it.amount) }} €
+            </span>
+            <span *ngIf="it.status === 'cancelada'" class="gphab-status-tag">Cancelada</span>
+          </div>
+          <i data-lucide="chevron-right" class="gphab-chevron" aria-hidden="true"></i>
+        </li>
+      </ul>
+    </div>
+  </div>
+</ng-container>

@@ -1,9 +1,18 @@
-import { EntryScreen, WizardState } from './services/wizard-state.service';
+import { EntryScreen, ProximosPagosView, WizardState } from './services/wizard-state.service';
 
 /** Segmento de URL bajo `/app/...` coherente con el paso del wizard */
 export function wizardStateToSlug(state: WizardState): string {
   if (state.currentStep === 1) {
-    return state.entryScreen === 'proximos-pagos' ? 'proximos-pagos' : 'posicion-global';
+    if (state.entryScreen === 'proximos-pagos') {
+      if (state.proximosPagosView === 'movimientos') {
+        return 'proximos-pagos-movimientos';
+      }
+      if (state.proximosPagosView === 'habituales') {
+        return 'proximos-pagos-habituales';
+      }
+      return 'proximos-pagos';
+    }
+    return 'posicion-global';
   }
   const byStep: Record<number, string> = {
     2: 'contratar',
@@ -21,10 +30,27 @@ export function wizardStateToSlug(state: WizardState): string {
 
 export function slugToWizardPatch(
   slug: string
-): { step: number; entryScreen?: EntryScreen } | null {
-  const map: Record<string, { step: number; entryScreen?: EntryScreen }> = {
+): {
+  step: number;
+  entryScreen?: EntryScreen;
+  proximosPagosView?: ProximosPagosView;
+} | null {
+  const map: Record<
+    string,
+    { step: number; entryScreen?: EntryScreen; proximosPagosView?: ProximosPagosView }
+  > = {
     'posicion-global': { step: 1, entryScreen: 'posicion-global' },
-    'proximos-pagos': { step: 1, entryScreen: 'proximos-pagos' },
+    'proximos-pagos': { step: 1, entryScreen: 'proximos-pagos', proximosPagosView: 'home' },
+    'proximos-pagos-movimientos': {
+      step: 1,
+      entryScreen: 'proximos-pagos',
+      proximosPagosView: 'movimientos'
+    },
+    'proximos-pagos-habituales': {
+      step: 1,
+      entryScreen: 'proximos-pagos',
+      proximosPagosView: 'habituales'
+    },
     contratar: { step: 2 },
     prestamos: { step: 3 },
     landing: { step: 4 },

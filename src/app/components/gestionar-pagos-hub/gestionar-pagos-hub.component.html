@@ -1,51 +1,4 @@
 <div class="gph-root">
-  <!-- Distributiva: módulos -->
-  <ng-container *ngIf="view === 'secciones'">
-    <header class="gph-header gph-header-nav">
-      <button type="button" class="gph-back" (click)="onBack()" aria-label="Volver">
-        <i data-lucide="arrow-left" class="gph-ic"></i>
-      </button>
-      <h1 class="gph-title gph-title-abs">Gestionar pagos</h1>
-      <div class="gph-header-util">
-        <button type="button" class="gph-util-btn" aria-label="Ocultar importes">
-          <i data-lucide="eye" class="gph-util-ic"></i>
-        </button>
-        <button type="button" class="gph-util-btn" aria-label="Ayuda">
-          <i data-lucide="message-circle" class="gph-util-ic"></i>
-        </button>
-      </div>
-    </header>
-
-    <div class="gph-module-list">
-      <button type="button" class="gph-module-card" (click)="openSuscripciones()">
-        <div class="gph-mod-icon"><i data-lucide="calendar" class="gph-mod-ic"></i></div>
-        <div class="gph-mod-body">
-          <span class="gph-mod-title">Suscripciones</span>
-          <span class="gph-mod-desc">Consulta, controla o cancela tus suscripciones activas.</span>
-        </div>
-        <i data-lucide="chevron-right" class="gph-chev"></i>
-      </button>
-
-      <button type="button" class="gph-module-card" disabled aria-disabled="true">
-        <div class="gph-mod-icon"><i data-lucide="home" class="gph-mod-ic"></i></div>
-        <div class="gph-mod-body">
-          <span class="gph-mod-title">Domiciliaciones de cuenta</span>
-          <span class="gph-mod-desc">Revisa tus recibos y gestiona tus domiciliaciones.</span>
-        </div>
-        <i data-lucide="chevron-right" class="gph-chev"></i>
-      </button>
-
-      <button type="button" class="gph-module-card" disabled aria-disabled="true">
-        <div class="gph-mod-icon"><i data-lucide="percent" class="gph-mod-ic"></i></div>
-        <div class="gph-mod-body">
-          <span class="gph-mod-title">Bizum</span>
-          <span class="gph-mod-desc">Gestiona tus pagos habituales, envía dinero y revisa tus contactos.</span>
-        </div>
-        <i data-lucide="chevron-right" class="gph-chev"></i>
-      </button>
-    </div>
-  </ng-container>
-
   <!-- Tus suscripciones: bloque superior #FAFAFA, lista inferior blanca (referencia) -->
   <ng-container *ngIf="view === 'suscripciones'">
     <div class="gph-ref-screen gph-ref-screen--subs">
@@ -148,6 +101,70 @@
             <div class="pp-row-amount-col">
               <span class="pp-row-amt">-{{ formatMoney(c.price) }} €</span>
               <span class="pp-tag">Suscripción</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Recibos (domiciliaciones) — mismo patrón visual que Suscripciones -->
+  <ng-container *ngIf="view === 'recibos'">
+    <div class="gph-ref-screen gph-ref-screen--subs">
+      <div class="gph-subs-upper">
+        <div class="gph-statusbar" aria-hidden="true">
+          <span class="gph-status-time">9:41</span>
+          <div class="gph-status-icons">
+            <i data-lucide="signal" class="gph-sb-ic"></i>
+            <i data-lucide="wifi" class="gph-sb-ic"></i>
+            <i data-lucide="battery-medium" class="gph-sb-ic"></i>
+          </div>
+        </div>
+
+        <header class="gph-header gph-header-ref gph-header-nav">
+          <button type="button" class="gph-back gph-back-ref" (click)="onBack()" aria-label="Volver">
+            <i data-lucide="chevron-left" class="gph-ic gph-ic-blue"></i>
+          </button>
+          <h1 class="gph-title gph-title-abs gph-title-ref">Recibos</h1>
+          <div class="gph-header-util gph-header-util-ref">
+            <button type="button" class="gph-util-btn-ref" aria-label="Ocultar importes">
+              <i data-lucide="eye" class="gph-util-ic gph-ic-blue"></i>
+            </button>
+            <button type="button" class="gph-util-btn-ref" aria-label="Ayuda">
+              <i data-lucide="message-circle" class="gph-util-ic gph-ic-blue"></i>
+            </button>
+          </div>
+        </header>
+
+        <div class="gph-subs-head">
+          <h2 class="gph-section-title">Tus recibos y domiciliaciones</h2>
+          <div class="gph-subs-summary-center">
+            <p class="gph-subs-total-label">Total mensual previsto</p>
+            <p class="gph-subs-total-amount">
+              <span class="gph-subs-amount-main">{{ recibosMensualAmountMain }}</span
+              ><span class="gph-subs-amount-rest">{{ recibosMensualAmountRest }}</span>
+            </p>
+            <p class="gph-subs-total-meta">{{ reciboItems.length }} recibos</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="gph-subs-list-panel">
+        <ul class="pp-list">
+          <li *ngFor="let it of reciboItems" class="pp-row">
+            <app-upcoming-payment-brand-logo
+              *ngIf="it.logoVariant"
+              [variant]="it.logoVariant"
+              size="md"
+            ></app-upcoming-payment-brand-logo>
+            <div *ngIf="!it.logoVariant" class="pp-logo" [style.background]="it.logoBg">{{ it.logo }}</div>
+            <div class="pp-row-main">
+              <p class="pp-row-name">{{ it.name }}</p>
+              <p class="pp-row-sub">{{ it.schedule }}</p>
+            </div>
+            <div class="pp-row-amount-col">
+              <span class="pp-row-amt">-{{ formatMoney(it.amount) }} €</span>
+              <span class="pp-tag">Domiciliación</span>
             </div>
           </li>
         </ul>

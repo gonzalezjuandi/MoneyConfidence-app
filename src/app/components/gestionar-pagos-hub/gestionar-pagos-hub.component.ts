@@ -8,7 +8,11 @@ import {
   OnInit
 } from '@angular/core';
 import { Router } from '@angular/router';
-import { WizardStateService } from '../../services/wizard-state.service';
+import {
+  WizardStateService,
+  UpcomingPaymentItem,
+  DEFAULT_UPCOMING_PAYMENTS_ITEMS
+} from '../../services/wizard-state.service';
 
 declare var lucide: any;
 
@@ -59,15 +63,15 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
   @Output() close = new EventEmitter<void>();
 
   view:
-    | 'secciones'
     | 'suscripciones'
+    | 'recibos'
     | 'detalle'
     | 'modalRedirigir'
     | 'partnerWeb'
     | 'confirmarCancelacion'
     | 'bloquear1'
     | 'bloquear2'
-    | 'bloquear3' = 'secciones';
+    | 'bloquear3' = 'suscripciones';
 
   subTab: 'activas' | 'canceladas' = 'activas';
 
@@ -139,6 +143,9 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
     }
   ];
 
+  /** Domiciliaciones / recibos (demo: mismos movimientos «Domiciliación» que Próximos pagos) */
+  reciboItems: UpcomingPaymentItem[] = [];
+
   cancelled: CancelledSub[] = [
     {
       id: 'can-1',
@@ -158,6 +165,14 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
 
   ngOnInit(): void {
     const state = this.wizardState.getCurrentState();
+    if (state.gestionarPagosDirectoRecibos) {
+      this.refreshReciboItems();
+      this.view = 'recibos';
+      this.wizardState.clearGestionarPagosDirectoSuscripciones();
+      this.cdr.markForCheck();
+      setTimeout(() => this.initLucide(), 100);
+      return;
+    }
     if (state.gestionarPagosDirectoSuscripciones) {
       const openDetalleId = state.gestionarPagosAbrirSuscripcionId;
       this.view = 'suscripciones';
@@ -172,7 +187,14 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
       }
       this.cdr.markForCheck();
       setTimeout(() => this.initLucide(), 100);
+      return;
     }
+
+    /* Paso 10 sin flags (p. ej. ruta /gestionar-pagos): lista de suscripciones; ya no hay menú intermedio */
+    this.view = 'suscripciones';
+    this.subTab = 'activas';
+    this.cdr.markForCheck();
+    setTimeout(() => this.initLucide(), 100);
   }
 
   ngAfterViewInit(): void {
@@ -194,6 +216,28 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
 
   get gastoMensualTotal(): number {
     return this.subscriptions.reduce((a, s) => a + s.priceMonthly, 0);
+  }
+
+  get recibosMensualTotal(): number {
+    return this.reciboItems.reduce((a, i) => a + i.amount, 0);
+  }
+
+  get recibosMensualAmountMain(): string {
+    const full = this.formatMoney(this.recibosMensualTotal);
+    const i = full.lastIndexOf(',');
+    return i === -1 ? full : full.slice(0, i);
+  }
+
+  get recibosMensualAmountRest(): string {
+    const full = this.formatMoney(this.recibosMensualTotal);
+    const i = full.lastIndexOf(',');
+    return i === -1 ? ' €' : `${full.slice(i)} €`;
+  }
+
+  private refreshReciboItems(): void {
+    const items =
+      this.wizardState.getCurrentState().upcomingPaymentsItems ?? DEFAULT_UPCOMING_PAYMENTS_ITEMS;
+    this.reciboItems = items.filter(i => i.label === 'Domiciliación');
   }
 
   get suscripcionesActivasCount(): number {
@@ -228,8 +272,10 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
   }
 
   onBack(): void {
-    if (this.view === 'secciones') {
-      this.close.emit();
+    if (this.view === 'recibos') {
+      this.wizardState.setEntryScreen('proximos-pagos');
+      this.wizardState.setCurrentStep(1);
+      void this.router.navigate(['/app', 'proximos-pagos']);
       return;
     }
     if (this.view === 'suscripciones') {
@@ -275,12 +321,6 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
       this.view = 'detalle';
       this.initLucide();
     }
-  }
-
-  openSuscripciones(): void {
-    this.view = 'suscripciones';
-    this.subTab = 'activas';
-    this.initLucide();
   }
 
   openDetalle(sub: SubscriptionDetail): void {

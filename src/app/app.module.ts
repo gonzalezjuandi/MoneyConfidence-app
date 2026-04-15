@@ -30,6 +30,7 @@ import { PostLoginFlowComponent } from './components/post-login-flow/post-login-
 import { NotificationLockComponent } from './components/notification-lock/notification-lock.component';
 import { LoginFlowComponent } from './components/login-flow/login-flow.component';
 import { ProximosPagosComponent } from './components/proximos-pagos/proximos-pagos.component';
+import { ProximosPagosMovimientosComponent } from './components/proximos-pagos-movimientos/proximos-pagos-movimientos.component';
 import { GestionarPagosHubComponent } from './components/gestionar-pagos-hub/gestionar-pagos-hub.component';
 import { FraccionarComprasFlowComponent } from './components/fraccionar-compras-flow/fraccionar-compras-flow.component';
 import { UpcomingPaymentDetailSheetComponent } from './components/upcoming-payment-detail-sheet/upcoming-payment-detail-sheet.component';
@@ -43,6 +44,7 @@ import { UpcomingPaymentBrandLogoComponent } from './components/upcoming-payment
     NotificationLockComponent,
     LoginFlowComponent,
     ProximosPagosComponent,
+    ProximosPagosMovimientosComponent,
     GestionarPagosHubComponent,
     FraccionarComprasFlowComponent,
     UpcomingPaymentDetailSheetComponent,

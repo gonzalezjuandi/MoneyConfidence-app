@@ -1,0 +1,667 @@
+/* Listado completo — alineado Figma «Tus próximos pagos» */
+$ppm-blue: #007dff;
+$ppm-text: #111827;
+$ppm-text-secondary: #6b7280;
+$ppm-border: #e0e0e0;
+$ppm-bg-soft: #fafafa;
+
+.ppm-root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #fff;
+  padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.ppm-statusbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 1.25rem 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: $ppm-text;
+  background: #fff;
+}
+
+.ppm-status-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.ppm-sb-ic {
+  width: 1rem;
+  height: 1rem;
+  stroke-width: 2;
+  color: $ppm-text;
+}
+
+.ppm-header {
+  background: #fff;
+  border-bottom: 1px solid #e8e8ed;
+}
+
+.ppm-header-nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem 0.65rem;
+}
+
+.ppm-back {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.ppm-header-center-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 50%;
+  margin-top: -0.75rem;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: $ppm-text;
+  letter-spacing: -0.02em;
+  pointer-events: none;
+}
+
+.ppm-icon {
+  width: 1.375rem;
+  height: 1.375rem;
+  stroke-width: 2;
+}
+
+.ppm-icon-blue {
+  color: $ppm-blue;
+}
+
+.ppm-header-actions {
+  display: flex;
+  gap: 0.15rem;
+  z-index: 1;
+}
+
+.ppm-icon-btn {
+  background: none;
+  border: none;
+  padding: 0.4rem;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ppm-scroll {
+  background: $ppm-bg-soft;
+  padding: 1.5rem 1rem 2rem;
+}
+
+.ppm-page-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 1rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.ppm-chips {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  overflow-x: auto;
+  padding-bottom: 0.15rem;
+}
+
+.ppm-chip {
+  flex-shrink: 0;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid #1a1a1a;
+  background: #fff;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: $ppm-text;
+  cursor: pointer;
+}
+
+.ppm-chip-dark {
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #1a1a1a;
+  font-weight: 600;
+}
+
+.ppm-forecast-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.5rem;
+}
+
+.ppm-forecast-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #000;
+  line-height: 1.35;
+}
+
+.ppm-info-filled-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ppm-info-filled {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  background: $ppm-blue;
+  color: #fff;
+  font-size: 0.5625rem;
+  font-weight: 800;
+  font-style: italic;
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1;
+}
+
+/* Lista plana: sin tarjeta contenedora, solo filas y separadores */
+.ppm-list {
+  list-style: none;
+  margin: 0 -1rem;
+  padding: 0;
+  width: calc(100% + 2rem);
+  max-width: none;
+  box-sizing: border-box;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.ppm-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.875rem;
+  padding: 1.125rem 1rem;
+  border-bottom: 1px solid #e8e8ed;
+  background: transparent;
+}
+
+.ppm-row:last-child {
+  border-bottom: none;
+}
+
+.ppm-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.ppm-row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.ppm-row-name {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.ppm-row-detail {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: #4b5563;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.ppm-row-sub {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.ppm-row-click {
+  cursor: pointer;
+}
+
+.ppm-row-amount-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: flex-start;
+  gap: 0.25rem;
+  text-align: right;
+  flex-shrink: 0;
+  min-width: 6.5rem;
+}
+
+.ppm-row-amt {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #000;
+  white-space: nowrap;
+  letter-spacing: -0.02em;
+}
+
+.ppm-row-account {
+  font-size: 0.6875rem;
+  color: $ppm-text-secondary;
+  line-height: 1.2;
+}
+
+.ppm-tag {
+  display: inline-block;
+  margin-top: 0.15rem;
+  padding: 0.28rem 0.55rem;
+  border-radius: 0.5rem;
+  background: #f2f2f2;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: $ppm-text-secondary;
+}
+
+.ppm-drawer-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 220;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.ppm-drawer-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.ppm-drawer-sheet {
+  position: relative;
+  width: 100%;
+  max-height: min(88vh, 560px);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 1.25rem 1.25rem 0 0;
+  padding: 0.5rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.12);
+  z-index: 1;
+}
+
+.ppm-drawer-handle {
+  width: 2.25rem;
+  height: 0.25rem;
+  border-radius: 9999px;
+  background: #e5e7eb;
+  margin: 0.35rem auto 0.75rem;
+}
+
+.ppm-drawer-close {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.75rem;
+  border: none;
+  background: none;
+  padding: 0.35rem;
+  color: $ppm-blue;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ppm-drawer-x-ic {
+  width: 1.5rem;
+  height: 1.5rem;
+  stroke-width: 2;
+}
+
+.ppm-drawer-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: $ppm-text;
+  margin: 0 2.5rem 1rem 0;
+  line-height: 1.25;
+  text-align: left;
+}
+
+.ppm-drawer-body {
+  font-size: 0.9375rem;
+  color: $ppm-text;
+  line-height: 1.5;
+  margin: 0 0 1.5rem;
+  text-align: left;
+}
+
+.ppm-drawer-body strong {
+  font-weight: 700;
+}
+
+.ppm-drawer-primary {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: none;
+  border-radius: 9999px;
+  background: $ppm-blue;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Pagos habituales (misma ruta de compilación que movimientos) */
+$gphab-blue: #007dff;
+$gphab-text: #111827;
+$gphab-text-secondary: #6b7280;
+
+.gphab-root {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #fff;
+  padding-bottom: calc(1.25rem + env(safe-area-inset-bottom));
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.gphab-statusbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 1.25rem 0.25rem;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: $gphab-text;
+  background: #fff;
+}
+
+.gphab-status-icons {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.gphab-sb-ic {
+  width: 1rem;
+  height: 1rem;
+  stroke-width: 2;
+  color: $gphab-text;
+}
+
+.gphab-header {
+  background: #fff;
+  border-bottom: 1px solid #e8e8ed;
+}
+
+.gphab-header-nav {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem 0.75rem 0.65rem;
+}
+
+.gphab-back {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+}
+
+.gphab-header-center-title {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 50%;
+  margin-top: -0.75rem;
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: $gphab-text;
+  letter-spacing: -0.02em;
+  pointer-events: none;
+}
+
+.gphab-icon {
+  width: 1.375rem;
+  height: 1.375rem;
+  stroke-width: 2;
+}
+
+.gphab-icon-blue {
+  color: $gphab-blue;
+}
+
+.gphab-header-actions {
+  display: flex;
+  gap: 0.15rem;
+  z-index: 1;
+}
+
+.gphab-icon-btn {
+  background: none;
+  border: none;
+  padding: 0.4rem;
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gphab-scroll {
+  background: #fff;
+  padding: 1.5rem 1rem 2rem;
+}
+
+.gphab-page-title {
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: #000;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+
+.gphab-page-sub {
+  font-size: 0.9375rem;
+  color: $gphab-text-secondary;
+  margin: 0 0 1.25rem;
+  line-height: 1.35;
+}
+
+.gphab-chips-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+  overflow-x: auto;
+  padding-bottom: 0.35rem;
+}
+
+.gphab-filter-btn {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+}
+
+.gphab-chip {
+  flex-shrink: 0;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: 1px solid #1a1a1a;
+  background: #fff;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: $gphab-text;
+  cursor: pointer;
+}
+
+.gphab-chip-dark {
+  background: #1a1a1a;
+  color: #fff;
+  border-color: #1a1a1a;
+  font-weight: 600;
+}
+
+.gphab-list {
+  list-style: none;
+  margin: 0 -1rem;
+  padding: 0;
+  width: calc(100% + 2rem);
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.gphab-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.125rem 1rem;
+  border-bottom: 1px solid #e8e8ed;
+}
+
+.gphab-row:last-child {
+  border-bottom: none;
+}
+
+.gphab-row-click {
+  cursor: pointer;
+}
+
+.gphab-logo-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.gphab-logo {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.gphab-row-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.gphab-row-name {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.gphab-row-sub {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.gphab-row-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 4.5rem;
+}
+
+.gphab-row-amt {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #000;
+  white-space: nowrap;
+  letter-spacing: -0.02em;
+}
+
+.gphab-status-tag {
+  display: inline-block;
+  padding: 0.28rem 0.55rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e5e7eb;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: $gphab-text-secondary;
+  background: #fff;
+}
+
+.gphab-chevron {
+  width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  color: $gphab-blue;
+  stroke-width: 2;
+}

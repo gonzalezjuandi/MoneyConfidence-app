@@ -103,9 +103,314 @@ $pp-bg-page: #ffffff;
   justify-content: center;
 }
 
+.pp-main-slot {
+  background: #fafafa;
+  flex: 1;
+}
+
 .pp-content {
-  padding: 1rem 1rem 0;
-  background: #ffffff;
+  padding: 1rem 0 2rem;
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+  background: transparent;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Imagen hero fuera de la tarjeta; 0px de hueco vertical con el contenedor */
+.pp-hero-forecast-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 1.5rem;
+}
+
+.pp-hero-forecast-stack {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.06),
+    0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.pp-hero-cluster {
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.pp-hero-cluster-img {
+  display: block;
+  width: auto;
+  max-width: min(230px, 100%);
+  height: auto;
+  margin: 0;
+}
+
+.pp-forecast-card {
+  margin: 0;
+}
+
+.pp-forecast-card-inner {
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  padding: 1.25rem 1.25rem 1.5rem;
+  text-align: center;
+  box-shadow: none;
+}
+
+.pp-forecast-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.pp-forecast-heading {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+}
+
+.pp-info-inline-btn {
+  border: none;
+  background: none;
+  padding: 0.15rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pp-info-inline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: $pp-blue;
+  color: #fff;
+  font-size: 0.625rem;
+  font-weight: 800;
+  font-style: italic;
+  font-family: Georgia, 'Times New Roman', serif;
+  line-height: 1;
+}
+
+.pp-forecast-sub {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #646464;
+  margin: 0 0 1rem;
+  line-height: 1.5;
+}
+
+.pp-forecast-amount {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #000;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  margin: 0.25rem 0 1.25rem;
+}
+
+.pp-hero-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  width: 100%;
+  padding: 0.35rem 0;
+  border: none;
+  background: none;
+  font-size: 1rem;
+  font-weight: 600;
+  color: $pp-blue;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pp-hero-link-ic {
+  width: 1.125rem;
+  height: 1.125rem;
+  stroke-width: 2;
+  flex-shrink: 0;
+}
+
+/* Rejilla 2×2 */
+.pp-insight-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.pp-insight-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 1rem;
+  padding: 0.75rem 0.75rem 1rem;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.08),
+    0 1px 4px rgba(0, 0, 0, 0.08);
+  min-height: 7.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.pp-insight-card--clickable {
+  cursor: pointer;
+  text-align: left;
+  -webkit-tap-highlight-color: transparent;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease;
+
+  &:hover {
+    border-color: color-mix(in srgb, $pp-blue 35%, #e0e0e0);
+    box-shadow:
+      0 4px 12px rgba(0, 0, 0, 0.1),
+      0 2px 6px rgba(0, 0, 0, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $pp-blue;
+    outline-offset: 2px;
+  }
+
+  &:active {
+    transform: scale(0.99);
+  }
+}
+
+.pp-insight-icon-wrap {
+  width: 1.5rem;
+  height: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.25rem;
+}
+
+.pp-insight-ic {
+  width: 1.15rem;
+  height: 1.15rem;
+  color: $pp-blue;
+  stroke-width: 2;
+}
+
+.pp-insight-label {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #646464;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.pp-insight-name {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #000;
+  margin: 0;
+  line-height: 1.35;
+}
+
+.pp-insight-meta {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #000;
+  margin: 0;
+  line-height: 1.35;
+}
+
+/* Vista previa últimos movimientos */
+.pp-preview-section {
+  margin-top: 0.25rem;
+}
+
+.pp-preview-head {
+  margin-bottom: 0.65rem;
+}
+
+.pp-preview-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.pp-preview-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    0 1px 4px rgba(0, 0, 0, 0.04);
+}
+
+.pp-preview-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.pp-preview-list .pp-row {
+  margin: 0;
+  border-bottom: 1px solid #e8e8ed;
+}
+
+.pp-preview-list .pp-row:last-of-type {
+  border-bottom: none;
+}
+
+.pp-footer-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  width: 100%;
+  padding: 0.9rem 1rem;
+  border: none;
+  border-top: 1px solid #e8e8ed;
+  background: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  color: $pp-blue;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.pp-footer-link-ic {
+  width: 1.125rem;
+  height: 1.125rem;
+  stroke-width: 2;
+}
+
+.pp-row-account-line {
+  font-size: 0.6875rem;
+  color: $pp-text-secondary;
+  line-height: 1.2;
 }
 
 .pp-page-title-row {
@@ -131,32 +436,6 @@ $pp-bg-page: #ffffff;
   width: 1.25rem;
   height: 1.25rem;
   font-size: 0.625rem;
-}
-
-.pp-chips {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  overflow-x: auto;
-}
-
-.pp-chip {
-  flex-shrink: 0;
-  padding: 0.5rem 1rem;
-  border-radius: 9999px;
-  border: 1px solid #1a1a1a;
-  background: #fff;
-  font-size: 0.8125rem;
-  font-weight: 500;
-  color: $pp-text;
-  cursor: pointer;
-}
-
-.pp-chip-dark {
-  background: #1a1a1a;
-  color: #fff;
-  border-color: #1a1a1a;
-  font-weight: 600;
 }
 
 /* Resumen sin tarjeta: texto centrado (referencia) */

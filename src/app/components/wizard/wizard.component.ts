@@ -40,10 +40,7 @@ export class WizardComponent implements OnInit, OnDestroy {
         const expected = wizardStateToSlug(this.wizardState.getCurrentState());
         if (initialSlug !== expected) {
           this.pauseUrlSync = true;
-          this.wizardState.setCurrentStep(patch.step);
-          if (patch.entryScreen) {
-            this.wizardState.setEntryScreen(patch.entryScreen);
-          }
+          this.applySlugPatch(patch);
           queueMicrotask(() => {
             this.pauseUrlSync = false;
           });
@@ -69,10 +66,7 @@ export class WizardComponent implements OnInit, OnDestroy {
           return;
         }
         this.pauseUrlSync = true;
-        this.wizardState.setCurrentStep(patch.step);
-        if (patch.entryScreen) {
-          this.wizardState.setEntryScreen(patch.entryScreen);
-        }
+        this.applySlugPatch(patch);
         queueMicrotask(() => {
           this.pauseUrlSync = false;
         });
@@ -121,4 +115,15 @@ export class WizardComponent implements OnInit, OnDestroy {
     this.wizardState.setCurrentStep(step);
   }
 
+  private applySlugPatch(
+    patch: NonNullable<ReturnType<typeof slugToWizardPatch>>
+  ): void {
+    this.wizardState.setCurrentStep(patch.step);
+    if (patch.entryScreen) {
+      this.wizardState.setEntryScreen(patch.entryScreen);
+    }
+    if (patch.proximosPagosView !== undefined) {
+      this.wizardState.setProximosPagosView(patch.proximosPagosView);
+    }
+  }
 }

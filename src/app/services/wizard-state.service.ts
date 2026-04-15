@@ -25,6 +25,67 @@ export interface RecommendedProduct {
 
 export type EntryScreen = 'proximos-pagos' | 'posicion-global';
 export type PosicionGlobalCardView = 'total' | 'upcoming';
+/** Subpantallas dentro de Próximos pagos (paso 1) */
+export type ProximosPagosView = 'home' | 'movimientos' | 'habituales';
+
+/** Pago habitual (gestionar suscripciones / recibos / cancelados) */
+export type HabitualPaymentCategory = 'suscripciones' | 'recibos' | 'cancelados';
+
+export interface HabitualPaymentItem {
+  id: string;
+  merchant: string;
+  lineSub: string;
+  category: HabitualPaymentCategory;
+  status: 'activa' | 'cancelada';
+  amount?: number;
+  logoInitial?: string;
+  logoColor?: string;
+  logoAsset?: string;
+  /** Enlace al detalle del hub de Gestionar pagos (suscripciones) */
+  linkedSubscriptionId?: string;
+}
+
+export const DEFAULT_HABITUAL_PAYMENTS: HabitualPaymentItem[] = [
+  {
+    id: 'h1',
+    merchant: 'Netflix',
+    lineSub: 'Mensual, se renueva 20 Abr',
+    category: 'suscripciones',
+    status: 'activa',
+    amount: 17.99,
+    logoAsset: 'assets/gph-logo-netflix.png',
+    linkedSubscriptionId: 'sub-1'
+  },
+  {
+    id: 'h2',
+    merchant: 'HBO Max',
+    lineSub: 'Mensual, se renueva 1 May',
+    category: 'suscripciones',
+    status: 'activa',
+    amount: 8.99,
+    logoAsset: 'assets/gph-logo-hbo.png',
+    linkedSubscriptionId: 'sub-3'
+  },
+  {
+    id: 'h3',
+    merchant: 'Endesa',
+    lineSub: 'Mensual, se renueva 18 Abr',
+    category: 'recibos',
+    status: 'activa',
+    amount: 45.0,
+    logoInitial: 'E',
+    logoColor: '#c4122e'
+  },
+  {
+    id: 'h4',
+    merchant: 'Movistar',
+    lineSub: 'Fibra, cancelado 1 Mar',
+    category: 'cancelados',
+    status: 'cancelada',
+    logoInitial: 'M',
+    logoColor: '#019cdc'
+  }
+];
 
 /** Logos de marca (referencia Próximos pagos) */
 export type UpcomingPaymentLogoVariant = 'asisa' | 'prestamos' | 'aguas' | 'telecom';
@@ -47,6 +108,15 @@ export interface UpcomingPaymentItem {
   accountMask: string;
   /** En qué cuentas del carrusel aplica; si falta, solo principal */
   accounts?: ('principal' | 'familiar')[];
+  /** Fecha/hora larga en detalle (p. ej. «Previsto 15 abril 2026, 16:00 h.») */
+  scheduleDetail?: string;
+  /** IBAN demo en detalle */
+  iban?: string;
+  titularCuenta?: string;
+  productoCuenta?: string;
+  referenciaMovimiento?: string;
+  /** Concepto largo en bloque «Detalle del movimiento» */
+  movementConcept?: string;
 }
 
 /** Suma y recuento coherentes con la lista (evita totales desincronizados al filtrar por cuenta) */
@@ -116,11 +186,17 @@ export const DEFAULT_UPCOMING_PAYMENTS_ITEMS: UpcomingPaymentItem[] = [
     amount: 100,
     label: 'Domiciliación',
     schedule: 'Previsto miércoles 15 Abr',
+    scheduleDetail: 'Previsto 15 abril 2026, 16:00 h.',
     logo: 'A',
     logoBg: '#0a2744',
     logoVariant: 'asisa',
     accountMask: 'Cuenta *4422',
-    accounts: ['principal']
+    accounts: ['principal'],
+    iban: 'ES11 0081 0101 0000 0000 1234',
+    titularCuenta: 'LAURA NAVARRO ORTIZ',
+    productoCuenta: 'CUENTA SABADELL',
+    referenciaMovimiento: 'AV3UXMKO6LW3U7Y51',
+    movementConcept: 'Asisa Asistencia'
   },
   {
     id: '2',
@@ -129,11 +205,17 @@ export const DEFAULT_UPCOMING_PAYMENTS_ITEMS: UpcomingPaymentItem[] = [
     amount: 250,
     label: 'Préstamos',
     schedule: 'Previsto viernes 17 Abr',
+    scheduleDetail: 'Previsto 17 abril 2026, 09:00 h.',
     logo: 'P',
     logoBg: '#0095ff',
     logoVariant: 'prestamos',
     accountMask: 'Cuenta *4422',
-    accounts: ['principal']
+    accounts: ['principal'],
+    iban: 'ES11 0081 0101 0000 0000 1234',
+    titularCuenta: 'LAURA NAVARRO ORTIZ',
+    productoCuenta: 'CUENTA SABADELL',
+    referenciaMovimiento: 'P7K2M9NQ4XW1R8T3V',
+    movementConcept: 'Préstamos Adeudo Cuota N. 123456789'
   },
   {
     id: '3',
@@ -141,11 +223,17 @@ export const DEFAULT_UPCOMING_PAYMENTS_ITEMS: UpcomingPaymentItem[] = [
     amount: 60,
     label: 'Domiciliación',
     schedule: 'Previsto lunes 20 Abr',
+    scheduleDetail: 'Previsto 20 abril 2026, 08:00 h.',
     logo: 'B',
     logoBg: '#003b73',
     logoVariant: 'aguas',
     accountMask: 'Cuenta *4422',
-    accounts: ['principal', 'familiar']
+    accounts: ['principal', 'familiar'],
+    iban: 'ES11 0081 0101 0000 0000 1234',
+    titularCuenta: 'LAURA NAVARRO ORTIZ',
+    productoCuenta: 'CUENTA SABADELL',
+    referenciaMovimiento: 'W5Y8Z2K1M4N7Q9R0T',
+    movementConcept: 'Aguas Barcelona — suministro'
   },
   {
     id: '4',
@@ -153,11 +241,17 @@ export const DEFAULT_UPCOMING_PAYMENTS_ITEMS: UpcomingPaymentItem[] = [
     amount: 40,
     label: 'Domiciliación',
     schedule: 'Previsto jueves 30 Abr',
+    scheduleDetail: 'Previsto 30 abril 2026, 12:00 h.',
     logo: 'T',
     logoBg: '#1e3a5f',
     logoVariant: 'telecom',
     accountMask: 'Cuenta *4425',
-    accounts: ['principal', 'familiar']
+    accounts: ['principal', 'familiar'],
+    iban: 'ES11 0081 0101 0000 0000 5678',
+    titularCuenta: 'LAURA NAVARRO ORTIZ',
+    productoCuenta: 'CUENTA SABADELL',
+    referenciaMovimiento: 'F3B6C9D2E5G8H1J4K',
+    movementConcept: 'Fibra y línea móvil'
   }
 ];
 
@@ -176,6 +270,10 @@ export interface WizardState {
   loanAmount?: number; // Monto del préstamo completado
   /** Tras el login: primera pantalla del wizard (paso 1) */
   entryScreen?: EntryScreen;
+  /** Subvista cuando entryScreen es próximos-pagos */
+  proximosPagosView?: ProximosPagosView;
+  /** Pestaña inicial al abrir «pagos habituales» (se consume al mostrar la pantalla) */
+  proximosPagosHabitualesTab?: HabitualPaymentCategory | null;
   /** Toggle tarjeta principal en Posición global (saldo vs próximos pagos) */
   posicionGlobalCardView?: PosicionGlobalCardView;
   /** Total demo de próximos pagos (30 días), alineado con la captura */
@@ -190,6 +288,8 @@ export interface WizardState {
   selectedUpcomingPaymentId?: string | null;
   /** Abrir el hub de Gestionar pagos directamente en la lista de Suscripciones */
   gestionarPagosDirectoSuscripciones?: boolean;
+  /** Abrir el hub directamente en la vista Recibos (domiciliaciones) */
+  gestionarPagosDirectoRecibos?: boolean;
   /** Si viene informado con directo suscripciones, abrir el detalle de esa suscripción (id demo del hub) */
   gestionarPagosAbrirSuscripcionId?: string | null;
 }
@@ -208,6 +308,8 @@ export class WizardStateService {
     capacidadMensual: 350,
     plazoAnos: 5,
     entryScreen: 'posicion-global',
+    proximosPagosView: 'home',
+    proximosPagosHabitualesTab: null,
     posicionGlobalCardView: 'total',
     upcomingPaymentsTotal: combined.total,
     upcomingPaymentsCount: combined.count,
@@ -215,6 +317,7 @@ export class WizardStateService {
     recurringSubscriptionItems: subs,
     selectedUpcomingPaymentId: null,
     gestionarPagosDirectoSuscripciones: false,
+    gestionarPagosDirectoRecibos: false,
     gestionarPagosAbrirSuscripcionId: null,
     perfilFinanciero: {
       ingresos: 0,
@@ -273,9 +376,46 @@ export class WizardStateService {
 
   setEntryScreen(screen: EntryScreen): void {
     const currentState = this.getCurrentState();
+    const leavingProximos =
+      currentState.entryScreen === 'proximos-pagos' && screen !== 'proximos-pagos';
     this.stateSubject.next({
       ...currentState,
-      entryScreen: screen
+      entryScreen: screen,
+      ...(leavingProximos
+        ? {
+            proximosPagosView: 'home' as ProximosPagosView,
+            proximosPagosHabitualesTab: null
+          }
+        : {})
+    });
+  }
+
+  setProximosPagosView(
+    view: ProximosPagosView,
+    habitualesInitialTab?: HabitualPaymentCategory | null
+  ): void {
+    const currentState = this.getCurrentState();
+    this.stateSubject.next({
+      ...currentState,
+      proximosPagosView: view,
+      proximosPagosHabitualesTab:
+        view === 'habituales'
+          ? habitualesInitialTab !== undefined
+            ? habitualesInitialTab
+            : null
+          : null
+    });
+  }
+
+  /** Tras leer la pestaña inicial en el componente de pagos habituales */
+  clearProximosPagosHabitualesTab(): void {
+    const currentState = this.getCurrentState();
+    if (currentState.proximosPagosHabitualesTab == null) {
+      return;
+    }
+    this.stateSubject.next({
+      ...currentState,
+      proximosPagosHabitualesTab: null
     });
   }
 
@@ -309,8 +449,14 @@ export class WizardStateService {
       ...currentState,
       currentStep: 10,
       gestionarPagosDirectoSuscripciones: true,
+      gestionarPagosDirectoRecibos: false,
       gestionarPagosAbrirSuscripcionId: null
     });
+  }
+
+  /** Recibos: misma pantalla que pagos habituales, pestaña Recibos (no el hub paso 10) */
+  goToGestionarPagosRecibos(): void {
+    this.setProximosPagosView('habituales', 'recibos');
   }
 
   /** Paso 10: Suscripciones y detalle de una suscripción concreta (mismo id que en el hub) */
@@ -320,19 +466,14 @@ export class WizardStateService {
       ...currentState,
       currentStep: 10,
       gestionarPagosDirectoSuscripciones: true,
+      gestionarPagosDirectoRecibos: false,
       gestionarPagosAbrirSuscripcionId: subscriptionId
     });
   }
 
-  /** Paso 10 con el menú principal de Gestionar pagos (no salto a Suscripciones) */
+  /** Paso 10: ya no hay menú intermedio; equivale a abrir Suscripciones */
   goToGestionarPagosMenu(): void {
-    const currentState = this.getCurrentState();
-    this.stateSubject.next({
-      ...currentState,
-      currentStep: 10,
-      gestionarPagosDirectoSuscripciones: false,
-      gestionarPagosAbrirSuscripcionId: null
-    });
+    this.goToGestionarPagosSuscripciones();
   }
 
   clearGestionarPagosDirectoSuscripciones(): void {
@@ -340,6 +481,7 @@ export class WizardStateService {
     this.stateSubject.next({
       ...currentState,
       gestionarPagosDirectoSuscripciones: false,
+      gestionarPagosDirectoRecibos: false,
       gestionarPagosAbrirSuscripcionId: null
     });
   }

@@ -925,7 +925,9 @@ $gph-ref-page: #fafafa;
 }
 
 .gph-subs-head {
-  padding: 1rem 1rem 0;
+  padding: 1rem 0 0;
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
   background: #fafafa;
 }
 
@@ -976,6 +978,8 @@ $gph-ref-page: #fafafa;
 .gph-subs-upper .gph-subtabs-ref {
   margin: 0;
   padding: 0;
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
   border-bottom: 1px solid #e8e8ed;
   background: #fafafa;
 }
@@ -997,11 +1001,16 @@ $gph-pp-text-secondary: #6b7280;
   min-height: 0;
   background: #ffffff;
   width: 100%;
+  box-sizing: border-box;
+  padding-left: max(1rem, env(safe-area-inset-left));
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-bottom: 0.5rem;
+
   .pp-list {
     list-style: none;
-    margin: 0 -1rem;
+    margin: 0;
     padding: 0;
-    width: calc(100% + 2rem);
+    width: 100%;
     max-width: none;
     box-sizing: border-box;
     background: transparent;
@@ -1014,7 +1023,7 @@ $gph-pp-text-secondary: #6b7280;
     display: flex;
     align-items: flex-start;
     gap: 0.875rem;
-    padding: 1.125rem 1rem;
+    padding: 1.125rem 0;
     border-bottom: 1px solid #e8e8ed;
     background: #fff;
   }

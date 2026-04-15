@@ -31,25 +31,8 @@ const PP_INITIAL_30D = combineUpcomingAndSubscriptions30d(
 export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy {
   private wizardStateSub?: Subscription;
 
-  showFraccionarFlow = false;
-
-  /** Pestaña principal: próximos cargos vs suscripciones */
-  mainTab: 'proximos' | 'suscripciones' = 'proximos';
-
   /** Suscripciones activas (demo) — wizard / Posición global */
   readonly recurringSubs: RecurringSubscriptionItem[] = DEFAULT_RECURRING_SUBSCRIPTIONS;
-
-  /** Alineado con chips de cuenta en Posición global / Cuentas */
-  readonly accountChips: {
-    key: 'all' | 'principal' | 'familiar';
-    label: string;
-  }[] = [
-    { key: 'all', label: 'Todas' },
-    { key: 'principal', label: 'Cuenta Sabadell *4422' },
-    { key: 'familiar', label: 'Cuenta familiar *4425' }
-  ];
-
-  selectedAccountKey: 'all' | 'principal' | 'familiar' = 'all';
 
   upcomingTotal = PP_INITIAL_30D.total;
   upcomingCount = PP_INITIAL_30D.count;
@@ -108,10 +91,14 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
   }
 
   get filteredUpcomingItems(): UpcomingPaymentItem[] {
-    return this.filterUpcomingByAccount(this.upcomingItems, this.selectedAccountKey);
+    return [...this.upcomingItems];
   }
 
-  /** Suma de cargos próximos según chip (solo lista «Próximos pagos»). */
+  /** Vista previa: últimos 3 movimientos previstos (orden de la lista) */
+  get previewUpcomingItems(): UpcomingPaymentItem[] {
+    return this.filteredUpcomingItems.slice(0, 3);
+  }
+
   get displayUpcomingTotal(): number {
     return this.filteredUpcomingItems.reduce((s, it) => s + it.amount, 0);
   }
@@ -120,15 +107,10 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
     return this.filteredUpcomingItems.length;
   }
 
-  /** Importe mensual combinado de suscripciones activas (pestaña Suscripciones). */
   get recurringSubsMonthlyTotal(): number {
     return this.recurringSubs.reduce((s, r) => s + r.priceMonthly, 0);
   }
 
-  /**
-   * Bloque «Total estimado próximos 30 días»: cargos previstos (filtrados por chip)
-   * más importes de suscripciones activas.
-   */
   get displaySummaryTotal(): number {
     return this.displayUpcomingTotal + this.recurringSubsMonthlyTotal;
   }
@@ -139,7 +121,64 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
 
   get displaySummaryCountLabel(): string {
     const c = this.displaySummaryCount;
-    return c === 1 ? '1 pago' : `${c} pagos`;
+    return c === 1 ? '1 en los próximos 30 días' : `${c} en los próximos 30 días`;
+  }
+
+  /** Tarjeta «Próximo gasto» */
+  get insightProximo(): UpcomingPaymentItem | null {
+    const list = this.filteredUpcomingItems;
+    return list.length ? list[0] : null;
+  }
+
+  /** Tarjeta «Mayor gasto» */
+  get insightMayor(): UpcomingPaymentItem | null {
+    const list = this.filteredUpcomingItems;
+    if (!list.length) {
+      return null;
+    }
+    return list.reduce((a, b) => (b.amount > a.amount ? b : a));
+  }
+
+  /** Suma mensual orientativa de recibos (domiciliaciones) */
+  get gastoMensualRecibos(): number {
+    return this.filteredUpcomingItems
+      .filter(it => it.label === 'Domiciliación')
+      .reduce((s, it) => s + it.amount, 0);
+  }
+
+  truncateInsightName(name: string, maxLen = 22): string {
+    const t = name.trim();
+    if (t.length <= maxLen) {
+      return t;
+    }
+    return `${t.slice(0, maxLen - 1)}…`;
+  }
+
+  goToMovimientosLista(): void {
+    this.wizardState.setProximosPagosView('movimientos');
+  }
+
+  /** Detalle full-screen del ítem (misma hoja que lista / preview) */
+  openInsightProximoDetail(): void {
+    const it = this.insightProximo;
+    if (it) {
+      this.openUpcomingDetail(it.id);
+    }
+  }
+
+  openInsightMayorDetail(): void {
+    const it = this.insightMayor;
+    if (it) {
+      this.openUpcomingDetail(it.id);
+    }
+  }
+
+  goGestionarPagosHabituales(): void {
+    this.wizardState.setProximosPagosView('habituales');
+  }
+
+  openGestionarPagosRecibos(): void {
+    this.wizardState.goToGestionarPagosRecibos();
   }
 
   openInfoDrawer(): void {
@@ -152,31 +191,6 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
     this.infoDrawer = null;
     this.cdr.markForCheck();
     setTimeout(() => this.initLucide(), 80);
-  }
-
-  selectAccountFilter(key: 'all' | 'principal' | 'familiar'): void {
-    this.selectedAccountKey = key;
-    this.cdr.markForCheck();
-  }
-
-  /**
-   * Misma regla que `upcomingItemsForSelectedAccount` en Posición global / Cuentas:
-   * un cargo pertenece a la cuenta si `accounts` la incluye (compartidos cuentan en ambas).
-   */
-  private filterUpcomingByAccount(
-    items: UpcomingPaymentItem[],
-    key: 'all' | 'principal' | 'familiar'
-  ): UpcomingPaymentItem[] {
-    if (key === 'all') {
-      return [...items];
-    }
-    return items.filter(it => {
-      const a = it.accounts;
-      if (!a?.length) {
-        return key === 'principal';
-      }
-      return a.includes(key);
-    });
   }
 
   ngAfterViewInit(): void {
@@ -197,34 +211,10 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
     });
   }
 
-  /** Vuelve al inicio (Posición global / dashboard) */
   onBack(): void {
     this.wizardState.setPosicionGlobalCardView('total');
     this.wizardState.setEntryScreen('posicion-global');
     void this.router.navigate(['/app', 'posicion-global']);
-  }
-
-  selectMainTab(tab: 'proximos' | 'suscripciones'): void {
-    this.mainTab = tab;
-    this.cdr.markForCheck();
-    setTimeout(() => this.initLucide(), 80);
-  }
-
-  /** Abre el hub en el detalle de la suscripción (mismos datos que en Gestionar pagos) */
-  onRecurringSubClick(subscriptionId: string): void {
-    this.wizardState.goToGestionarPagosSuscripcionDetalle(subscriptionId);
-  }
-
-  openFraccionarFlow(): void {
-    this.showFraccionarFlow = true;
-    this.cdr.markForCheck();
-    setTimeout(() => this.initLucide(), 100);
-  }
-
-  onFraccionarClosed(): void {
-    this.showFraccionarFlow = false;
-    this.cdr.markForCheck();
-    setTimeout(() => this.initLucide(), 100);
   }
 
   private initLucide(): void {
