@@ -12,7 +12,9 @@ import {
   UpcomingPaymentItem,
   DEFAULT_UPCOMING_PAYMENTS_ITEMS,
   DEFAULT_RECURRING_SUBSCRIPTIONS,
+  DEFAULT_HABITUAL_PAYMENTS,
   combineUpcomingAndSubscriptions30d,
+  sumHabitualRecibosMonthly,
   RecurringSubscriptionItem
 } from '../../services/wizard-state.service';
 
@@ -139,11 +141,9 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
     return list.reduce((a, b) => (b.amount > a.amount ? b : a));
   }
 
-  /** Suma mensual orientativa de recibos (domiciliaciones) */
+  /** Suma mensual de recibos habituales (misma fuente que la pestaña Recibos al gestionar pagos) */
   get gastoMensualRecibos(): number {
-    return this.filteredUpcomingItems
-      .filter(it => it.label === 'Domiciliación')
-      .reduce((s, it) => s + it.amount, 0);
+    return sumHabitualRecibosMonthly(DEFAULT_HABITUAL_PAYMENTS);
   }
 
   truncateInsightName(name: string, maxLen = 22): string {

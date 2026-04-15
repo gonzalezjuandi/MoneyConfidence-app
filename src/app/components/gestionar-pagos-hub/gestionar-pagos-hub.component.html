@@ -172,9 +172,9 @@
     </div>
   </ng-container>
 
-  <!-- Detalle -->
+  <!-- Detalle suscripción (referencia: hero + métricas + detalle + histórico) -->
   <ng-container *ngIf="view === 'detalle' && selected">
-    <div class="gph-ref-screen">
+    <div class="gph-ref-screen gph-ref-screen--detalle-sub">
       <div class="gph-statusbar" aria-hidden="true">
         <span class="gph-status-time">9:41</span>
         <div class="gph-status-icons">
@@ -199,28 +199,28 @@
         </div>
       </header>
 
-      <div class="gph-ref-content gph-ref-content--detail">
-        <div class="gph-hero gph-hero-ref">
+      <div class="gph-ref-content gph-ref-content--detail gph-detalle-sub-scroll">
+        <div class="gph-hero gph-hero-ref gph-hero-ref--detalle-nuevo">
           <div class="gph-hero-logo-wrap">
             <img
               *ngIf="selected.logoAsset"
               [src]="selected.logoAsset"
               alt=""
               class="gph-hero-img"
-              width="72"
-              height="72"
+              width="80"
+              height="80"
             />
             <div *ngIf="!selected.logoAsset" class="gph-hero-logo" [style.background]="selected.logoColor">
               {{ selected.logoInitial }}
             </div>
           </div>
           <p class="gph-hero-name gph-hero-name--detail">{{ selected.displayName }}</p>
-          <span class="gph-hero-pill" *ngIf="selected.status !== 'pagos-bloqueados' && selected.lineSub">{{
-            selected.lineSub
-          }}</span>
+          <span class="gph-hero-activa" *ngIf="selected.status === 'activa' || selected.status === 'proximo-cobro'">
+            {{ selected.status === 'proximo-cobro' ? statusLabel('proximo-cobro') : 'Activa' }}
+          </span>
           <span
             class="gph-tag gph-tag-lg"
-            *ngIf="selected.status === 'pagos-bloqueados'"
+            *ngIf="selected.status === 'pagos-bloqueados' || selected.status === 'cancelada'"
             [ngClass]="statusClass(selected.status)"
             >{{ statusLabel(selected.status) }}</span
           >
@@ -228,26 +228,16 @@
             -{{ formatMoney(selected.priceMonthly) }} €/mes
           </p>
           <p class="gph-hero-price-main gph-hero-price-main--empty" *ngIf="selected.status === 'pagos-bloqueados'">—</p>
-          <button
-            *ngIf="selected.status !== 'pagos-bloqueados'"
-            type="button"
-            class="gph-hero-importe-link"
-            (click)="openImporteInfo()"
-            aria-label="Información sobre importe estimado"
-          >
-            <span class="gph-hero-importe-ic" aria-hidden="true">i</span>
-            <span>Importe estimado</span>
-          </button>
         </div>
 
-        <div class="gph-actions gph-actions-ref">
+        <div class="gph-actions gph-actions-ref gph-actions-ref--detalle">
           <button
             *ngIf="selected.status !== 'pagos-bloqueados'"
             type="button"
             class="gph-act"
             (click)="startBloquear()"
           >
-            <span class="gph-act-ring"><i data-lucide="pause-circle" class="gph-act-svg"></i></span>
+            <span class="gph-act-ring"><i data-lucide="pause" class="gph-act-svg"></i></span>
             <span>Bloquear pagos futuros</span>
           </button>
           <button
@@ -265,32 +255,96 @@
           </button>
         </div>
 
-        <div class="gph-info-card gph-info-card-ref">
-          <h3 class="gph-info-title">Detalle del movimiento</h3>
+        <ng-container *ngIf="selected.status !== 'pagos-bloqueados'">
+          <div class="gph-detalle-metricas">
+            <div class="gph-detalle-metric-card">
+              <div class="gph-detalle-metric-top">
+                <span class="gph-detalle-metric-label">Siguiente cobro</span>
+                <span class="gph-detalle-metric-value">{{ formatProximaCobroCorta(selected.proximaCobro) }}</span>
+              </div>
+              <div class="gph-detalle-progress" role="progressbar" [attr.aria-valuenow]="cobroProgressPercent">
+                <div class="gph-detalle-progress-fill" [style.width.%]="cobroProgressPercent"></div>
+              </div>
+              <p class="gph-detalle-metric-foot">{{ faltanDiasCobroLabel }}</p>
+            </div>
+            <div class="gph-detalle-metric-card gph-detalle-metric-card--inline">
+              <span class="gph-detalle-metric-label">Gasto anual previsto</span>
+              <span class="gph-detalle-metric-strong">{{ formatMoney(gastoAnualPrevistoSelected) }} €</span>
+            </div>
+          </div>
+
+          <h3 class="gph-detalle-block-title">Detalle de la suscripción</h3>
+          <div class="gph-info-card gph-info-card-ref gph-info-card--detalle-sub">
+            <div class="gph-info-row">
+              <span class="gph-k">Concepto</span><span class="gph-v">{{ selected.concepto }}</span>
+            </div>
+            <div class="gph-info-row">
+              <span class="gph-k">Tarifa mensual</span><span class="gph-v">{{ formatMoney(selected.priceMonthly) }} €</span>
+            </div>
+            <div class="gph-info-row">
+              <span class="gph-k">Tarjeta asociada</span><span class="gph-v">{{ tarjetaDisplay(selected) }}</span>
+            </div>
+            <div class="gph-info-row">
+              <span class="gph-k">Fecha inicio</span><span class="gph-v">{{ selected.fechaInicio }}</span>
+            </div>
+            <div class="gph-info-row">
+              <span class="gph-k">Fecha de contratación</span><span class="gph-v">{{ selected.fechaContratacion }}</span>
+            </div>
+            <div class="gph-info-row">
+              <span class="gph-k">Fecha de próxima renovación</span><span class="gph-v">{{ selected.proximaCobro }}</span>
+            </div>
+            <p class="gph-info-card-hint" *ngIf="selected.footerHint">
+              {{ selected.footerHint }}
+            </p>
+          </div>
+
+          <div class="gph-historico-head">
+            <h3 class="gph-detalle-block-title gph-detalle-block-title--inline">Histórico de movimientos</h3>
+            <button
+              type="button"
+              class="gph-historico-info"
+              (click)="openHistoricoInfo()"
+              aria-label="Información sobre importes del histórico"
+            >
+              <span class="gph-historico-info-ic" aria-hidden="true">i</span>
+            </button>
+          </div>
+          <ul class="gph-historico-card">
+            <li *ngFor="let h of historicoMovimientos; let last = last" class="gph-historico-row" [class.gph-historico-row--last]="last">
+              <div class="gph-historico-logo-wrap">
+                <img
+                  *ngIf="selected.logoAsset"
+                  [src]="selected.logoAsset"
+                  alt=""
+                  width="40"
+                  height="40"
+                  class="gph-historico-logo"
+                />
+                <div
+                  *ngIf="!selected.logoAsset"
+                  class="gph-historico-logo-fallback"
+                  [style.background]="selected.logoColor"
+                >
+                  {{ selected.logoInitial }}
+                </div>
+              </div>
+              <div class="gph-historico-main">
+                <p class="gph-historico-name">{{ selected.merchant }}</p>
+                <p class="gph-historico-date">{{ h.fecha }}</p>
+              </div>
+              <span class="gph-historico-amt">-{{ formatMoney(h.amount) }} €</span>
+            </li>
+          </ul>
+        </ng-container>
+
+        <div *ngIf="selected.status === 'pagos-bloqueados'" class="gph-info-card gph-info-card-ref gph-info-card--detalle-sub">
+          <h3 class="gph-info-title">Detalle de la suscripción</h3>
           <div class="gph-info-row">
             <span class="gph-k">Concepto</span><span class="gph-v">{{ selected.concepto }}</span>
           </div>
           <div class="gph-info-row">
-            <span class="gph-k">Tarifa mensual</span><span class="gph-v">{{ formatMoney(selected.priceMonthly) }} €</span>
-          </div>
-          <div class="gph-info-row">
-            <span class="gph-k">Tarjeta asociada</span><span class="gph-v">{{ selected.tarjetaMasked }}</span>
-          </div>
-          <div class="gph-info-row">
-            <span class="gph-k">Fecha inicio</span><span class="gph-v">{{ selected.fechaInicio }}</span>
-          </div>
-          <div class="gph-info-row">
-            <span class="gph-k">Fecha de contratación</span><span class="gph-v">{{ selected.fechaContratacion }}</span>
-          </div>
-          <div class="gph-info-row">
-            <span class="gph-k">Fecha de próxima renovación</span><span class="gph-v">{{ selected.proximaCobro }}</span>
-          </div>
-          <div class="gph-info-row" *ngIf="selected.fechaBloqueo">
             <span class="gph-k">Fecha de bloqueo</span><span class="gph-v">{{ selected.fechaBloqueo }}</span>
           </div>
-          <p class="gph-info-card-hint" *ngIf="selected.footerHint && selected.status !== 'pagos-bloqueados'">
-            {{ selected.footerHint }}
-          </p>
         </div>
       </div>
     </div>

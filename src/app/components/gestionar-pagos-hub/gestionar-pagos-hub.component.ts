@@ -39,6 +39,8 @@ export interface SubscriptionDetail {
   fechaBloqueo?: string;
   /** Dominio del partner para redirección (ej. netflix.es) */
   partnerHost: string;
+  /** Líneas demo del histórico (fecha corta + importe) */
+  historicoCargos?: { fecha: string; amount: number }[];
 }
 
 export interface CancelledSub {
@@ -99,7 +101,12 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
       renewalTag: 'Se renueva 20 Abril',
       footerHint:
         'El plan se renueva cada 30 días. Te avisaremos antes por si quieres cancelarlo.',
-      partnerHost: 'netflix.es'
+      partnerHost: 'netflix.es',
+      historicoCargos: [
+        { fecha: '29 Abr', amount: 17.99 },
+        { fecha: '27 Mar', amount: 17.99 },
+        { fecha: '14 Feb', amount: 17.99 }
+      ]
     },
     {
       id: 'sub-2',
@@ -212,6 +219,72 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });
+  }
+
+  /** p. ej. 20/04/2026 → «20 Abril» */
+  formatProximaCobroCorta(proxima: string): string {
+    const m = proxima.trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+    if (!m) {
+      return proxima;
+    }
+    const d = parseInt(m[1], 10);
+    const monthIdx = parseInt(m[2], 10) - 1;
+    const months = [
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre'
+    ];
+    const mo = months[monthIdx] ?? '';
+    return `${d} ${mo}`;
+  }
+
+  /** Texto demo coherente con la referencia */
+  get faltanDiasCobroLabel(): string {
+    return 'Faltan 7 días';
+  }
+
+  /** Barra de avance hacia el próximo cobro (demo) */
+  get cobroProgressPercent(): number {
+    return 22;
+  }
+
+  get gastoAnualPrevistoSelected(): number {
+    if (!this.selected || this.selected.status === 'pagos-bloqueados') {
+      return 0;
+    }
+    return Math.round(this.selected.priceMonthly * 12 * 100) / 100;
+  }
+
+  get historicoMovimientos(): { fecha: string; amount: number }[] {
+    if (!this.selected) {
+      return [];
+    }
+    if (this.selected.historicoCargos?.length) {
+      return this.selected.historicoCargos;
+    }
+    return [
+      { fecha: '29 Abr', amount: this.selected.priceMonthly },
+      { fecha: '27 Mar', amount: this.selected.priceMonthly },
+      { fecha: '14 Feb', amount: this.selected.priceMonthly }
+    ];
+  }
+
+  openHistoricoInfo(): void {
+    this.openImporteInfo();
+  }
+
+  /** Referencia visual: «Crédito ****1234» */
+  tarjetaDisplay(s: SubscriptionDetail): string {
+    return s.tarjetaMasked.replace(/•/g, '*');
   }
 
   get gastoMensualTotal(): number {

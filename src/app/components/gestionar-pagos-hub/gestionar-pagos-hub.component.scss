@@ -1785,3 +1785,252 @@ $gph-pp-text-secondary: #6b7280;
 .gph-importe-primary {
   margin-bottom: 0;
 }
+
+/* —— Detalle suscripción (referencia Netflix) —— */
+.gph-ref-screen--detalle-sub {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: #fafafa;
+}
+
+.gph-ref-screen--detalle-sub .gph-statusbar {
+  background: #fafafa;
+}
+
+.gph-ref-screen--detalle-sub .gph-header-ref {
+  background: #fafafa;
+  border-bottom: 1px solid #ebebeb;
+}
+
+.gph-detalle-sub-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
+}
+
+.gph-hero-ref--detalle-nuevo .gph-hero-img {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.gph-hero-ref--detalle-nuevo .gph-hero-logo {
+  width: 5rem;
+  height: 5rem;
+  font-size: 1.625rem;
+}
+
+.gph-hero-activa {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 0.28rem 0.85rem;
+  border-radius: 9999px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: #166534;
+  background: #fff;
+  border: 1px solid #86efac;
+  line-height: 1.2;
+}
+
+.gph-actions-ref--detalle {
+  padding-top: 0.25rem;
+  padding-bottom: 1.25rem;
+}
+
+.gph-detalle-metricas {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 0 0 1.25rem;
+}
+
+.gph-detalle-metric-card {
+  background: #fff;
+  border-radius: 0.875rem;
+  border: 1px solid #e8e8ed;
+  padding: 1rem 1.125rem;
+  box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.06);
+}
+
+.gph-detalle-metric-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 0.75rem;
+}
+
+.gph-detalle-metric-label {
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: #6b7280;
+}
+
+.gph-detalle-metric-value {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.gph-detalle-progress {
+  margin-top: 0.75rem;
+  height: 0.35rem;
+  border-radius: 9999px;
+  background: #e5e7eb;
+  overflow: hidden;
+}
+
+.gph-detalle-progress-fill {
+  height: 100%;
+  border-radius: 9999px;
+  background: #006dff;
+  transition: width 0.3s ease;
+}
+
+.gph-detalle-metric-foot {
+  margin: 0.65rem 0 0;
+  font-size: 0.8125rem;
+  color: #9ca3af;
+}
+
+.gph-detalle-metric-card--inline {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.gph-detalle-metric-strong {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.gph-detalle-block-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 0.65rem;
+  letter-spacing: -0.02em;
+}
+
+.gph-detalle-block-title--inline {
+  margin: 0;
+  flex: 1;
+}
+
+.gph-info-card--detalle-sub .gph-info-title {
+  margin-bottom: 0.85rem;
+}
+
+.gph-historico-head {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.5rem 0 0.65rem;
+}
+
+.gph-historico-info {
+  flex-shrink: 0;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #006dff;
+}
+
+.gph-historico-info-ic {
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  border: 1.5px solid currentColor;
+  font-size: 0.65rem;
+  font-weight: 800;
+  font-style: normal;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gph-historico-card {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  border-radius: 0.875rem;
+  border: 1px solid #e8e8ed;
+  overflow: hidden;
+  box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.06);
+}
+
+.gph-historico-row {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 0.9rem 1rem;
+  border-bottom: 1px solid #ececec;
+}
+
+.gph-historico-row--last {
+  border-bottom: none;
+}
+
+.gph-historico-logo-wrap {
+  flex-shrink: 0;
+}
+
+.gph-historico-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+}
+
+.gph-historico-logo-fallback {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.875rem;
+}
+
+.gph-historico-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.gph-historico-name {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.gph-historico-date {
+  margin: 0.15rem 0 0;
+  font-size: 0.8125rem;
+  color: #9ca3af;
+}
+
+.gph-historico-amt {
+  flex-shrink: 0;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #111827;
+}

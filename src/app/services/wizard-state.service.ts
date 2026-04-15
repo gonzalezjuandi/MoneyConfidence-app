@@ -87,6 +87,13 @@ export const DEFAULT_HABITUAL_PAYMENTS: HabitualPaymentItem[] = [
   }
 ];
 
+/** Misma regla que la pestaña Recibos en «Gestionar pagos habituales» */
+export function sumHabitualRecibosMonthly(items: HabitualPaymentItem[]): number {
+  return items
+    .filter(i => i.category === 'recibos' && i.status === 'activa' && i.amount != null)
+    .reduce((sum, i) => sum + (i.amount ?? 0), 0);
+}
+
 /** Logos de marca (referencia Próximos pagos) */
 export type UpcomingPaymentLogoVariant = 'asisa' | 'prestamos' | 'aguas' | 'telecom';
 
