@@ -21,8 +21,13 @@
   height: 48px;
 }
 
-.upl svg {
+.upl svg,
+.upl-img {
   display: block;
   width: 100%;
   height: 100%;
+}
+
+.upl-img {
+  object-fit: cover;
 }

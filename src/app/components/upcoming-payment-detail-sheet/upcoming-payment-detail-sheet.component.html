@@ -48,10 +48,15 @@
 
         <p class="upd-amount">-{{ formatMoney(item.amount) }} €</p>
 
-        <div class="upd-estimado-row">
+        <button
+          type="button"
+          class="upd-estimado-row"
+          (click)="openImporteInfo()"
+          aria-label="Información sobre importes y fechas estimadas"
+        >
           <span class="upd-estimado-i" aria-hidden="true">i</span>
           <span class="upd-estimado-text">Importe estimado</span>
-        </div>
+        </button>
 
         <p class="upd-schedule-long">{{ scheduleLongDisplay }}</p>
         <p class="upd-cuenta-mask">{{ cuentaEnmascarada }}</p>
@@ -95,5 +100,28 @@
         </div>
       </section>
     </div>
+  </div>
+</div>
+
+<div class="upd-importe-layer" *ngIf="item && importeInfoOpen">
+  <div class="upd-importe-backdrop" (click)="closeImporteInfo()"></div>
+  <div
+    class="upd-importe-sheet"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="upd-importe-info-title"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="upd-importe-handle" aria-hidden="true"></div>
+    <button type="button" class="upd-importe-close" (click)="closeImporteInfo()" aria-label="Cerrar">
+      <i data-lucide="x" class="upd-importe-close-ic"></i>
+    </button>
+    <h2 id="upd-importe-info-title" class="upd-importe-title">Importes y fechas estimadas</h2>
+    <p class="upd-importe-body">
+      Ten en cuenta que los <strong>importes y fechas son orientativos</strong> según el tipo de movimiento y los
+      plazos habituales, algún importe <strong>podría variar o cancelarse</strong> desde que te lo mostramos hasta
+      que se cargue en cuenta.
+    </p>
+    <button type="button" class="upd-importe-primary" (click)="closeImporteInfo()">Entendido</button>
   </div>
 </div>

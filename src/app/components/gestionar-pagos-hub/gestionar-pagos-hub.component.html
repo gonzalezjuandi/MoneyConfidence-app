@@ -164,7 +164,7 @@
             </div>
             <div class="pp-row-amount-col">
               <span class="pp-row-amt">-{{ formatMoney(it.amount) }} €</span>
-              <span class="pp-tag">Domiciliación</span>
+              <span class="pp-tag">{{ it.label }}</span>
             </div>
           </li>
         </ul>
@@ -350,6 +350,209 @@
     </div>
   </ng-container>
 
+  <!-- Detalle recibo (referencia: hero + métricas + detalle domiciliación + histórico) -->
+  <ng-container *ngIf="view === 'detalleRecibo' && selectedRecibo">
+    <div class="gph-ref-screen gph-ref-screen--detalle-sub">
+      <div class="gph-statusbar" aria-hidden="true">
+        <span class="gph-status-time">9:41</span>
+        <div class="gph-status-icons">
+          <i data-lucide="signal" class="gph-sb-ic"></i>
+          <i data-lucide="wifi" class="gph-sb-ic"></i>
+          <i data-lucide="battery-medium" class="gph-sb-ic"></i>
+        </div>
+      </div>
+
+      <header class="gph-header gph-header-ref gph-header-nav">
+        <button type="button" class="gph-back gph-back-ref" (click)="onBack()" aria-label="Volver">
+          <i data-lucide="chevron-left" class="gph-ic gph-ic-blue"></i>
+        </button>
+        <h1 class="gph-title gph-title-abs gph-title-ref">Detalle recibo</h1>
+        <div class="gph-header-util gph-header-util-ref">
+          <button type="button" class="gph-util-btn-ref" aria-label="Ocultar importes">
+            <i data-lucide="eye" class="gph-util-ic gph-ic-blue"></i>
+          </button>
+          <button type="button" class="gph-util-btn-ref" aria-label="Ayuda">
+            <i data-lucide="message-circle" class="gph-util-ic gph-ic-blue"></i>
+          </button>
+        </div>
+      </header>
+
+      <div class="gph-ref-content gph-ref-content--detail gph-detalle-sub-scroll">
+        <div class="gph-hero gph-hero-ref gph-hero-ref--detalle-nuevo">
+          <div class="gph-hero-logo-wrap">
+            <img
+              *ngIf="selectedRecibo.logoAsset"
+              [src]="selectedRecibo.logoAsset"
+              alt=""
+              class="gph-hero-img"
+              width="80"
+              height="80"
+            />
+            <div *ngIf="!selectedRecibo.logoAsset" class="gph-hero-logo" [style.background]="selectedRecibo.logoColor">
+              {{ selectedRecibo.logoInitial }}
+            </div>
+          </div>
+          <p class="gph-hero-name gph-hero-name--detail">{{ selectedRecibo.displayName }}</p>
+          <span class="gph-hero-activa" *ngIf="selectedRecibo.status === 'activa' || selectedRecibo.status === 'proximo-cobro'">
+            {{ selectedRecibo.status === 'proximo-cobro' ? statusLabel('proximo-cobro') : 'Activa' }}
+          </span>
+          <span
+            class="gph-tag gph-tag-lg"
+            *ngIf="selectedRecibo.status === 'pagos-bloqueados' || selectedRecibo.status === 'cancelada'"
+            [ngClass]="statusClass(selectedRecibo.status)"
+            >{{ statusLabel(selectedRecibo.status) }}</span
+          >
+          <p class="gph-hero-price-main" [class.gph-hero-price-main--muted]="selectedRecibo.status === 'pagos-bloqueados'">
+            -{{ formatMoney(selectedRecibo.priceMonthly) }} €/mes
+          </p>
+        </div>
+
+        <div class="gph-actions gph-actions-ref gph-actions-ref--detalle">
+          <button
+            *ngIf="selectedRecibo.status !== 'pagos-bloqueados'"
+            type="button"
+            class="gph-act"
+            (click)="startBloquearDesdeRecibo()"
+          >
+            <span class="gph-act-ring"><i data-lucide="pause" class="gph-act-svg"></i></span>
+            <span>Bloquear pagos futuros</span>
+          </button>
+          <button
+            *ngIf="selectedRecibo.status === 'pagos-bloqueados'"
+            type="button"
+            class="gph-act"
+            (click)="activarPagosRecibo()"
+          >
+            <span class="gph-act-ring"><i data-lucide="play" class="gph-act-svg"></i></span>
+            <span>Activar pagos futuros</span>
+          </button>
+          <button
+            type="button"
+            class="gph-act"
+            *ngIf="selectedRecibo.status !== 'pagos-bloqueados'"
+            (click)="openModificarCuentaRecibo()"
+          >
+            <span class="gph-act-ring"><i data-lucide="settings" class="gph-act-svg"></i></span>
+            <span>Modificar cuenta</span>
+          </button>
+          <button
+            type="button"
+            class="gph-act"
+            *ngIf="selectedRecibo.status === 'pagos-bloqueados'"
+            (click)="openModificarCuentaRecibo()"
+          >
+            <span class="gph-act-ring"><i data-lucide="external-link" class="gph-act-svg"></i></span>
+            <span>Gestionar domiciliación</span>
+          </button>
+          <button type="button" class="gph-act">
+            <span class="gph-act-ring"><i data-lucide="share-2" class="gph-act-svg"></i></span>
+            <span>Compartir detalle</span>
+          </button>
+        </div>
+
+        <div class="gph-detalle-metricas">
+          <div class="gph-detalle-metric-card">
+            <div class="gph-detalle-metric-top">
+              <span class="gph-detalle-metric-label">Siguiente cobro</span>
+              <span class="gph-detalle-metric-value">{{ reciboSiguienteCobroDisplay }}</span>
+            </div>
+            <div
+              *ngIf="selectedRecibo.status !== 'pagos-bloqueados'"
+              class="gph-detalle-progress"
+              role="progressbar"
+              [attr.aria-valuenow]="cobroProgressPercentRecibo"
+            >
+              <div class="gph-detalle-progress-fill" [style.width.%]="cobroProgressPercentRecibo"></div>
+            </div>
+            <p class="gph-detalle-metric-foot" *ngIf="selectedRecibo.status !== 'pagos-bloqueados'">{{ faltanDiasCobroLabel }}</p>
+          </div>
+          <div class="gph-detalle-metric-card gph-detalle-metric-card--inline">
+            <span class="gph-detalle-metric-label">Gasto anual previsto</span>
+            <span class="gph-detalle-metric-strong">{{ formatMoney(gastoAnualPrevistoRecibo) }} €</span>
+          </div>
+        </div>
+
+        <h3 class="gph-detalle-block-title">Detalle del recibo</h3>
+        <div class="gph-info-card gph-info-card-ref gph-info-card--detalle-sub">
+          <div class="gph-info-row" *ngIf="selectedRecibo.status === 'pagos-bloqueados' && selectedRecibo.fechaBloqueo">
+            <span class="gph-k">Pagos</span><span class="gph-v gph-v--bloqueado">Bloqueados desde {{ selectedRecibo.fechaBloqueo }}</span>
+          </div>
+          <p class="gph-info-card-hint" *ngIf="selectedRecibo.status === 'pagos-bloqueados'">
+            No se realizarán nuevos cobros por este adeudo hasta que reactives los pagos.
+          </p>
+          <div class="gph-info-row">
+            <span class="gph-k">Concepto</span><span class="gph-v">{{ selectedRecibo.concepto }}</span>
+          </div>
+          <div class="gph-info-row">
+            <span class="gph-k">Cuenta</span><span class="gph-v">{{ selectedRecibo.cuentaIban }}</span>
+          </div>
+          <div class="gph-info-row" *ngIf="reciboDetalleAmpliado">
+            <span class="gph-k">Titular de la cuenta</span><span class="gph-v">{{ selectedRecibo.titularCuenta }}</span>
+          </div>
+          <div class="gph-info-row" *ngIf="reciboDetalleAmpliado">
+            <span class="gph-k">Producto</span><span class="gph-v">{{ selectedRecibo.productoCuenta }}</span>
+          </div>
+          <div class="gph-info-row" *ngIf="reciboDetalleAmpliado">
+            <span class="gph-k">Referencia</span><span class="gph-v">{{ selectedRecibo.referencia }}</span>
+          </div>
+          <p class="gph-info-card-hint" *ngIf="reciboDetalleAmpliado && selectedRecibo.footerHint">
+            {{ selectedRecibo.footerHint }}
+          </p>
+          <button type="button" class="gph-recibo-toggle" (click)="toggleReciboDetalleAmpliado()">
+            {{ reciboDetalleAmpliado ? 'Mostrar menos' : 'Mostrar más' }}
+            <i
+              [attr.data-lucide]="reciboDetalleAmpliado ? 'chevron-up' : 'chevron-down'"
+              class="gph-recibo-toggle-ic"
+              aria-hidden="true"
+            ></i>
+          </button>
+        </div>
+
+        <div class="gph-historico-head">
+          <h3 class="gph-detalle-block-title gph-detalle-block-title--inline">Histórico de movimientos</h3>
+          <button
+            type="button"
+            class="gph-historico-info"
+            (click)="openHistoricoInfo()"
+            aria-label="Información sobre importes del histórico"
+          >
+            <span class="gph-historico-info-ic" aria-hidden="true">i</span>
+          </button>
+        </div>
+        <ul class="gph-historico-card">
+            <li
+              *ngFor="let h of historicoMovimientosRecibo; let last = last"
+              class="gph-historico-row"
+              [class.gph-historico-row--last]="last"
+            >
+              <div class="gph-historico-logo-wrap">
+                <img
+                  *ngIf="selectedRecibo.logoAsset"
+                  [src]="selectedRecibo.logoAsset"
+                  alt=""
+                  width="40"
+                  height="40"
+                  class="gph-historico-logo"
+                />
+                <div
+                  *ngIf="!selectedRecibo.logoAsset"
+                  class="gph-historico-logo-fallback"
+                  [style.background]="selectedRecibo.logoColor"
+                >
+                  {{ selectedRecibo.logoInitial }}
+                </div>
+              </div>
+              <div class="gph-historico-main">
+                <p class="gph-historico-name">{{ selectedRecibo.merchant }}</p>
+                <p class="gph-historico-date">{{ h.fecha }}</p>
+              </div>
+              <span class="gph-historico-amt">-{{ formatMoney(h.amount) }} €</span>
+            </li>
+          </ul>
+      </div>
+    </div>
+  </ng-container>
+
   <!-- Redirección al partner -->
   <ng-container *ngIf="view === 'modalRedirigir' && selected">
     <div class="gph-fullscreen gph-redir-sheet">
@@ -478,11 +681,17 @@
           </div>
         </div>
         <h2 class="gph-bloquear-title">Vas a bloquear los pagos con {{ selected.displayName }}</h2>
-        <p class="gph-bloquear-p">
+        <p class="gph-bloquear-p" *ngIf="!bloquearReciboOrigen">
           Desde ahora, rechazaremos todos los pagos con tarjeta a este proveedor.
         </p>
-        <p class="gph-bloquear-p">
+        <p class="gph-bloquear-p" *ngIf="bloquearReciboOrigen">
+          Desde ahora, rechazaremos todos los pagos a este proveedor.
+        </p>
+        <p class="gph-bloquear-p" *ngIf="!bloquearReciboOrigen">
           Podrás cambiarlo cuando quieras desde las opciones de tarjeta, en la sección de Pagos Bloqueados.
+        </p>
+        <p class="gph-bloquear-p" *ngIf="bloquearReciboOrigen">
+          Podrás cambiarlo cuando quieras desde el detalle del recibo.
         </p>
         <div class="gph-bloquear-actions">
           <button type="button" class="gph-btn-primary" (click)="onBloquearConfirm()">Bloquear pagos</button>
@@ -518,8 +727,11 @@
           <i data-lucide="check" class="gph-success-check-ic"></i>
         </div>
         <h2 class="gph-success-title">Has bloqueado los pagos con {{ selected.displayName }}</h2>
-        <p class="gph-success-txt">
+        <p class="gph-success-txt" *ngIf="!bloquearReciboOrigen">
           Recuerda que puedes cambiarlo cuando quieras desde las opciones de tarjeta, en la sección de Pagos Bloqueados.
+        </p>
+        <p class="gph-success-txt" *ngIf="bloquearReciboOrigen">
+          Recuerda que puedes cambiarlo cuando quieras desde el detalle del recibo.
         </p>
       </div>
       <div class="gph-success-footer">

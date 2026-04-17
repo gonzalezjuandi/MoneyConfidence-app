@@ -31,6 +31,15 @@ export type ProximosPagosView = 'home' | 'movimientos' | 'habituales';
 /** Pago habitual (gestionar suscripciones / recibos / cancelados) */
 export type HabitualPaymentCategory = 'suscripciones' | 'recibos' | 'cancelados';
 
+/** Filtro de chips en «Gestionar pagos habituales» (sin cancelados en UI) */
+export type ProximosPagosHabitualesFilter = 'todos' | 'suscripciones' | 'recibos';
+
+/** Al cerrar detalle suscripción/recibo (paso 10), restaurar subvista Próximos pagos */
+export type GestionarPagosReturnContext = {
+  proximosPagosView: ProximosPagosView;
+  habitualesTab?: ProximosPagosHabitualesFilter | null;
+};
+
 export interface HabitualPaymentItem {
   id: string;
   merchant: string;
@@ -49,7 +58,7 @@ export const DEFAULT_HABITUAL_PAYMENTS: HabitualPaymentItem[] = [
   {
     id: 'h1',
     merchant: 'Netflix',
-    lineSub: 'Mensual, se renueva 20 Abr',
+    lineSub: 'Mensual, se renueva 24 Abr',
     category: 'suscripciones',
     status: 'activa',
     amount: 17.99,
@@ -69,22 +78,12 @@ export const DEFAULT_HABITUAL_PAYMENTS: HabitualPaymentItem[] = [
   {
     id: 'h3',
     merchant: 'Endesa',
-    lineSub: 'Mensual, se renueva 18 Abr',
+    lineSub: 'Mensual, se renueva 28 Abr',
     category: 'recibos',
     status: 'activa',
     amount: 45.0,
-    logoInitial: 'E',
-    logoColor: '#c4122e'
+    logoAsset: 'assets/gph-logo-endesa.png'
   },
-  {
-    id: 'h4',
-    merchant: 'Movistar',
-    lineSub: 'Fibra, cancelado 1 Mar',
-    category: 'cancelados',
-    status: 'cancelada',
-    logoInitial: 'M',
-    logoColor: '#019cdc'
-  }
 ];
 
 /** Misma regla que la pestaña Recibos en «Gestionar pagos habituales» */
@@ -115,7 +114,7 @@ export interface UpcomingPaymentItem {
   accountMask: string;
   /** En qué cuentas del carrusel aplica; si falta, solo principal */
   accounts?: ('principal' | 'familiar')[];
-  /** Fecha/hora larga en detalle (p. ej. «Previsto 15 abril 2026, 16:00 h.») */
+  /** Fecha/hora larga en detalle (p. ej. «Previsto 22 abril 2026, 16:00 h.») */
   scheduleDetail?: string;
   /** IBAN demo en detalle */
   iban?: string;
@@ -168,7 +167,7 @@ export const DEFAULT_RECURRING_SUBSCRIPTIONS: RecurringSubscriptionItem[] = [
   {
     id: 'sub-1',
     merchant: 'Netflix',
-    lineSub: 'Mensual, se renueva 21 Abr',
+    lineSub: 'Mensual, se renueva 24 Abr',
     priceMonthly: 17.99,
     logoInitial: 'N',
     logoColor: '#E50914',
@@ -192,8 +191,8 @@ export const DEFAULT_UPCOMING_PAYMENTS_ITEMS: UpcomingPaymentItem[] = [
     name: 'Asisa Asistencia',
     amount: 100,
     label: 'Domiciliación',
-    schedule: 'Previsto miércoles 15 Abr',
-    scheduleDetail: 'Previsto 15 abril 2026, 16:00 h.',
+    schedule: 'Previsto miércoles 22 Abr',
+    scheduleDetail: 'Previsto 22 abril 2026, 16:00 h.',
     logo: 'A',
     logoBg: '#0a2744',
     logoVariant: 'asisa',
@@ -211,8 +210,8 @@ export const DEFAULT_UPCOMING_PAYMENTS_ITEMS: UpcomingPaymentItem[] = [
     detail: 'Cuota N.123456789',
     amount: 250,
     label: 'Préstamos',
-    schedule: 'Previsto viernes 17 Abr',
-    scheduleDetail: 'Previsto 17 abril 2026, 09:00 h.',
+    schedule: 'Previsto viernes 24 Abr',
+    scheduleDetail: 'Previsto 24 abril 2026, 09:00 h.',
     logo: 'P',
     logoBg: '#0095ff',
     logoVariant: 'prestamos',
@@ -229,8 +228,8 @@ export const DEFAULT_UPCOMING_PAYMENTS_ITEMS: UpcomingPaymentItem[] = [
     name: 'Aguas Barcelona',
     amount: 60,
     label: 'Domiciliación',
-    schedule: 'Previsto lunes 20 Abr',
-    scheduleDetail: 'Previsto 20 abril 2026, 08:00 h.',
+    schedule: 'Previsto miércoles 29 Abr',
+    scheduleDetail: 'Previsto 29 abril 2026, 08:00 h.',
     logo: 'B',
     logoBg: '#003b73',
     logoVariant: 'aguas',
@@ -247,8 +246,8 @@ export const DEFAULT_UPCOMING_PAYMENTS_ITEMS: UpcomingPaymentItem[] = [
     name: 'Fibra y línea móvil',
     amount: 40,
     label: 'Domiciliación',
-    schedule: 'Previsto jueves 30 Abr',
-    scheduleDetail: 'Previsto 30 abril 2026, 12:00 h.',
+    schedule: 'Previsto martes 12 May',
+    scheduleDetail: 'Previsto 12 mayo 2026, 12:00 h.',
     logo: 'T',
     logoBg: '#1e3a5f',
     logoVariant: 'telecom',
@@ -279,8 +278,8 @@ export interface WizardState {
   entryScreen?: EntryScreen;
   /** Subvista cuando entryScreen es próximos-pagos */
   proximosPagosView?: ProximosPagosView;
-  /** Pestaña inicial al abrir «pagos habituales» (se consume al mostrar la pantalla) */
-  proximosPagosHabitualesTab?: HabitualPaymentCategory | null;
+  /** Filtro inicial al abrir «pagos habituales» (null = todos; se consume al mostrar) */
+  proximosPagosHabitualesTab?: ProximosPagosHabitualesFilter | null;
   /** Toggle tarjeta principal en Posición global (saldo vs próximos pagos) */
   posicionGlobalCardView?: PosicionGlobalCardView;
   /** Total demo de próximos pagos (30 días), alineado con la captura */
@@ -299,6 +298,10 @@ export interface WizardState {
   gestionarPagosDirectoRecibos?: boolean;
   /** Si viene informado con directo suscripciones, abrir el detalle de esa suscripción (id demo del hub) */
   gestionarPagosAbrirSuscripcionId?: string | null;
+  /** Detalle de un recibo habitual (mismo id que `HabitualPaymentItem.id`, p. ej. `h3` Endesa) */
+  gestionarPagosAbrirReciboId?: string | null;
+  /** Origen para volver atrás desde el hub (detalle suscripción / recibo) */
+  gestionarPagosReturn?: GestionarPagosReturnContext | null;
 }
 
 @Injectable({
@@ -326,6 +329,8 @@ export class WizardStateService {
     gestionarPagosDirectoSuscripciones: false,
     gestionarPagosDirectoRecibos: false,
     gestionarPagosAbrirSuscripcionId: null,
+    gestionarPagosAbrirReciboId: null,
+    gestionarPagosReturn: null,
     perfilFinanciero: {
       ingresos: 0,
       gastos: 0,
@@ -399,7 +404,7 @@ export class WizardStateService {
 
   setProximosPagosView(
     view: ProximosPagosView,
-    habitualesInitialTab?: HabitualPaymentCategory | null
+    habitualesInitialTab?: ProximosPagosHabitualesFilter | null
   ): void {
     const currentState = this.getCurrentState();
     this.stateSubject.next({
@@ -457,7 +462,9 @@ export class WizardStateService {
       currentStep: 10,
       gestionarPagosDirectoSuscripciones: true,
       gestionarPagosDirectoRecibos: false,
-      gestionarPagosAbrirSuscripcionId: null
+      gestionarPagosAbrirSuscripcionId: null,
+      gestionarPagosAbrirReciboId: null,
+      gestionarPagosReturn: null
     });
   }
 
@@ -467,14 +474,55 @@ export class WizardStateService {
   }
 
   /** Paso 10: Suscripciones y detalle de una suscripción concreta (mismo id que en el hub) */
-  goToGestionarPagosSuscripcionDetalle(subscriptionId: string): void {
+  goToGestionarPagosSuscripcionDetalle(
+    subscriptionId: string,
+    returnTo?: GestionarPagosReturnContext | null
+  ): void {
     const currentState = this.getCurrentState();
     this.stateSubject.next({
       ...currentState,
       currentStep: 10,
       gestionarPagosDirectoSuscripciones: true,
       gestionarPagosDirectoRecibos: false,
-      gestionarPagosAbrirSuscripcionId: subscriptionId
+      gestionarPagosAbrirSuscripcionId: subscriptionId,
+      gestionarPagosAbrirReciboId: null,
+      gestionarPagosReturn: returnTo ?? null
+    });
+  }
+
+  /** Paso 10: detalle de un recibo habitual (demo hub); `h3`, etc. */
+  goToGestionarPagosReciboDetalle(
+    habitualPaymentId: string,
+    returnTo?: GestionarPagosReturnContext | null
+  ): void {
+    const currentState = this.getCurrentState();
+    this.stateSubject.next({
+      ...currentState,
+      currentStep: 10,
+      gestionarPagosDirectoSuscripciones: false,
+      gestionarPagosDirectoRecibos: false,
+      gestionarPagosAbrirSuscripcionId: null,
+      gestionarPagosAbrirReciboId: habitualPaymentId,
+      gestionarPagosReturn: returnTo ?? null
+    });
+  }
+
+  /**
+   * Paso 10: detalle recibo para un cargo previsto (id `up-{upcomingId}` en catálogo hub).
+   */
+  goToGestionarPagosReciboDetallePorUpcoming(
+    upcomingPaymentId: string,
+    returnTo?: GestionarPagosReturnContext | null
+  ): void {
+    const currentState = this.getCurrentState();
+    this.stateSubject.next({
+      ...currentState,
+      currentStep: 10,
+      gestionarPagosDirectoSuscripciones: false,
+      gestionarPagosDirectoRecibos: false,
+      gestionarPagosAbrirSuscripcionId: null,
+      gestionarPagosAbrirReciboId: `up-${upcomingPaymentId}`,
+      gestionarPagosReturn: returnTo ?? null
     });
   }
 
@@ -489,7 +537,33 @@ export class WizardStateService {
       ...currentState,
       gestionarPagosDirectoSuscripciones: false,
       gestionarPagosDirectoRecibos: false,
-      gestionarPagosAbrirSuscripcionId: null
+      gestionarPagosAbrirSuscripcionId: null,
+      gestionarPagosAbrirReciboId: null
+    });
+  }
+
+  /** Lee y limpia el contexto de retorno (una sola vez) */
+  consumeGestionarPagosReturn(): GestionarPagosReturnContext | null {
+    const currentState = this.getCurrentState();
+    const ret = currentState.gestionarPagosReturn ?? null;
+    if (!ret) {
+      return null;
+    }
+    this.stateSubject.next({
+      ...currentState,
+      gestionarPagosReturn: null
+    });
+    return ret;
+  }
+
+  clearGestionarPagosAbrirReciboId(): void {
+    const currentState = this.getCurrentState();
+    if (currentState.gestionarPagosAbrirReciboId == null) {
+      return;
+    }
+    this.stateSubject.next({
+      ...currentState,
+      gestionarPagosAbrirReciboId: null
     });
   }
 

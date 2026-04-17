@@ -461,13 +461,21 @@ $gphab-text-secondary: #6b7280;
 .gphab-header-center-title {
   position: absolute;
   left: 50%;
-  transform: translateX(-50%);
   top: 50%;
-  margin-top: -0.75rem;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  max-width: calc(100% - 7.5rem);
+  margin: 0;
+  padding: 0 0.25rem;
   font-size: 1.0625rem;
   font-weight: 700;
   color: $gphab-text;
   letter-spacing: -0.02em;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   pointer-events: none;
 }
 
@@ -573,8 +581,8 @@ $gphab-text-secondary: #6b7280;
 .gphab-row {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 1.125rem 1rem;
+  gap: 0.875rem;
+  padding: 1rem 1rem;
   border-bottom: 1px solid #e8e8ed;
 }
 
@@ -584,6 +592,52 @@ $gphab-text-secondary: #6b7280;
 
 .gphab-row-click {
   cursor: pointer;
+}
+
+.gphab-row--subscription {
+  align-items: center;
+}
+
+/** Cargos de previsión: solo listado de gestión, sin navegación a detalle de movimiento */
+.gphab-row--gestion-proximo {
+  cursor: default;
+}
+
+/** Referencia list view: título → subtítulo opcional → importe (columna única, sin meta a la derecha) */
+.gphab-row-main--listview {
+  gap: 0.2rem;
+}
+
+.gphab-row-main--listview .gphab-row-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #000;
+  letter-spacing: -0.02em;
+}
+
+.gphab-row-main--listview .gphab-row-sub {
+  font-size: 0.8125rem;
+  font-weight: 400;
+  color: #6b7280;
+  margin-top: 0.05rem;
+}
+
+.gphab-row-price {
+  margin: 0.15rem 0 0;
+  font-size: 0.9375rem;
+  font-weight: 400;
+  color: #111827;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+}
+
+.gphab-row-main--listview .gphab-row-price {
+  margin-top: 0.25rem;
+}
+
+.gphab-status-tag--inline {
+  margin-top: 0.35rem;
+  align-self: flex-start;
 }
 
 .gphab-logo-img {
@@ -647,6 +701,19 @@ $gphab-text-secondary: #6b7280;
   letter-spacing: -0.02em;
 }
 
+.gphab-row-proximo-tag {
+  display: inline-block;
+  margin-top: 0.35rem;
+  padding: 0.22rem 0.5rem;
+  border-radius: 0.45rem;
+  background: #f2f2f2;
+  font-size: 0.6875rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-align: right;
+  align-self: flex-end;
+}
+
 .gphab-status-tag {
   display: inline-block;
   padding: 0.28rem 0.55rem;
@@ -659,9 +726,23 @@ $gphab-text-secondary: #6b7280;
 }
 
 .gphab-chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  min-width: 1.25rem;
+  height: 1.25rem;
+  flex-shrink: 0;
+  align-self: center;
+  color: $gphab-blue;
+}
+
+/* Chevron del listado: SVG inline (no depende de Lucide/createIcons en *ngFor) */
+.gphab-chevron svg {
+  display: block;
   width: 1.25rem;
   height: 1.25rem;
   flex-shrink: 0;
-  color: $gphab-blue;
-  stroke-width: 2;
+  stroke: currentColor;
+  fill: none;
 }

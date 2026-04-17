@@ -193,7 +193,19 @@ app-upcoming-payment-brand-logo.upd-brand-logo {
   align-items: center;
   justify-content: center;
   gap: 0.35rem;
-  margin-bottom: 0.65rem;
+  margin: 0 auto 0.65rem;
+  padding: 0.25rem 0.35rem;
+  border: none;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  -webkit-tap-highlight-color: transparent;
+
+  &:focus-visible {
+    outline: 2px solid $upd-blue;
+    outline-offset: 2px;
+  }
 }
 
 .upd-estimado-i {
@@ -320,4 +332,95 @@ app-upcoming-payment-brand-logo.upd-brand-logo {
   height: 1.125rem;
   stroke-width: 2;
   flex-shrink: 0;
+}
+
+/* Bottom sheet: importes y fechas (misma referencia que Próximos pagos / hub) */
+.upd-importe-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 280;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.upd-importe-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+}
+
+.upd-importe-sheet {
+  position: relative;
+  width: 100%;
+  max-height: min(88vh, 560px);
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 1.25rem 1.25rem 0 0;
+  padding: 0.5rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.12);
+  z-index: 1;
+}
+
+.upd-importe-handle {
+  width: 2.25rem;
+  height: 0.25rem;
+  border-radius: 9999px;
+  background: #e5e7eb;
+  margin: 0.35rem auto 0.75rem;
+}
+
+.upd-importe-close {
+  position: absolute;
+  top: 0.65rem;
+  right: 0.75rem;
+  border: none;
+  background: none;
+  padding: 0.35rem;
+  color: $upd-blue;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upd-importe-close-ic {
+  width: 1.5rem;
+  height: 1.5rem;
+  stroke-width: 2;
+}
+
+.upd-importe-title {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 2.5rem 1rem 0;
+  line-height: 1.25;
+  text-align: left;
+}
+
+.upd-importe-body {
+  font-size: 0.9375rem;
+  color: #111827;
+  line-height: 1.5;
+  margin: 0 0 1.5rem;
+  text-align: left;
+}
+
+.upd-importe-body strong {
+  font-weight: 700;
+}
+
+.upd-importe-primary {
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: none;
+  border-radius: 9999px;
+  background: $upd-blue;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  -webkit-tap-highlight-color: transparent;
 }

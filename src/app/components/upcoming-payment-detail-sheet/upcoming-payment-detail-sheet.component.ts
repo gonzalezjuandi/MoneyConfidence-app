@@ -22,6 +22,9 @@ export class UpcomingPaymentDetailSheetComponent
 {
   item: UpcomingPaymentItem | null = null;
 
+  /** Sheet «Importes y fechas estimadas» (referencia) */
+  importeInfoOpen = false;
+
   /** Filas extra del bloque detalle plegables */
   detailExpanded = true;
 
@@ -35,6 +38,7 @@ export class UpcomingPaymentDetailSheetComponent
       const id = state.selectedUpcomingPaymentId;
       if (!id) {
         this.item = null;
+        this.importeInfoOpen = false;
       } else {
         const next =
           state.upcomingPaymentsItems?.find(i => i.id === id) ??
@@ -59,7 +63,20 @@ export class UpcomingPaymentDetailSheetComponent
   }
 
   close(): void {
+    this.importeInfoOpen = false;
     this.wizardState.setSelectedUpcomingPaymentId(null);
+  }
+
+  openImporteInfo(): void {
+    this.importeInfoOpen = true;
+    this.cdr.markForCheck();
+    setTimeout(() => this.refreshIcons(), 80);
+  }
+
+  closeImporteInfo(): void {
+    this.importeInfoOpen = false;
+    this.cdr.markForCheck();
+    setTimeout(() => this.refreshIcons(), 40);
   }
 
   toggleDetailExpanded(): void {

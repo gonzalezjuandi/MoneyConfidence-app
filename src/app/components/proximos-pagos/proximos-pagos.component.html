@@ -46,10 +46,6 @@
               </div>
               <p class="pp-forecast-sub">{{ displaySummaryCountLabel }}</p>
               <p class="pp-forecast-amount">-{{ formatMoney(displaySummaryTotal) }} €</p>
-              <button type="button" class="pp-hero-link" (click)="goGestionarPagosHabituales()">
-                <span>Gestionar pagos habituales</span>
-                <i data-lucide="chevron-right" class="pp-hero-link-ic"></i>
-              </button>
             </div>
           </section>
         </div>
@@ -111,41 +107,17 @@
             <p class="pp-insight-meta">Sin datos</p>
           </ng-container>
         </div>
-
-        <div
-          class="pp-insight-card pp-insight-card--clickable"
-          role="button"
-          tabindex="0"
-          (click)="goGestionarPagosHabituales()"
-          (keydown.enter)="goGestionarPagosHabituales()"
-          (keydown.space)="$event.preventDefault(); goGestionarPagosHabituales()"
-          aria-label="Gasto mensual en suscripciones. Abrir gestión de pagos habituales"
-        >
-          <div class="pp-insight-icon-wrap">
-            <i data-lucide="tag" class="pp-insight-ic"></i>
-          </div>
-          <p class="pp-insight-label">Gasto mensual</p>
-          <p class="pp-insight-name">Suscripciones</p>
-          <p class="pp-insight-meta">{{ formatMoney(recurringSubsMonthlyTotal) }} €</p>
-        </div>
-
-        <div
-          class="pp-insight-card pp-insight-card--clickable"
-          role="button"
-          tabindex="0"
-          (click)="openGestionarPagosRecibos()"
-          (keydown.enter)="openGestionarPagosRecibos()"
-          (keydown.space)="$event.preventDefault(); openGestionarPagosRecibos()"
-          aria-label="Gasto mensual en recibos. Abrir gestión de recibos y domiciliaciones"
-        >
-          <div class="pp-insight-icon-wrap">
-            <i data-lucide="file-text" class="pp-insight-ic"></i>
-          </div>
-          <p class="pp-insight-label">Gasto mensual</p>
-          <p class="pp-insight-name">Recibos</p>
-          <p class="pp-insight-meta">{{ formatMoney(gastoMensualRecibos) }} €</p>
-        </div>
       </div>
+
+      <section class="pp-manage-notice">
+        <button type="button" class="pp-manage-notice-row" (click)="goGestionarPagosHabituales()">
+          <span class="pp-manage-notice-icon-wrap" aria-hidden="true">
+            <i data-lucide="settings" class="pp-manage-notice-ic"></i>
+          </span>
+          <span class="pp-manage-notice-label">Gestionar suscripciones y recibos</span>
+          <i data-lucide="chevron-right" class="pp-manage-notice-chevron" aria-hidden="true"></i>
+        </button>
+      </section>
 
       <section class="pp-preview-section" aria-labelledby="pp-preview-title">
         <div class="pp-preview-head">
@@ -207,7 +179,7 @@
           generalmente, son recurrentes y vinculados a productos del Banco Sabadell.
         </p>
         <p>
-          Muy pronto también <strong>podrás ver tus ingresos</strong> y tener una visión más completa de tu dinero.
+          Muy pronto también <strong>podrás ver tus suscripciones</strong> y tener una visión más completa de tu dinero.
         </p>
         <p>Así podrás anticiparte a tus gastos y evitar sorpresas.</p>
       </div>

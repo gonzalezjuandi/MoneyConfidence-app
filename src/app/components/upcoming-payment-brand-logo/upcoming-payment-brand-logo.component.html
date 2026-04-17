@@ -27,23 +27,16 @@
     </svg>
   </span>
 
-  <!-- Préstamos: azul vivo + "os" -->
+  <!-- Préstamos: marca referencia (BS en círculo azul) -->
   <span *ngSwitchCase="'prestamos'" class="upl" [class.upl--sm]="size === 'sm'" [class.upl--lg]="size === 'lg'" aria-hidden="true">
-    <svg viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="20" cy="20" r="20" fill="#0095ff" />
-      <text
-        x="20"
-        y="26"
-        text-anchor="middle"
-        fill="#ffffff"
-        font-size="15"
-        font-family="Georgia, 'Times New Roman', serif"
-        font-style="italic"
-        font-weight="700"
-      >
-        os
-      </text>
-    </svg>
+    <img
+      src="assets/pp-logo-prestamos-bs.png"
+      alt=""
+      width="40"
+      height="40"
+      decoding="async"
+      class="upl-img"
+    />
   </span>
 
   <!-- Aguas Barcelona: ondas -->

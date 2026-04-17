@@ -13,12 +13,18 @@ import {
   DEFAULT_RECURRING_SUBSCRIPTIONS,
   RecurringSubscriptionItem,
   ProximosPagosView,
-  HabitualPaymentCategory,
+  ProximosPagosHabitualesFilter,
+  GestionarPagosReturnContext,
   HabitualPaymentItem,
   DEFAULT_HABITUAL_PAYMENTS
 } from '../../services/wizard-state.service';
 
 declare var lucide: any;
+
+/** Fila en chip Recibos: habitual (Endesa) + movimientos de Próximos pagos */
+type RecibosHabitualMergedRow =
+  | { tipo: 'habitual'; habitual: HabitualPaymentItem }
+  | { tipo: 'proximo'; upcoming: UpcomingPaymentItem };
 
 @Component({
   selector: 'app-proximos-pagos-movimientos',
@@ -33,13 +39,14 @@ export class ProximosPagosMovimientosComponent implements OnInit, AfterViewInit,
 
   readonly habitualItems: HabitualPaymentItem[] = [...DEFAULT_HABITUAL_PAYMENTS];
 
-  readonly habitualCategoryTabs: { key: HabitualPaymentCategory; label: string }[] = [
+  readonly habitualCategoryTabs: { key: ProximosPagosHabitualesFilter; label: string }[] = [
+    { key: 'todos', label: 'Todos' },
     { key: 'suscripciones', label: 'Suscripciones' },
-    { key: 'recibos', label: 'Recibos' },
-    { key: 'cancelados', label: 'Cancelados' }
+    { key: 'recibos', label: 'Recibos' }
   ];
 
-  selectedHabitualCategory: HabitualPaymentCategory = 'suscripciones';
+  /** Por defecto: todos los pagos activos (sin filtro de chip) */
+  selectedHabitualFilter: ProximosPagosHabitualesFilter = 'todos';
 
   readonly recurringSubs: RecurringSubscriptionItem[] = DEFAULT_RECURRING_SUBSCRIPTIONS;
 
@@ -61,8 +68,8 @@ export class ProximosPagosMovimientosComponent implements OnInit, AfterViewInit,
   ) {
     const s = this.wizardState.getCurrentState();
     this.proximosPagosView = s.proximosPagosView ?? 'home';
-    if (s.proximosPagosHabitualesTab) {
-      this.selectedHabitualCategory = s.proximosPagosHabitualesTab;
+    if (s.proximosPagosHabitualesTab != null) {
+      this.selectedHabitualFilter = s.proximosPagosHabitualesTab;
       this.wizardState.clearProximosPagosHabitualesTab();
     }
     if (s.upcomingPaymentsItems?.length) {
@@ -75,18 +82,100 @@ export class ProximosPagosMovimientosComponent implements OnInit, AfterViewInit,
   }
 
   get activeHabitualPaymentsCount(): number {
-    return this.habitualItems.filter(i => i.status === 'activa').length;
+    return this.habitualItems.filter(
+      i => i.status === 'activa' && i.category !== 'cancelados'
+    ).length;
   }
 
   get filteredHabitualItems(): HabitualPaymentItem[] {
-    return this.habitualItems.filter(i => i.category === this.selectedHabitualCategory);
+    const base = this.habitualItems.filter(
+      i => i.category !== 'cancelados' && i.status !== 'cancelada'
+    );
+    if (this.selectedHabitualFilter === 'todos') {
+      return base;
+    }
+    return base.filter(i => i.category === this.selectedHabitualFilter);
+  }
+
+  isSubscriptionListSimplified(it: HabitualPaymentItem): boolean {
+    return it.category === 'suscripciones' && it.status === 'activa';
+  }
+
+  /**
+   * Chip «Recibos»: recibos habituales + cargos de la previsión (misma fuente que Próximos pagos).
+   */
+  get recibosMergedRows(): RecibosHabitualMergedRow[] {
+    const rows: RecibosHabitualMergedRow[] = [];
+    for (const h of this.habitualItems) {
+      if (h.category === 'recibos' && h.status === 'activa') {
+        rows.push({ tipo: 'habitual', habitual: h });
+      }
+    }
+    for (const u of this.upcomingItems) {
+      rows.push({ tipo: 'proximo', upcoming: u });
+    }
+    return rows;
+  }
+
+  /**
+   * Chip «Todos»: todos los pagos habituales activos + mismos cargos que en Recibos (sin duplicar lógica de movimiento).
+   */
+  get todosMergedRows(): RecibosHabitualMergedRow[] {
+    const rows: RecibosHabitualMergedRow[] = [];
+    for (const h of this.habitualItems) {
+      if (h.category !== 'cancelados' && h.status !== 'cancelada') {
+        rows.push({ tipo: 'habitual', habitual: h });
+      }
+    }
+    for (const u of this.upcomingItems) {
+      rows.push({ tipo: 'proximo', upcoming: u });
+    }
+    return rows;
+  }
+
+  get habitualesMergedListRows(): RecibosHabitualMergedRow[] {
+    if (this.selectedHabitualFilter === 'todos') {
+      return this.todosMergedRows;
+    }
+    if (this.selectedHabitualFilter === 'recibos') {
+      return this.recibosMergedRows;
+    }
+    return [];
+  }
+
+  onMergedHabitualRowClick(row: RecibosHabitualMergedRow): void {
+    if (row.tipo === 'proximo') {
+      this.wizardState.goToGestionarPagosReciboDetallePorUpcoming(
+        row.upcoming.id,
+        this.habitualesReturnContext()
+      );
+      return;
+    }
+    this.onHabitualRowClick(row.habitual);
+  }
+
+  private habitualesReturnContext(): GestionarPagosReturnContext {
+    return {
+      proximosPagosView: 'habituales',
+      habitualesTab: this.selectedHabitualFilter
+    };
+  }
+
+  isMergedHabitualRowClickable(row: RecibosHabitualMergedRow): boolean {
+    if (row.tipo === 'proximo') {
+      return true;
+    }
+    if (row.habitual.linkedSubscriptionId) {
+      return true;
+    }
+    return row.habitual.category === 'recibos' && row.habitual.status === 'activa';
   }
 
   ngOnInit(): void {
     this.wizardStateSub = this.wizardState.state$.subscribe(state => {
       const nextView = state.proximosPagosView ?? 'home';
-      if (nextView === 'habituales' && state.proximosPagosHabitualesTab) {
-        this.selectedHabitualCategory = state.proximosPagosHabitualesTab;
+      if (nextView === 'habituales' && state.proximosPagosHabitualesTab != null) {
+        this.selectedHabitualFilter = state.proximosPagosHabitualesTab;
         this.wizardState.clearProximosPagosHabitualesTab();
       }
       if (nextView !== this.proximosPagosView) {
@@ -125,15 +214,20 @@ export class ProximosPagosMovimientosComponent implements OnInit, AfterViewInit,
     this.cdr.markForCheck();
   }
 
-  selectHabitualCategory(key: HabitualPaymentCategory): void {
-    this.selectedHabitualCategory = key;
+  selectHabitualFilter(key: ProximosPagosHabitualesFilter): void {
+    this.selectedHabitualFilter = key;
     this.cdr.markForCheck();
     setTimeout(() => this.initLucide(), 80);
   }
 
   onHabitualRowClick(it: HabitualPaymentItem): void {
+    const ret = this.habitualesReturnContext();
     if (it.linkedSubscriptionId) {
-      this.wizardState.goToGestionarPagosSuscripcionDetalle(it.linkedSubscriptionId);
+      this.wizardState.goToGestionarPagosSuscripcionDetalle(it.linkedSubscriptionId, ret);
+      return;
+    }
+    if (it.category === 'recibos' && it.status === 'activa') {
+      this.wizardState.goToGestionarPagosReciboDetalle(it.id, ret);
     }
   }
 

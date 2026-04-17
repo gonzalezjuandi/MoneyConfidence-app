@@ -119,7 +119,7 @@
       <button type="button" class="gphab-back" (click)="onBack()" aria-label="Volver">
         <i data-lucide="chevron-left" class="gphab-icon gphab-icon-blue"></i>
       </button>
-      <h1 class="gphab-header-center-title">Gestionar pagos</h1>
+      <h1 class="gphab-header-center-title">Suscripciones y recibos</h1>
       <div class="gphab-header-actions">
         <button type="button" class="gphab-icon-btn" aria-label="Ocultar importes">
           <i data-lucide="eye" class="gphab-icon gphab-icon-blue"></i>
@@ -131,7 +131,7 @@
     </header>
 
     <div class="gphab-scroll">
-      <h2 class="gphab-page-title">Gestiona tus pagos habituales</h2>
+      <h2 class="gphab-page-title">Gestionar tus suscripciones y recibos</h2>
       <p class="gphab-page-sub">
         Tienes {{ activeHabitualPaymentsCount }}
         {{ activeHabitualPaymentsCount === 1 ? 'pago activo' : 'pagos activos' }}
@@ -145,17 +145,146 @@
           type="button"
           *ngFor="let t of habitualCategoryTabs"
           class="gphab-chip"
-          [class.gphab-chip-dark]="selectedHabitualCategory === t.key"
-          (click)="selectHabitualCategory(t.key)"
+          [class.gphab-chip-dark]="selectedHabitualFilter === t.key"
+          (click)="selectHabitualFilter(t.key)"
         >
           {{ t.label }}
         </button>
       </div>
 
-      <ul class="gphab-list">
+      <ul
+        class="gphab-list"
+        *ngIf="selectedHabitualFilter === 'todos' || selectedHabitualFilter === 'recibos'"
+      >
+        <li
+          *ngFor="let row of habitualesMergedListRows"
+          class="gphab-row"
+          [class.gphab-row--gestion-proximo]="row.tipo === 'proximo'"
+          [class.gphab-row--subscription]="row.tipo === 'habitual' && isSubscriptionListSimplified(row.habitual)"
+          [class.gphab-row-click]="isMergedHabitualRowClickable(row)"
+          (click)="onMergedHabitualRowClick(row)"
+        >
+          <ng-container *ngIf="row.tipo === 'habitual'">
+            <img
+              *ngIf="row.habitual.logoAsset"
+              [src]="row.habitual.logoAsset"
+              [alt]="row.habitual.merchant"
+              class="gphab-logo-img"
+              width="48"
+              height="48"
+            />
+            <div
+              *ngIf="!row.habitual.logoAsset"
+              class="gphab-logo"
+              [style.background]="row.habitual.logoColor ?? '#6b7280'"
+            >
+              {{ row.habitual.logoInitial }}
+            </div>
+            <ng-container *ngIf="isSubscriptionListSimplified(row.habitual)">
+              <div class="gphab-row-main gphab-row-main--listview">
+                <p class="gphab-row-name">{{ row.habitual.merchant }}</p>
+                <p class="gphab-row-price" *ngIf="row.habitual.amount != null">
+                  {{ formatMoney(row.habitual.amount) }} €
+                </p>
+              </div>
+              <span
+                class="gphab-chevron"
+                [class.gphab-chevron--static]="!isMergedHabitualRowClickable(row)"
+                aria-hidden="true"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </span>
+            </ng-container>
+            <ng-container *ngIf="!isSubscriptionListSimplified(row.habitual)">
+              <div class="gphab-row-main gphab-row-main--listview">
+                <p class="gphab-row-name">{{ row.habitual.merchant }}</p>
+                <p class="gphab-row-sub" *ngIf="row.habitual.lineSub">{{ row.habitual.lineSub }}</p>
+                <p
+                  class="gphab-row-price"
+                  *ngIf="row.habitual.status === 'activa' && row.habitual.amount != null"
+                >
+                  {{ formatMoney(row.habitual.amount) }} €
+                </p>
+                <span *ngIf="row.habitual.status === 'cancelada'" class="gphab-status-tag gphab-status-tag--inline"
+                  >Cancelada</span
+                >
+              </div>
+              <span
+                class="gphab-chevron"
+                [class.gphab-chevron--static]="!isMergedHabitualRowClickable(row)"
+                aria-hidden="true"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                >
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </span>
+            </ng-container>
+          </ng-container>
+
+          <ng-container *ngIf="row.tipo === 'proximo'">
+            <app-upcoming-payment-brand-logo
+              *ngIf="row.upcoming.logoVariant"
+              [variant]="row.upcoming.logoVariant"
+              size="md"
+            ></app-upcoming-payment-brand-logo>
+            <div *ngIf="!row.upcoming.logoVariant" class="gphab-logo" [style.background]="row.upcoming.logoBg">
+              {{ row.upcoming.logo }}
+            </div>
+            <div class="gphab-row-main gphab-row-main--listview">
+              <p class="gphab-row-name">{{ row.upcoming.name }}</p>
+              <p class="gphab-row-sub">{{ row.upcoming.schedule }}</p>
+              <p class="gphab-row-price">{{ formatMoney(row.upcoming.amount) }} €</p>
+            </div>
+            <span
+              class="gphab-chevron"
+              [class.gphab-chevron--static]="!isMergedHabitualRowClickable(row)"
+              aria-hidden="true"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </span>
+          </ng-container>
+        </li>
+      </ul>
+
+      <ul class="gphab-list" *ngIf="selectedHabitualFilter === 'suscripciones'">
         <li
           *ngFor="let it of filteredHabitualItems"
           class="gphab-row"
+          [class.gphab-row--subscription]="isSubscriptionListSimplified(it)"
           [class.gphab-row-click]="!!it.linkedSubscriptionId"
           (click)="onHabitualRowClick(it)"
         >
@@ -174,17 +303,63 @@
           >
             {{ it.logoInitial }}
           </div>
-          <div class="gphab-row-main">
-            <p class="gphab-row-name">{{ it.merchant }}</p>
-            <p class="gphab-row-sub">{{ it.lineSub }}</p>
-          </div>
-          <div class="gphab-row-meta">
-            <span *ngIf="it.status === 'activa' && it.amount != null" class="gphab-row-amt">
-              {{ formatMoney(it.amount) }} €
+
+          <ng-container *ngIf="isSubscriptionListSimplified(it)">
+            <div class="gphab-row-main gphab-row-main--listview">
+              <p class="gphab-row-name">{{ it.merchant }}</p>
+              <p class="gphab-row-price" *ngIf="it.amount != null">{{ formatMoney(it.amount) }} €</p>
+            </div>
+            <span
+              class="gphab-chevron"
+              [class.gphab-chevron--static]="!it.linkedSubscriptionId"
+              aria-hidden="true"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m9 18 6-6-6-6" />
+              </svg>
             </span>
-            <span *ngIf="it.status === 'cancelada'" class="gphab-status-tag">Cancelada</span>
-          </div>
-          <i data-lucide="chevron-right" class="gphab-chevron" aria-hidden="true"></i>
+          </ng-container>
+          <ng-container *ngIf="!isSubscriptionListSimplified(it)">
+            <div class="gphab-row-main gphab-row-main--listview">
+              <p class="gphab-row-name">{{ it.merchant }}</p>
+              <p class="gphab-row-sub" *ngIf="it.lineSub">{{ it.lineSub }}</p>
+              <p class="gphab-row-price" *ngIf="it.status === 'activa' && it.amount != null">
+                {{ formatMoney(it.amount) }} €
+              </p>
+              <span *ngIf="it.status === 'cancelada'" class="gphab-status-tag gphab-status-tag--inline"
+                >Cancelada</span
+              >
+            </div>
+            <span
+              class="gphab-chevron"
+              [class.gphab-chevron--static]="!it.linkedSubscriptionId"
+              aria-hidden="true"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </span>
+          </ng-container>
         </li>
       </ul>
     </div>

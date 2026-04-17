@@ -12,9 +12,7 @@ import {
   UpcomingPaymentItem,
   DEFAULT_UPCOMING_PAYMENTS_ITEMS,
   DEFAULT_RECURRING_SUBSCRIPTIONS,
-  DEFAULT_HABITUAL_PAYMENTS,
   combineUpcomingAndSubscriptions30d,
-  sumHabitualRecibosMonthly,
   RecurringSubscriptionItem
 } from '../../services/wizard-state.service';
 
@@ -109,16 +107,16 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
     return this.filteredUpcomingItems.length;
   }
 
-  get recurringSubsMonthlyTotal(): number {
-    return this.recurringSubs.reduce((s, r) => s + r.priceMonthly, 0);
-  }
-
+  /**
+   * Previsión del hero: mismo criterio que el listado de esta pantalla (solo cargos previstos
+   * `upcomingItems`), no las suscripciones recurrentes demo que viven en Posición global / hábitos.
+   */
   get displaySummaryTotal(): number {
-    return this.displayUpcomingTotal + this.recurringSubsMonthlyTotal;
+    return this.displayUpcomingTotal;
   }
 
   get displaySummaryCount(): number {
-    return this.displayUpcomingCount + this.recurringSubs.length;
+    return this.displayUpcomingCount;
   }
 
   get displaySummaryCountLabel(): string {
@@ -139,11 +137,6 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
       return null;
     }
     return list.reduce((a, b) => (b.amount > a.amount ? b : a));
-  }
-
-  /** Suma mensual de recibos habituales (misma fuente que la pestaña Recibos al gestionar pagos) */
-  get gastoMensualRecibos(): number {
-    return sumHabitualRecibosMonthly(DEFAULT_HABITUAL_PAYMENTS);
   }
 
   truncateInsightName(name: string, maxLen = 22): string {
@@ -175,10 +168,6 @@ export class ProximosPagosComponent implements OnInit, AfterViewInit, OnDestroy 
 
   goGestionarPagosHabituales(): void {
     this.wizardState.setProximosPagosView('habituales');
-  }
-
-  openGestionarPagosRecibos(): void {
-    this.wizardState.goToGestionarPagosRecibos();
   }
 
   openInfoDrawer(): void {
