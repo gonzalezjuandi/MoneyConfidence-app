@@ -16,7 +16,8 @@ import {
   ProximosPagosHabitualesFilter,
   GestionarPagosReturnContext,
   HabitualPaymentItem,
-  DEFAULT_HABITUAL_PAYMENTS
+  DEFAULT_HABITUAL_PAYMENTS,
+  upcomingItemDebitAccountKey
 } from '../../services/wizard-state.service';
 
 declare var lucide: any;
@@ -82,9 +83,13 @@ export class ProximosPagosMovimientosComponent implements OnInit, AfterViewInit,
   }
 
   get activeHabitualPaymentsCount(): number {
-    return this.habitualItems.filter(
-      i => i.status === 'activa' && i.category !== 'cancelados'
-    ).length;
+    if (this.selectedHabitualFilter === 'todos') {
+      return this.todosMergedRows.length;
+    }
+    if (this.selectedHabitualFilter === 'recibos') {
+      return this.recibosMergedRows.length;
+    }
+    return this.filteredHabitualItems.filter(i => i.status === 'activa').length;
   }
 
   get filteredHabitualItems(): HabitualPaymentItem[] {
@@ -102,35 +107,82 @@ export class ProximosPagosMovimientosComponent implements OnInit, AfterViewInit,
   }
 
   /**
-   * Chip «Recibos»: recibos habituales + cargos de la previsión (misma fuente que Próximos pagos).
+   * Chip «Recibos»: cargos previstos (como en Próximos pagos) y al final el recibo domiciliado
+   * que no está en esa previsión (Endesa), con la fecha de renovación más tardía en demo.
    */
   get recibosMergedRows(): RecibosHabitualMergedRow[] {
+    const upcomingSorted = [...this.upcomingItems].sort(
+      (a, b) => this.upcomingChargeTimestamp(a) - this.upcomingChargeTimestamp(b)
+    );
     const rows: RecibosHabitualMergedRow[] = [];
-    for (const h of this.habitualItems) {
-      if (h.category === 'recibos' && h.status === 'activa') {
-        rows.push({ tipo: 'habitual', habitual: h });
-      }
-    }
-    for (const u of this.upcomingItems) {
+    for (const u of upcomingSorted) {
       rows.push({ tipo: 'proximo', upcoming: u });
+    }
+    const endesaRecibo = this.endesaHabitualRecibo;
+    if (endesaRecibo) {
+      rows.push({ tipo: 'habitual', habitual: endesaRecibo });
     }
     return rows;
   }
 
   /**
-   * Chip «Todos»: todos los pagos habituales activos + mismos cargos que en Recibos (sin duplicar lógica de movimiento).
+   * Chip «Todos»: suscripciones primero, cargos previstos ordenados por fecha, Endesa al final
+   * (no figura en Próximos pagos como línea propia — recibo habitual aparte).
    */
   get todosMergedRows(): RecibosHabitualMergedRow[] {
+    const habitual = this.habitualItems.filter(
+      h => h.category !== 'cancelados' && h.status !== 'cancelada'
+    );
+    const subscriptions = habitual.filter(h => h.category === 'suscripciones');
+    const endesaRecibo = this.endesaHabitualRecibo;
+    const upcomingSorted = [...this.upcomingItems].sort(
+      (a, b) => this.upcomingChargeTimestamp(a) - this.upcomingChargeTimestamp(b)
+    );
     const rows: RecibosHabitualMergedRow[] = [];
-    for (const h of this.habitualItems) {
-      if (h.category !== 'cancelados' && h.status !== 'cancelada') {
-        rows.push({ tipo: 'habitual', habitual: h });
-      }
+    for (const h of subscriptions) {
+      rows.push({ tipo: 'habitual', habitual: h });
     }
-    for (const u of this.upcomingItems) {
+    for (const u of upcomingSorted) {
       rows.push({ tipo: 'proximo', upcoming: u });
     }
+    if (endesaRecibo) {
+      rows.push({ tipo: 'habitual', habitual: endesaRecibo });
+    }
     return rows;
+  }
+
+  private get endesaHabitualRecibo(): HabitualPaymentItem | null {
+    const h = this.habitualItems.find(i => i.id === 'h3' && i.category === 'recibos');
+    return h && h.status === 'activa' ? h : null;
+  }
+
+  /** Ordenar por fecha de `scheduleDetail` / `schedule` (demo ES). */
+  private upcomingChargeTimestamp(u: UpcomingPaymentItem): number {
+    const text = (u.scheduleDetail ?? u.schedule ?? '').toLowerCase();
+    const m = text.match(
+      /(\d{1,2})\s+(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\s+(\d{4})/
+    );
+    if (m) {
+      const months: Record<string, number> = {
+        enero: 0,
+        febrero: 1,
+        marzo: 2,
+        abril: 3,
+        mayo: 4,
+        junio: 5,
+        julio: 6,
+        agosto: 7,
+        septiembre: 8,
+        octubre: 9,
+        noviembre: 10,
+        diciembre: 11
+      };
+      const mi = months[m[2]];
+      if (mi != null) {
+        return Date.UTC(parseInt(m[3], 10), mi, parseInt(m[1], 10));
+      }
+    }
+    return 0;
   }
 
   get habitualesMergedListRows(): RecibosHabitualMergedRow[] {
@@ -233,18 +285,12 @@ export class ProximosPagosMovimientosComponent implements OnInit, AfterViewInit,
 
   private filterUpcomingByAccount(
     items: UpcomingPaymentItem[],
-    key: 'all' | 'principal' | 'familiar'
+    filterKey: 'all' | 'principal' | 'familiar'
   ): UpcomingPaymentItem[] {
-    if (key === 'all') {
+    if (filterKey === 'all') {
       return [...items];
     }
-    return items.filter(it => {
-      const a = it.accounts;
-      if (!a?.length) {
-        return key === 'principal';
-      }
-      return a.includes(key);
-    });
+    return items.filter(it => upcomingItemDebitAccountKey(it) === filterKey);
   }
 
   formatMoney(n: number): string {

@@ -215,7 +215,7 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
       titularCuenta: 'LAURA NAVARRO ORTIZ',
       productoCuenta: 'CUENTA SABADELL',
       referencia: 'AV3UXMKO6LW3U7Y51',
-      proximaCobro: '28/04/2026',
+      proximaCobro: '20/05/2026',
       footerHint:
         'El adeudo se ejecuta según el calendario acordado con el acreedor. Si cambias la cuenta, aplicará en el próximo cobro.',
       partnerHost: 'endesa.es',
@@ -231,6 +231,7 @@ export class GestionarPagosHubComponent implements OnInit, AfterViewInit, OnDest
       displayName: 'Asisa Asistencia',
       logoInitial: 'A',
       logoColor: '#0a2744',
+      logoAsset: 'assets/upl-logo-asisa.png',
       priceMonthly: 100,
       status: 'activa',
       concepto: 'Asisa Asistencia',

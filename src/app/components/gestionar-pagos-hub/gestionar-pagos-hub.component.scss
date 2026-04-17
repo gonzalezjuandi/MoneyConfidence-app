@@ -1826,7 +1826,7 @@ $gph-pp-text-secondary: #6b7280;
   width: 5rem;
   height: 5rem;
   border-radius: 50%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .gph-hero-ref--detalle-nuevo .gph-hero-logo {

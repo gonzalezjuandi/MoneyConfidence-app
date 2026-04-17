@@ -78,7 +78,7 @@ export const DEFAULT_HABITUAL_PAYMENTS: HabitualPaymentItem[] = [
   {
     id: 'h3',
     merchant: 'Endesa',
-    lineSub: 'Mensual, se renueva 28 Abr',
+    lineSub: 'Mensual, se renueva 20 May',
     category: 'recibos',
     status: 'activa',
     amount: 45.0,
@@ -123,6 +123,28 @@ export interface UpcomingPaymentItem {
   referenciaMovimiento?: string;
   /** Concepto largo en bloque «Detalle del movimiento» */
   movementConcept?: string;
+}
+
+/**
+ * Cuenta por la que se carga el movimiento (coherente con `accountMask` en UI).
+ * No basta con `accounts`: a veces incluye ambas aunque el adeudo sea solo de una tarjeta/cuenta.
+ */
+export function upcomingItemDebitAccountKey(it: UpcomingPaymentItem): 'principal' | 'familiar' {
+  const compact = (it.accountMask ?? '').replace(/\s/g, '');
+  if (compact.includes('*4425') && !compact.includes('*4422')) {
+    return 'familiar';
+  }
+  if (compact.includes('*4422')) {
+    return 'principal';
+  }
+  if (compact.includes('*4425')) {
+    return 'familiar';
+  }
+  const a = it.accounts;
+  if (a?.length === 1) {
+    return a[0];
+  }
+  return 'principal';
 }
 
 /** Suma y recuento coherentes con la lista (evita totales desincronizados al filtrar por cuenta) */
@@ -234,7 +256,7 @@ export const DEFAULT_UPCOMING_PAYMENTS_ITEMS: UpcomingPaymentItem[] = [
     logoBg: '#003b73',
     logoVariant: 'aguas',
     accountMask: 'Cuenta *4422',
-    accounts: ['principal', 'familiar'],
+    accounts: ['principal'],
     iban: 'ES11 0081 0101 0000 0000 1234',
     titularCuenta: 'LAURA NAVARRO ORTIZ',
     productoCuenta: 'CUENTA SABADELL',
@@ -252,7 +274,7 @@ export const DEFAULT_UPCOMING_PAYMENTS_ITEMS: UpcomingPaymentItem[] = [
     logoBg: '#1e3a5f',
     logoVariant: 'telecom',
     accountMask: 'Cuenta *4425',
-    accounts: ['principal', 'familiar'],
+    accounts: ['familiar'],
     iban: 'ES11 0081 0101 0000 0000 5678',
     titularCuenta: 'LAURA NAVARRO ORTIZ',
     productoCuenta: 'CUENTA SABADELL',

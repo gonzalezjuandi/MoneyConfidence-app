@@ -5,7 +5,8 @@ import {
   DEFAULT_UPCOMING_PAYMENTS_ITEMS,
   DEFAULT_RECURRING_SUBSCRIPTIONS,
   RecurringSubscriptionItem,
-  combineUpcomingAndSubscriptions30d
+  combineUpcomingAndSubscriptions30d,
+  upcomingItemDebitAccountKey
 } from '../../services/wizard-state.service';
 
 declare var lucide: any;
@@ -164,13 +165,9 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
 
   /** Próximos movimientos filtrados por cuenta del carrusel */
   get upcomingItemsForSelectedAccount(): UpcomingPaymentItem[] {
-    return this.upcomingPaymentsItems.filter(it => {
-      const a = it.accounts;
-      if (!a?.length) {
-        return this.selectedAccount === 'principal';
-      }
-      return a.includes(this.selectedAccount);
-    });
+    return this.upcomingPaymentsItems.filter(
+      it => upcomingItemDebitAccountKey(it) === this.selectedAccount
+    );
   }
 
   /** Arrastre horizontal saldo ↔ próximos pagos */
