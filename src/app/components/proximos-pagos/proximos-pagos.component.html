@@ -109,14 +109,23 @@
         </div>
       </div>
 
-      <section class="pp-manage-notice">
-        <button type="button" class="pp-manage-notice-row" (click)="goGestionarPagosHabituales()">
-          <span class="pp-manage-notice-icon-wrap" aria-hidden="true">
-            <i data-lucide="settings" class="pp-manage-notice-ic"></i>
-          </span>
-          <span class="pp-manage-notice-label">Gestionar suscripciones y recibos</span>
-          <i data-lucide="chevron-right" class="pp-manage-notice-chevron" aria-hidden="true"></i>
-        </button>
+      <section class="pp-manage-notice" aria-labelledby="pp-manage-notice-title">
+        <div class="pp-manage-notice-card">
+          <div class="pp-manage-notice-top">
+            <div class="pp-manage-notice-icon-wrap" aria-hidden="true">
+              <i data-lucide="settings" class="pp-manage-notice-ic"></i>
+            </div>
+            <div class="pp-manage-notice-copy">
+              <h3 id="pp-manage-notice-title" class="pp-manage-notice-title">¿Quieres gestionar tus pagos?</h3>
+              <p class="pp-manage-notice-text">
+                Revisa y gestiona tus suscripciones y recibos en un solo lugar.
+              </p>
+            </div>
+          </div>
+          <button type="button" class="pp-manage-notice-btn" (click)="goGestionarPagosHabituales()">
+            Gestionar pagos habituales
+          </button>
+        </div>
       </section>
 
       <section class="pp-preview-section" aria-labelledby="pp-preview-title">
