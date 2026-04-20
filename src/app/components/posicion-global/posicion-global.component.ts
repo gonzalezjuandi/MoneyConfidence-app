@@ -104,23 +104,21 @@ export class PosicionGlobalComponent implements AfterViewInit, OnDestroy, OnInit
     return this.recurringSubscriptionItems.reduce((s, r) => s + r.priceMonthly, 0);
   }
 
-  /** Total 30 días transversal (Próximos pagos + suscripciones), coherente con `displaySummaryTotal` */
-  get combined30DayTotal(): number {
-    return this.upcomingPaymentsSumAll + this.recurringSubscriptionsMonthlySum;
-  }
-
-  /** Importe de próximos pagos con signo negativo (p. ej. -476,98) */
+  /**
+   * Importe en la píldora de inicio: mismo criterio que la previsión de Próximos pagos
+   * (solo cargos previstos listados, sin sumar suscripciones recurrentes aparte).
+   */
   get upcomingTotalFormatted(): string {
-    const n = -Math.abs(this.combined30DayTotal);
+    const n = -Math.abs(this.upcomingPaymentsSumAll);
     return n.toLocaleString('es-ES', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });
   }
 
-  /** Total como cargo (signo negativo), coherente con la captura de resumen */
+  /** Total como texto con signo negativo (misma base que `upcomingTotalFormatted`). */
   get upcomingOutflowFormatted(): string {
-    const n = Math.abs(this.combined30DayTotal);
+    const n = Math.abs(this.upcomingPaymentsSumAll);
     return (
       '-' +
       n.toLocaleString('es-ES', {
