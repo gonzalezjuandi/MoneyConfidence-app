@@ -1,11 +1,8 @@
-// Entry point saldo / próximos pagos
-.balance-swipe-zone {
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
-}
+// Resumen saldo + píldora a Próximos pagos (sin swipe en el hero)
 
-/* Arrastre horizontal: solo se desplaza .balance-pill-chevron (ver HTML + TS) */
+.balance-hero-wrap {
+  width: 100%;
+}
 
 .balance-swipe-inner {
   display: flex;

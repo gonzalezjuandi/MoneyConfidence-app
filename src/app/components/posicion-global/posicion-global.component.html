@@ -20,47 +20,25 @@
       </div>
     </header>
 
-    <!-- Saldo / próximos: swipe solo en el hero; la píldora en vista saldo es un botón a Próximos pagos -->
+    <!-- Saldo fijo; único acceso a Próximos pagos: la píldora inferior -->
     <div class="px-6 pt-2 pb-6 text-center">
       <div class="balance-swipe-inner">
-        <div
-          class="balance-swipe-zone"
-          (pointerdown)="onBalanceSwipePointerDown($event)"
-          (pointermove)="onBalanceSwipePointerMove($event)"
-          (pointerup)="onBalanceSwipePointerUp($event)"
-          (pointercancel)="onBalanceSwipePointerCancel($event)"
-        >
-          <!-- Misma rejilla tipográfica en ambas vistas para evitar saltos al hacer swipe -->
+        <div class="balance-hero-wrap">
           <div class="balance-hero-stage">
-            <ng-container *ngIf="posicionCardView === 'total'">
-              <p class="balance-hero-label">Tu saldo total</p>
-              <h1 class="balance-hero-numeric text-4xl text-gray-900 font-normal tracking-tight">
-                {{ saldoTotalFormatted }} €
-              </h1>
-              <div class="balance-hero-sub">
-                <p class="balance-hero-ahorrado">
-                  Ahorrado/invertido:
-                  <span class="balance-hero-ahorrado-amt">{{ ahorradoInvertidoFormatted }} €</span>
-                </p>
-              </div>
-            </ng-container>
-            <ng-container *ngIf="posicionCardView === 'upcoming'">
-              <p class="balance-hero-label">Próximos pagos</p>
-              <h1 class="balance-hero-numeric text-4xl text-gray-900 font-normal tracking-tight">
-                {{ upcomingTotalFormatted }} €
-              </h1>
-              <div class="balance-hero-sub balance-hero-sub--link" (pointerdown)="$event.stopPropagation()">
-                <button type="button" class="balance-manage-link" (click)="onGestionarGastos()">
-                  Gestionar gastos
-                </button>
-              </div>
-            </ng-container>
+            <p class="balance-hero-label">Tu saldo total</p>
+            <h1 class="balance-hero-numeric text-4xl text-gray-900 font-normal tracking-tight">
+              {{ saldoTotalFormatted }} €
+            </h1>
+            <div class="balance-hero-sub">
+              <p class="balance-hero-ahorrado">
+                Ahorrado/invertido:
+                <span class="balance-hero-ahorrado-amt">{{ ahorradoInvertidoFormatted }} €</span>
+              </p>
+            </div>
           </div>
         </div>
 
-        <!-- Vista saldo: comercios + importe + flecha azul; clic → Próximos pagos -->
         <button
-          *ngIf="posicionCardView === 'total'"
           type="button"
           class="balance-entry-pill balance-entry-pill--total balance-entry-pill--static"
           (click)="onGestionarGastos()"
@@ -81,33 +59,6 @@
             <i data-lucide="chevron-right" class="balance-pill-next-icon"></i>
           </span>
         </button>
-
-        <!-- Vista próximos pagos: vuelta al saldo (swipe en hero o esta píldora) -->
-        <div
-          *ngIf="posicionCardView === 'upcoming'"
-          class="balance-entry-pill balance-entry-pill--upcoming"
-          role="button"
-          tabindex="0"
-          aria-label="Ver saldo total"
-          (keydown.enter)="onToggleBalanceCard()"
-          (keydown.space)="$event.preventDefault(); onToggleBalanceCard()"
-          (click)="onToggleBalanceCard()"
-        >
-          <div class="balance-pill-edge balance-pill-edge--lead"></div>
-          <div class="balance-pill-body">
-            <span class="balance-pill-text balance-pill-text--muted">Tu saldo total: {{ saldoTotalFormatted }} €</span>
-          </div>
-          <div class="balance-pill-edge balance-pill-edge--trail">
-            <span
-              class="balance-pill-chevron"
-              [class.balance-pill-chevron--dragging]="pillPointerActive"
-              [style.transform]="'translateX(' + pillDragOffset + 'px)'"
-              aria-hidden="true"
-            >
-              <i data-lucide="chevron-left" class="balance-pill-chevron-icon"></i>
-            </span>
-          </div>
-        </div>
       </div>
     </div>
 
